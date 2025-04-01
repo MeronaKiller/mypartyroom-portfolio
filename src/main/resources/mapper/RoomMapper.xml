@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.room.RoomMapper">
+
+	<select id="roomInfo" resultType="com.example.demo.dto.RoomDto">
+		SELECT * FROM room WHERE roomid=#{roomid}
+		ORDER BY roomid DESC
+	</select>
+	
+	<select id="RoomList" resultType="com.example.demo.dto.RoomDto">
+		SELECT * FROM room
+		<where>
+        <if test="rcode != null and rcode !=''">
+            rcode LIKE CONCAT(#{rcode},'%')
+        </if>
+        <if test="searchKeyword != null and searchKeyword !=''">
+            AND (
+                name LIKE CONCAT('%', #{searchKeyword}, '%') 
+                OR keyword LIKE CONCAT('%', #{searchKeyword}, '%')
+            )
+        </if>
+    </where>
+    ORDER BY duration_type DESC
+	</select>
+
+
+	<select id="roomContent" resultType="com.example.demo.dto.RoomDto">
+		SELECT * FROM room WHERE rcode=#{rcode}
+	</select>
+	
+	<select id="getMember" resultType="com.example.demo.dto.MemberDto">
+		SELECT * FROM member WHERE userid=#{userid}
+	</select>
+
+   <select id="getNumber" resultType="Integer">
+   	SELECT IFNULL(MAX(RIGHT(jumuncode,3)),0)+1
+  	FROM reservation
+   	WHERE jumuncode LIKE CONCAT(#{jumuncode},'%')
+   </select>
+   
+   <insert id="reservOk" parameterType="com.example.demo.dto.ReservationDto">
+   	INSERT INTO reservation(startTime,endTime,rcode,card1,tel,
+   	halbu1,bank1,card2,bank2,jumuncode,writeday,userid,purposeuse,requesttohost,reservprice)
+   	VALUES (#{startTime},#{endTime},#{rcode},#{card1},#{tel},#{halbu1},
+   	#{bank1},#{card2},#{bank2},#{jumuncode},now(),#{userid},#{purposeuse},#{requesttohost},#{reservprice})
+   </insert>
+   
+   <select id="reservList" parameterType="com.example.demo.dto.ReservationDto" resultType="com.example.demo.dto.ReservationDto">
+		SELECT * FROM reservation WHERE jumuncode=#{jumuncode}
+	</select>
+   <select id="reservChk" parameterType="com.example.demo.dto.ReservationDto" resultType="com.example.demo.dto.ReservationDto">
+		SELECT * FROM reservation WHERE jumuncode=#{jumuncode}
+	</select>
+	
+	  <select id="getReservTime"  resultType="com.example.demo.dto.ReservationDto">
+	    select substring(startTime,12,2) as startTime  , substring(endTime,12,2) as endTime 
+	    from reservation
+	     where rcode=#{rcode} and startTime like concat(#{ymd} , '%')
+	</select> 
+
+	<select id="getReservationsByUserId" resultType="com.example.demo.dto.ReservationDto">
+	    SELECT * FROM reservation WHERE userid=#{userid} ORDER BY writeday DESC
+	</select>
+	
+
+</mapper>
+
+

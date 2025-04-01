@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+   <mapper namespace="com.example.demo.member.MemberMapper">
+
+	<select id="useridCheck" resultType="Integer"> <!-- 아이디 중복검사 -->
+		SELECT COUNT(*) FROM MEMBER WHERE userid=#{userid}
+	</select>
+
+	<insert id="memberOk" parameterType="com.example.demo.dto.MemberDto">
+		INSERT INTO member(userid,name,pwd,email,phone,created_day,modified_day)
+		VALUES(#{userid},#{name},#{pwd},#{email},#{phone},now(),now())
+	</insert>
+	
+	  <select id="order" resultType="HashMap">
+  	SELECT
+  	rs.writeday,
+  	rs.startTime,
+  	rs.endTime,
+  	rs.review,
+  	rs.reservationid,
+  	rs.status,
+  	rs.card1,
+  	rs.halbu1,
+  	rs.bank1,
+  	rs.card2,
+  	r.pic,
+  	r.name,
+  	r.rcode,
+  	r.name
+  	FROM room AS r
+  	INNER JOIN
+  	reservation AS rs ON r.rcode=rs.rcode
+  	<if test="month != 0">
+  	<![CDATA[
+  	AND
+  	rs.writeday >=#{start}
+  	AND
+  	rs.writeday <= #{end}
+  	]]>
+  	</if>
+  </select>
+  
+	<update id="updateReservationStatus" parameterType="com.example.demo.dto.ReservationDto">
+	  UPDATE reservation
+	  SET status = #{status},
+	      modified_at = NOW()
+	  WHERE reservationid = #{reservationid}
+	</update>
+		
+</mapper>

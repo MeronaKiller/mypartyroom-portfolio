@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.admin.AdminMapper">
+	<select id="getDae" resultType="com.example.demo.dto.DaeDto">
+		SELECT * FROM dae ORDER BY daecode ASC
+	</select>
+	
+	<select id="getSo" resultType="com.example.demo.dto.SoDto">
+		SELECT * FROM so WHERE daeid=#{daeid}
+		ORDER BY socode ASC
+	</select>
+	
+	<select id="getNumber" resultType="Integer">
+		SELECT IFNULL( MAX( RIGHT(rcode,3 )), 0)+1
+		FROM room
+		WHERE rcode LIKE concat(#{rcode}, '%')
+	</select>
+	
+	<insert id="roomWriteOk" parameterType="com.example.demo.dto.RoomDto">
+		INSERT INTO room(price,rcode,name,description,capacity,pic,duration_type,subpic,halin,keyword,pkgname,pkgprice,pkgstart,pkgend,adress,roadadress,mapx,mapy,caution,refundpolicy,officehour,closedday,floor,car,elevator,fstatus,ininfo,play,kitchen,phone,subname,subdesc,writeday)
+		VALUES (#{price},#{rcode},#{name},#{description},#{capacity},#{pic},#{duration_type},#{subpic},#{halin},#{keyword},#{pkgname},#{pkgprice},#{pkgstart},#{pkgend},#{adress},#{roadadress},#{mapx},#{mapy},#{caution},#{refundpolicy},#{officehour},#{closedday},#{floor},#{car},#{elevator},#{fstatus},#{ininfo},#{play},#{kitchen},#{phone},#{subname},#{subdesc},now())
+	</insert>
+	
+	<select id="roomManage" resultType="HashMap">
+		SELECT 
+	</select>
+	
+	<select id="adminLoginOk" resultType="String">
+		SELECT admin_name FROM admin
+		WHERE admin_userid=#{admin_userid} AND pwd=#{pwd}
+	</select>
+	
+	<select id="getAllMember" resultType="com.example.demo.dto.MemberDto">
+		SELECT * FROM member
+		ORDER BY memberid DESC
+	</select>
+	
+	<select  id="getCancleRequest" resultType="com.example.demo.dto.ReservationDto">
+		SELECT r.*,
+		
+		rm.pic,
+		rm.name,
+		
+		m.name AS mname,
+		m.userid,
+		m.email,
+		m.phone
+		
+		FROM reservation r
+		INNER JOIN room rm ON r.rcode = rm.rcode
+		INNER JOIN member m ON r.userid = m.userid
+		WHERE r.status=1
+		<if test="userid != null and userid !=''">
+			AND r.uesrid = #{userid}
+		</if>
+		ORDER BY modified_at ASC
+	</select>
+	
+	<update id="updateReservationStatus">
+	    UPDATE reservation 
+	    SET status = #{status} 
+	    WHERE reservationid = #{reservationId}
+	</update>
+	
+</mapper>
