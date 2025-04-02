@@ -16,6 +16,8 @@ public interface MemberService {
 	public String useridCheck(HttpServletRequest request);
 	public String order(HttpSession session, Model model, HttpServletRequest request, ReservationDto rsdto, RoomDto rdto);
 	public String cancelReserv(ReservationDto rsdto, HttpSession session);
+	public String cancelReturnList(HttpSession session, Model model, HttpServletRequest request, ReservationDto rsdto,
+			RoomDto rdto);
 	
 	}
 

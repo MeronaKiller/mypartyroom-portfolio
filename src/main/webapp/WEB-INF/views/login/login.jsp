@@ -59,7 +59,7 @@
 		
 		<div><input type= "text" name= "userid" id= "txt" placeholder= "아이디" value="hong123"></div>
 		<div>
-		<input type= "password" name= "pwd" id= "txt" placeholder= "비밀번호" value="1234">
+		<input type= "password" name= "pwd" id= "txt" placeholder= "비밀번호" value="123456">
 		<c:if test="${err==1}">
 			<br><span style="font-size:12px; color:red;"> 아이디 혹은 비밀번호가 틀립니다. </span>
 		</c:if>

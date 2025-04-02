@@ -66,6 +66,7 @@ function handleCancelRequest(reservationId, currentStatus) {
       </td>
     </tr>
   </table>
+  <hr>
 </c:forEach>
 
 </body>

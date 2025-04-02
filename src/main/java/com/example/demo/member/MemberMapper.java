@@ -15,4 +15,6 @@ public interface MemberMapper {
 	public void memberOk(MemberDto mdto);
 	public ArrayList<HashMap> order(String userid, String start, String end, int month);
 	public void updateReservationStatus(ReservationDto rsdto);
+	public void updateReservationStatus1(ReservationDto rsdto);
+	public ArrayList<HashMap> cancelReturnList(String userid, String start, String end, int month);
 }

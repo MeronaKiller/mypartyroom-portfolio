@@ -46,4 +46,9 @@ public class MemberController {
 	{
 	    return service.cancelReserv(rsdto, session);
 	}
+	@GetMapping("/member/cancelReturnList")
+	public String cancelReturnList(HttpSession session, Model model,HttpServletRequest request,ReservationDto rsdto,RoomDto rdto)
+	{
+		return service.cancelReturnList(session,model,request,rsdto,rdto);
+	}
 }
