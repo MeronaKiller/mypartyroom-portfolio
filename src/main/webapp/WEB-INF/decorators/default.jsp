@@ -220,7 +220,7 @@
        	<ul id="etcMySub">
        		<li><a href="../board/noticeList">공지사항</a></li>
        		<li><a href="../board/fna">자주하는 질문</a></li>
-       		<li><a href="../member/qnaList">1:1 문의</a></li>
+       		<li><a href="../member/personalInquiry">1:1 문의</a></li>
        		<li><a href="">건의하기</a></li>	
        		<li><a href="">취소/반품 안내</a></li>
        	</ul>

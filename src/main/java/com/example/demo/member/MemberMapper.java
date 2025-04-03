@@ -6,6 +6,7 @@ import java.util.HashMap;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.example.demo.dto.MemberDto;
+import com.example.demo.dto.PersonalInquiryDto;
 import com.example.demo.dto.ReservationDto;
 
 @Mapper
@@ -17,4 +18,5 @@ public interface MemberMapper {
 	public void updateReservationStatus(ReservationDto rsdto);
 	public void updateReservationStatus1(ReservationDto rsdto);
 	public ArrayList<HashMap> cancelReturnList();
+	public void personalInquiryOk(PersonalInquiryDto pdto);
 }

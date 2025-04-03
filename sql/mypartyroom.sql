@@ -91,31 +91,6 @@ LOCK TABLES `buyerinfo` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `councel`
---
-
-DROP TABLE IF EXISTS `councel`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `councel` (
-  `councelid` int(11) NOT NULL AUTO_INCREMENT,
-  `councel_text` text NOT NULL,
-  `status` int(11) NOT NULL DEFAULT 0,
-  `writeday` datetime DEFAULT NULL,
-  PRIMARY KEY (`councelid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `councel`
---
-
-LOCK TABLES `councel` WRITE;
-/*!40000 ALTER TABLE `councel` DISABLE KEYS */;
-/*!40000 ALTER TABLE `councel` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `dae`
 --
 
@@ -138,6 +113,37 @@ LOCK TABLES `dae` WRITE;
 /*!40000 ALTER TABLE `dae` DISABLE KEYS */;
 INSERT INTO `dae` VALUES (1,'서울','01'),(2,'인천/부천','02'),(3,'경기','03'),(4,'부산','04'),(5,'대구/경상','05'),(6,'대전/충청','06'),(7,'광주/전라','07');
 /*!40000 ALTER TABLE `dae` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `fna`
+--
+
+DROP TABLE IF EXISTS `fna`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `fna` (
+  `fnaid` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `writeday` datetime DEFAULT NULL,
+  `rnum` int(11) DEFAULT NULL,
+  `img` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `content` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `state` int(11) DEFAULT NULL,
+  `adminid` int(11) DEFAULT NULL,
+  `admin_name` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`fnaid`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `fna`
+--
+
+LOCK TABLES `fna` WRITE;
+/*!40000 ALTER TABLE `fna` DISABLE KEYS */;
+INSERT INTO `fna` VALUES (1,'예약은 언제부터 가능한가요?','2025-04-03 15:56:22',1,NULL,'파티룸 예약은 최대 3개월 전부터 가능합니다. 주말과 공휴일은 빠르게 예약이 마감되니 서둘러 예약하시기 바랍니다.',1,1,'관리자'),(2,'예약 취소 시 환불 규정은 어떻게 되나요?','2025-04-03 15:56:22',2,NULL,'이용 7일 전 취소: 100% 환불\n이용 5일 전 취소: 80% 환불\n이용 3일 전 취소: 50% 환불\n이용 1일 전 취소: 환불 불가\n당일 취소: 환불 불가\n\n단, 천재지변이나 당사의 귀책사유로 인한 취소는 100% 환불됩니다.',1,1,'관리자'),(3,'기본 제공되는 시설과 장비는 무엇인가요?','2025-04-03 15:56:22',3,NULL,'모든 파티룸에는 기본적으로 블루투스 스피커, Wi-Fi, 에어컨, 냉장고, 전자레인지가 제공됩니다. 룸별로 추가 제공되는 시설은 각 룸 상세페이지에서 확인하실 수 있습니다.',1,1,'관리자'),(4,'음식 반입이 가능한가요?','2025-04-03 15:56:22',4,NULL,'네, 외부 음식 반입이 가능합니다. 다만, 퇴실 시 음식물 쓰레기 처리와 정리는 고객님께서 해주셔야 합니다. 추가 청소비가 발생할 수 있습니다.',1,1,'관리자'),(5,'최대 인원은 몇 명인가요?','2025-04-03 15:56:22',5,NULL,'파티룸별로 최대 수용 인원이 다릅니다. 기본적으로 소형룸은 6-8명, 중형룸은 10-15명, 대형룸은 20명까지 이용 가능합니다. 최대 인원 초과 시 추가 요금이 발생하거나 입장이 제한될 수 있습니다.',1,1,'관리자'),(6,'주차 시설이 있나요?','2025-04-03 15:56:22',6,NULL,'네, 모든 지점에 무료 주차 공간이 마련되어 있습니다. 다만, 주말이나 성수기에는 주차 공간이 제한될 수 있으니 가급적 대중교통 이용을 권장드립니다.',1,1,'관리자'),(7,'예약 시간 연장이 가능한가요?','2025-04-03 15:56:22',7,NULL,'당일 예약 상황에 따라 가능합니다. 연장을 원하시면 이용 중에 카운터 또는 고객센터로 문의해 주세요. 시간당 추가 요금이 발생합니다.',1,1,'관리자'),(8,'파티룸 내 흡연이 가능한가요?','2025-04-03 15:56:22',8,NULL,'모든 파티룸은 금연 구역입니다. 지정된 흡연 구역 외 실내 흡연 시 청소비가 추가 청구되며, 다음 예약에 차질이 생길 경우 손해배상이 청구될 수 있습니다.',1,1,'관리자'),(9,'파티 용품 대여가 가능한가요?','2025-04-03 15:56:22',9,NULL,'생일파티, 브라이덜 샤워 등 각종 이벤트에 필요한 파티 용품을 대여해 드립니다. 예약 시 미리 문의하시면 준비해 드립니다. 용품별로 대여료가 다르니 홈페이지에서 확인해 주세요.',1,1,'관리자'),(10,'영업 시간은 어떻게 되나요?','2025-04-03 15:56:22',10,NULL,'오전 10시부터 오후 11시까지 운영합니다. 24시간 운영하는 특정 지점도 있으니 예약 전 확인해 주세요. 체크인은 예약 시간 10분 전부터 가능합니다.',1,1,'관리자');
+/*!40000 ALTER TABLE `fna` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -289,6 +295,38 @@ INSERT INTO `notice` VALUES (1,'공지 테스트 1','2025-03-21 15:21:41',0,NULL
 UNLOCK TABLES;
 
 --
+-- Table structure for table `personalinquiry`
+--
+
+DROP TABLE IF EXISTS `personalinquiry`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `personalinquiry` (
+  `personalInquiryid` int(11) NOT NULL AUTO_INCREMENT,
+  `userid` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `title` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `content` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `writeday` datetime DEFAULT NULL,
+  `answerwriteday` datetime DEFAULT NULL,
+  `state` int(11) DEFAULT 0,
+  `category` int(11) DEFAULT 0,
+  `admin_userid` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `answercontent` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`personalInquiryid`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `personalinquiry`
+--
+
+LOCK TABLES `personalinquiry` WRITE;
+/*!40000 ALTER TABLE `personalinquiry` DISABLE KEYS */;
+INSERT INTO `personalinquiry` VALUES (1,'hong123','ㅇㅁㄴ','ㅇㄴㅁ','2025-04-03 17:48:04',NULL,0,1,NULL,NULL);
+/*!40000 ALTER TABLE `personalinquiry` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `purchaseinfo`
 --
 
@@ -376,7 +414,7 @@ CREATE TABLE `reservation` (
 
 LOCK TABLES `reservation` WRITE;
 /*!40000 ALTER TABLE `reservation` DISABLE KEYS */;
-INSERT INTO `reservation` VALUES (1,1,'2025-03-25 05:00:00','2025-03-25 13:00:00','r0101004',1,2,0,0,0,'j20250324001',NULL,NULL,'hong123',0,'2025-03-24 10:58:36','모임','없습니다.',160000,'2025-04-02 07:51:11','0000-00-00 00:00:00'),(2,0,'2025-04-30 12:00:00','2025-04-30 17:00:00','r0101004',0,0,0,0,0,'j20250402001',NULL,NULL,'hong123',0,'2025-04-02 16:51:02','','',100000,NULL,'0000-00-00 00:00:00');
+INSERT INTO `reservation` VALUES (1,2,'2025-03-25 05:00:00','2025-03-25 13:00:00','r0101004',1,2,0,0,0,'j20250324001',NULL,NULL,'hong123',0,'2025-03-24 10:58:36','모임','없습니다.',160000,'2025-04-03 05:54:01','0000-00-00 00:00:00'),(2,0,'2025-04-30 12:00:00','2025-04-30 17:00:00','r0101004',0,0,0,0,0,'j20250402001',NULL,NULL,'hong123',0,'2025-04-02 16:51:02','','',100000,NULL,'0000-00-00 00:00:00');
 /*!40000 ALTER TABLE `reservation` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -552,4 +590,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-03 14:20:34
+-- Dump completed on 2025-04-03 17:48:28

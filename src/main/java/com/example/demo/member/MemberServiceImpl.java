@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 
 import com.example.demo.MyUtil;
 import com.example.demo.dto.MemberDto;
+import com.example.demo.dto.PersonalInquiryDto;
 import com.example.demo.dto.ReservationDto;
 import com.example.demo.dto.RoomDto;
 
@@ -145,5 +146,32 @@ public class MemberServiceImpl implements MemberService {
 			model.addAttribute("mapAll",mapAll);
 			return "/member/cancelReturnList";
 		}
+	}
+	@Override
+	public String personalInquiry(HttpSession session, Model model, HttpServletRequest request, PersonalInquiryDto pdto)
+	{
+		return "/member/personalInquiry";
+	}
+	
+	@Override
+	public String personalInquiryOk(MemberDto mdto, HttpSession session, Model model, HttpServletRequest request,
+			PersonalInquiryDto pdto)
+	{
+			String userid = (String)session.getAttribute("userid");
+			if(userid==null)
+			{
+				return"redirect:/login/login";
+			}
+			else
+			{
+			pdto.setUserid(userid);
+		    mapper.personalInquiryOk(pdto);
+			return "redirect:/member/personalInquiryList";
+			}
+	}
+	@Override
+	public String personalInquiryList(HttpSession session,Model model,HttpServletRequest request,PersonalInquiryDto pdto)
+	{
+		return "/member/personalInquiryList";
 	}
 }

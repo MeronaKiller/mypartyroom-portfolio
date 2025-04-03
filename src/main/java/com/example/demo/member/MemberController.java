@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.dto.MemberDto;
+import com.example.demo.dto.PersonalInquiryDto;
 import com.example.demo.dto.ReservationDto;
 import com.example.demo.dto.RoomDto;
 
@@ -51,4 +52,20 @@ public class MemberController {
 	{
 		return service.cancelReturnList(session,model,request,rsdto,rdto);
 	}
+	@GetMapping("/member/personalInquiry")
+	public String personalInquiry(HttpSession session, Model model, HttpServletRequest request, PersonalInquiryDto pdto)
+	{
+		return service.personalInquiry(session,model,request,pdto);
+	}
+	@PostMapping("/member/personalInquiryOk")
+	public String personalInquiryOk(MemberDto mdto, HttpSession session, Model model, HttpServletRequest request, PersonalInquiryDto pdto)
+	{
+		return service.personalInquiryOk(mdto,session,model,request,pdto);
+	}
+	@GetMapping("/member/personalInquiryList")
+	public String personalInquiryList(HttpSession session,Model model,HttpServletRequest request,PersonalInquiryDto pdto)
+	{
+		return service.personalInquiryList(session,model,request,pdto);
+	}
 }
+	

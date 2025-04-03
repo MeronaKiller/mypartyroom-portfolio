@@ -71,5 +71,11 @@
   	reservation AS rs ON r.rcode=rs.rcode
   	WHERE rs.status = 2
   </select>
+  
+	<insert id="personalInquiryOk" parameterType="com.example.demo.dto.PersonalInquiryDto"> <!-- 회원이 문의를 보낼때 -->
+		INSERT INTO personalInquiry(userid,title,content,writeday,category)
+		VALUES(#{userid},#{title},#{content},now(),#{category})
+	</insert>
+  	
 		
 </mapper>
