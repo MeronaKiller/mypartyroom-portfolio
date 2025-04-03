@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.example.demo.dto.FnaDto;
 import com.example.demo.dto.NoticeDto;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,5 +23,10 @@ public class BoardController {
 	public String noticeList(NoticeDto ndto,Model model,HttpServletRequest request)
 	{
 		return service.noticeList(ndto,model,request);
+	}
+	@GetMapping("/board/fna")
+	public String fna(FnaDto fdto,Model model,HttpServletRequest request)
+	{
+		return service.fna(fdto,model,request);
 	}
 }

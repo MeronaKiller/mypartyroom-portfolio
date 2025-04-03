@@ -20,7 +20,11 @@
    	<insert id="noticeWrite" parameterType="com.example.demo.dto.NoticeDto"> <!-- 공지사항 글쓰기(관리자용) -->
 	    INSERT INTO notice (title, memberid, writeday, rnum, img, content)
 	    VALUES (#{title}, #{memberid}, NOW(), #{rnum}, #{img}, #{content})
-</insert>
+	</insert>
+	
+	<select id="fna" resultType="com.example.demo.dto.FnaDto">
+   		SELECT * FROM fna ORDER BY fnaid DESC
+   	</select>
 
 	
 

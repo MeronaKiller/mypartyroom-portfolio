@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import com.example.demo.dto.FnaDto;
 import com.example.demo.dto.NoticeDto;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -61,5 +62,12 @@ public class BoardServiceImpl implements BoardService {
 		
 		//ArrayList 처리
 		return "/board/noticeList";
+	}
+	@Override
+	public String fna(FnaDto fdto,Model model,HttpServletRequest request)
+	{
+		ArrayList<FnaDto> flist=mapper.fna();
+		model.addAttribute("flist",flist);
+		return "/board/fna";
 	}
 }
