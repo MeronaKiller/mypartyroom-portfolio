@@ -62,4 +62,11 @@
 	    WHERE reservationid = #{reservationId}
 	</update>
 	
+		<update id="updateReservationStatus1" parameterType="com.example.demo.dto.ReservationDto"><!-- 취소수락했을때 -->
+	  UPDATE reservation
+	  SET status = #{status},
+	      modified_at1 = NOW()
+	  WHERE reservationid = #{reservationid}
+	</update>
+	
 </mapper>

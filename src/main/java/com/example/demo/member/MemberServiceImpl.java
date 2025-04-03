@@ -131,54 +131,19 @@ public class MemberServiceImpl implements MemberService {
 		}
 		else
 		{
-			String userid=session.getAttribute("userid").toString();
-			String start,end;
-			int month;
-	        if(request.getParameter("start")==null)
-	        {
-	        	month=0;
-				if(request.getParameter("month")!=null)
-				   month=Integer.parseInt(request.getParameter("month")); // 3 6 12
-				
-				// 오늘날짜
-				LocalDate today=LocalDate.now(); 
-				
-				// month값에 해당되는 날짜 구하기
-				LocalDate xday=today.minusMonths(month);
-				
-				start=xday.toString();
-				end=today.toString();
-	        }
-	        else
-	        {
-	        	start=request.getParameter("start");
-	        	end=request.getParameter("end");
-	        	month=1;
-	        	
-	        	model.addAttribute("start",start);
-	        	model.addAttribute("end",end);
-	        }
-			
-		 
-			ArrayList<HashMap> mapAll=mapper.cancelReturnList(userid,start,end, month);
+			ArrayList<HashMap> mapAll=mapper.cancelReturnList();
 			
 			for(int i=0;i<mapAll.size();i++)
 			{
 			    HashMap map=mapAll.get(i);
 			    // 키가 "status"인지 "state"인지 확인하고 그에 맞게 접근
 			    // null 체크를 추가하여 NullPointerException 방지
-			    int state = 0;
-			    if(map.get("status") != null) {
-			        state = Integer.parseInt(map.get("status").toString());
-			    }
-			    String stateStr = MyUtil.getState(state);
+			    int state = 2;
+			    String stateStr=MyUtil.getState(state);
 			    map.put("stateStr", stateStr);
 			}
-			
 			model.addAttribute("mapAll",mapAll);
-			
-			
-			return "/member/order";
+			return "/member/cancelReturnList";
 		}
 	}
 }
