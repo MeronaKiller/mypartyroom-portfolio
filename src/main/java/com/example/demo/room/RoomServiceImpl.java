@@ -40,6 +40,7 @@ public class RoomServiceImpl implements RoomService {
 		model.addAttribute("rlist", rlist);
 		model.addAttribute("rcode",rdto.getRcode());
 		model.addAttribute("searchKeyword", searchKeyword);
+		model.addAttribute("rlistSize", rlist.size());
 		
 		return "/room/roomList";
 	}

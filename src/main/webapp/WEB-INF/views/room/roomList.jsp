@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>   
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -246,13 +247,13 @@
 	<div>${rdto.keyword}</div>
 	
 	<div>
-	<!-- 단위 0일때:시간단위 아니면 패키지단위 -->
+	<!-- 단위 0일때:시간단위 아니면 패키지단위(패키지아직안함) -->
 	<c:choose>
 	<c:when test="${rdto.duration_type==0}">
 		<fmt:formatNumber value="${rdto.price}" type="number" pattern="#,###"/>원/시간
 	</c:when>
 	<c:when test="${rdto.duration_type==1}">
-		
+	
 	</c:when>
 	<c:otherwise>
 			<fmt:formatNumber value="${rdto.price}" type="number" pattern="#,###"/>원/시간
@@ -268,8 +269,16 @@
 	</td>
    <c:if test="${sts.count%3==0}">	
      </tr>
+     <tr>
    </c:if> 
 	</c:forEach>
+	
+	<c:if test="${rlistSize % 3 !=0}">
+		<c:forEach begin="1" end="${3-(rlistSize % 3)}">
+		<td></td>
+		</c:forEach>
+		</c:if>
+	</tr>
 	</table>
 	
 <!-- <fmt:formatNumber value="${rdto.pkgprice}" type="number" pattern="#,###"/>원/패키지 -->
