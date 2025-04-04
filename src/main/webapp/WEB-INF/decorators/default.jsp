@@ -58,14 +58,14 @@
         justify-content: right;
         align-items: center; /* 세로 중앙 정렬 */
         transform: translateX(-50%); /* 가운데 정렬 */
-	    background-color: #F0F0F0; /* 배경 추가하여 가독성 확보 */
+	    background-color: #3A3A3A; /* 배경 추가하여 가독성 확보 */
 	    z-index: 4; /* 헤더보다 위에 배치 */
 	}
 	#top-bar_warp
 	{
 		width: 100%;
 		height: 30px;
-		background-color: #F0F0F0;
+		background-color: #3A3A3A;
 		position: fixed; /* 스크롤되도 유지 */
 		top: 0;
 		left: 0;
@@ -89,7 +89,11 @@
        text-align:left;
        border-bottom:none;
     }
-
+	#etcMySub > li > a
+	{
+	   color: #3A3A3A;
+	   text-decoration: none;
+	}
 	#header_warp
 	{
 		width: 100%;
@@ -188,7 +192,11 @@
 	.footer-links a:hover, .footer-social a:hover {
 	    text-decoration: underline;
 	}
-	
+	.decotop a
+	{
+		text-decoration: none;
+		color: white;
+	}
 </style>
 <script>
 	function viewMy()
@@ -214,7 +222,7 @@
 <div id="top-bar_warp"></div>
 <div id="top-bar">
 	<c:if test="${userid!=null}"> <!-- 로그인이 되었을 경우 -->
-    <div><a href="../member/order">${name}님</a> <a href="../login/logout">로그아웃</a> 
+    <div class="decotop"><a href="../member/order">${name}님</a> <a href="../login/logout">로그아웃</a> 
     <span id="span1" onmouseover="viewMy1()" onmouseout="hideMy1()">
     	<a href="../board/noticeList">고객센터</a>
        	<ul id="etcMySub">
@@ -229,7 +237,7 @@
     </c:if>
     
 	<c:if test="${userid==null}"> <!-- 로그인이 안되었을 경우 -->
-    <div><a href="../login/login">로그인</a> <a href="../member/member">회원가입</a> 
+    <div class="decotop"><a href="../login/login">로그인</a> <a href="../member/member">회원가입</a> 
     <span id="span1" onmouseover="viewMy1()" onmouseout="hideMy1()">
     	<a href="../board/noticeList">고객센터</a>
        	<ul id="etcMySub">

@@ -16,14 +16,31 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<style>
+	#reservChkTitle
+	{
+		color: #5A7D9A;
+		font-size: 35px;
+	}
+	#reservChkTitle1
+	{
+		color: black;
+		text-align: left;
+		font-size: 20px;
+		font-weight: bold;
+	}
+	.reservChkHr
+	{
+		color: #ddd;
+	}
+</style>
 </head>
 <body>
 	<section>
-		<h3>예약확인</h3>
-		<hr>
-		<div>파티룸 예약 정보</div>
+		<h3 id="reservChkTitle">예약확인</h3>
+		<div id="reservChkTitle1">파티룸 예약 정보</div>
 		<div style="float: right"><a href="../member/order">돌아가기</a></div>
-		<hr>
+		<hr class="reservChkHr">
 		<table>
 		<tr>
 		 <td>예약신청일</td>

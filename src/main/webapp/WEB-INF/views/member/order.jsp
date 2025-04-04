@@ -28,7 +28,7 @@ function handleCancelRequest(reservationId, currentStatus) {
 	#odTitle
 	{
 	   text-align: center;
-	   font-size: 32px;
+	   font-size: 35px;
 	   padding-top: 75px;
 	   padding-bottom: 30px;
 	}
