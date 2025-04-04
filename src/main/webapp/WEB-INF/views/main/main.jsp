@@ -8,7 +8,7 @@
 <style>
  	 table /*임시*/
  	 {
- 	    width: 1294px;
+ 	    width: 1100px;
   	    border-collapse: collapse;
  	 }
 </style>

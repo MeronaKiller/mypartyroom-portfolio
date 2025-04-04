@@ -29,7 +29,7 @@
 	}
   #cContainer_top
   {
-  	width: 1294px;
+  	width: 1100px;
   	height:300px;
   	border: 1px solid black;
   	margin:auto;
@@ -37,13 +37,13 @@
   
   .cContainer
   {
-  	width: 1294px;
+  	width: 1100px;
     margin:auto;
   }
 
   .cContent_wrapper
   {
-    width:900px;
+    width:70%;
     height:auto;
     border: 1px solid black;
     overflow: auto;
@@ -52,7 +52,7 @@
 
   .cAside_menu
   {
-    width: 390px;
+    width: 25%;
     height:auto;
     float:right;
     border: 1px solid black;
@@ -548,7 +548,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	<div>
 		<input type="checkbox" checked onclick="return false">${rdto.name}&#8361;<fmt:formatNumber value="${roomInfo.halinprice}" type="number" pattern="#,###"/>
 	</div>
-	<div><img style="width:350px; height:220px;" src="../static/room/${rdto.pic}"></div>
+	<div><img style="width:100%; height:50%;" src="../static/room/${rdto.pic}"></div>
 	<div><pre style="white-space: pre-wrap; font-size: 15px">${rdto.subdesc}</pre></div>
 	
 	<div>

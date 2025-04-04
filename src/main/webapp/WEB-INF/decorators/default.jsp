@@ -37,7 +37,7 @@
 	}
 	section
 	{
-	width: 1294px;
+	width: 1100px;
 	flex-grow: 1;
 	margin: auto;
 	text-align: center;
@@ -49,7 +49,7 @@
 	}
 	#top-bar
 	{
-	    width: 1294px;
+	    width: 1100px;
 	    height: 30px;
 	    display: flex;
 	    position: fixed;
@@ -106,7 +106,7 @@
     header /* 헤더 전체 */
     {
 
-    	width: 1294px; /* 헤더 가로 길이 */
+    	width: 1100px; /* 헤더 가로 길이 */
         height: 80px; /* 헤더 높이 */
         display: flex;
         align-items: center; /* 세로 중앙 정렬 */
@@ -172,7 +172,7 @@
 	}
 	
 	.footer-container {
-	    max-width: 1294px;
+	    max-width: 1100px;
 	    margin: auto;
 	}
 	

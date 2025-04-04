@@ -10,7 +10,7 @@
 <style>
 	section
 	{
-		width: 1294px;
+		width: 1100px;
 		height: auto;
 	}
    section > table {
@@ -26,7 +26,7 @@
    section > table tr td div:first-child {
       text-align:center;
       overflow:hidden;
-      width:360px;
+      width:30%;
       height:180px;
    }
    section > table tr td div {
@@ -55,7 +55,7 @@
 	}
 	#imgContainer
 	{
-    width: 360px;
+    width: 100%;
     height: 180px;
 	}
 	#imgContainer img
@@ -103,7 +103,7 @@
 	}
 	#imgTd
 	{
-		width:430px;
+		width:30%;
 	}
     .locCat
     {
@@ -226,7 +226,7 @@
 
 
 
-	<table align="center" width="1294">
+	<table align="center" width="1100">
         <tr>
 	<c:forEach items="${rlist}" var="rdto" varStatus="sts">
 	

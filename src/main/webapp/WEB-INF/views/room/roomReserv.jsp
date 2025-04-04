@@ -22,7 +22,7 @@
 	}
   #rContainer_top
   {
-  	width: 1294px;
+  	width: 1100px;
   	height:300px;
   	border: 1px solid black;
   	margin:auto;
@@ -30,7 +30,7 @@
   
   .rContainer
   {
-  	width: 1294px;
+  	width: 1100px;
     margin:auto;
   }
 

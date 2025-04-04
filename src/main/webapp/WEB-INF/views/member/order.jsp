@@ -158,7 +158,7 @@ function handleCancelRequest(reservationId, currentStatus) {
 <body>
 <h1 id="odTitle">예약내역</h1>
 
-<hr style="background-color: #5A7D9A; height: 2px; width: 1294px; border: none; margin-bottom: 50px;">
+<hr style="background-color: #5A7D9A; height: 2px; width: 1100px; border: none; margin-bottom: 50px;">
 
 <form id="cancelForm" action="../member/cancelReserv" method="post" style="display: none;">
   <input type="hidden" name="reservationid" id="reservationIdInput" value="">
