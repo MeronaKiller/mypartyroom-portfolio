@@ -7,11 +7,28 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<style>
+	#crlTitle
+	{
+	   text-align: center;
+	   font-size: 35px;
+	   padding-top: 75px;
+	   padding-bottom: 30px;
+	}
+	.crlContent
+	{
+	   text-align: center;
+	   border: 1px solid #ddd;
+	   border-radius: 5px;
+	   margin-bottom: 50px;
+	}
+</style>
 </head>
 <body>
-<div>취소/환불 내역</div>
+<h1 id="crlTitle">취소/환불 내역</h1>
 
 <c:forEach items="${mapAll}" var="map" varStatus="sts">
+<section class="crlContent">
   <div>
     <fmt:parseDate value="${map.writeday}" var="writeday" pattern="yyyy-MM-dd HH:mm:ss.S" />
     <fmt:formatDate value="${writeday}" pattern="yyyy.MM.dd HH시 mm분" /> 예약
@@ -33,6 +50,7 @@
     </tr>
   </table>
   <hr>
+ </section>
 </c:forEach>
 </body>
 </html>

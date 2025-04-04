@@ -128,6 +128,37 @@ function handleCancelRequest(reservationId, currentStatus) {
 		margin-bottom: 5px;
 		border-radius: 5px;
 	}
+	.odContent #odtd2 .odbtn1 a
+	{
+		display: block;
+		font-size: 20px;
+		border: 1px solid #ddd;
+		background-color: #e63946;
+		color: white;
+		text-decoration: none;
+		width: 90%;
+		height:45px;
+		margin: 0, auto;
+		line-height:45px;
+		margin-bottom: 5px;
+		border-radius: 5px;
+	}
+	.odContent #odtd2 .odbtn2 a
+	{
+		display: block;
+		font-size: 20px;
+		border: 1px solid #ddd;
+		background-color: #ddd;
+		color: white;
+		text-decoration: none;
+		width: 90%;
+		height:45px;
+		margin: 0, auto;
+		line-height:45px;
+		margin-bottom: 5px;
+		border-radius: 5px;
+		pointer-events: none;
+	}
 	.odContent #odtd2 #odbtnReview a
 	{
 		display: block;
@@ -185,15 +216,30 @@ function handleCancelRequest(reservationId, currentStatus) {
       </td>
       <td id="odtd2">
         <div class="odbtn"><a href="../room/reservChk?reservationid=${map.reservationid}">예약 상세보기</a></div>
-        <div class="odbtn">
-          <!-- 함수명을 handleCancelRequest로 변경 (confirmCancel → handleCancelRequest) -->
-          <a href="#" onclick="handleCancelRequest(${map.reservationid}, ${map.status}); return false;">
+        <div>
             <c:choose>
-              <c:when test="${map.status == 0}">취소 및 환불 신청</c:when>
-              <c:when test="${map.status == 1}">취소 및 환불 신청 취소</c:when>
-              <c:otherwise>취소 및 환불 신청</c:otherwise>
+              <c:when test="${map.status == 0}">
+              <div class="odbtn">
+              <a href="#" onclick="handleCancelRequest(${map.reservationid}, ${map.status}); return false;">
+              취소 및 환불 신청
+              </a>
+              </div>
+              </c:when>
+              <c:when test="${map.status == 1}">
+              <div class="odbtn1">
+              <a href="#" onclick="handleCancelRequest(${map.reservationid}, ${map.status}); return false;">
+              취소 및 환불 신청 취소
+              </a>
+              </div>
+              </c:when>
+              <c:otherwise>
+              <div class="odbtn2">
+              <a href="">
+              취소 및 환불 완료
+              </a>
+              </div>
+              </c:otherwise>
             </c:choose>
-          </a>
         </div>
         <div id="odbtnReview"><a href="">리뷰 작성하기</a></div>
       </td>
