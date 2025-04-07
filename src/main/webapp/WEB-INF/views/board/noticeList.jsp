@@ -12,6 +12,14 @@
 		border-collapse:collapse;
 		text-align: center;
 	}
+	table tr td, table tr th
+	{
+		border-left: none;
+		border-right: none;
+		border-top: 1px solid black;
+		border-bottom: 1px solid black;
+		border-radius: 5px;
+	}
 	table #noticeContent
 	{
 		padding-left: 30px;
@@ -21,16 +29,27 @@
 		text-align: center;
 		font-size: 30px;
 		padding-bottom: 30px;
+		color: #5A7D9A;
+	}
+	#nltop
+	{
+		font-size: 20px;
+		background-color: #F8F9FA;
+		font-weight: bold;
+	}
+	#nlbody
+	{
+		background-color: #F8F9FA;
 	}
 </style>
 </head>
-<body>
+<body id=nlbody>
 
-<a href="../board/noticeList"><h1>공지사항</h1></a>
+<h1>공지사항</h1>
 <table border="1" align="center">
 
 
-	<tr height="60px">
+	<tr id="nltop" height="60px">
 	<td width="80px">번호</td>
 	<td width="500px">제목</td>
 	<td width="80px">작성자</td>
