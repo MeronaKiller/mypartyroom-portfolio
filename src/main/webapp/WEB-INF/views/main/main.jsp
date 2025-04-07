@@ -46,7 +46,7 @@
  	 	background: white;
  	 	color: black;
  	 	border: none;
- 	 	z-index: 10;
+ 	 	z-index: 1;
  	 	border-radius: 50%;
  	 	padding: 15px;
  	 	background-color: rgba(255, 255, 255, 0.7);
@@ -66,6 +66,27 @@
  	 {
  	 	right: 20px;
  	 }
+ 	 #imgTd
+ 	 {
+ 	 	width: 30%;
+ 	 }
+ 	 #imgContainer
+	 {
+	     width: 100%;
+	     height: 180px;
+	 }
+	 #imgContainer img
+	 {
+	 	
+	 	width: 100%;
+     	height: 100%;
+	 	object-fit: cover; /* 빈 공간 없이 채우기, 일부 잘림 */
+	 }
+	 #popularRoom
+	 {
+	 	font-size: 25px;
+	 	font-style: bold;
+	 }
 </style>
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script>
@@ -177,12 +198,6 @@ $(function() {
 </head>
 <body><!-- /main/main.jsp -->
 <section>
-<table border="1"><!-- 임시 -->
-
-	<tr height="330">
-	<td colspan="2">
-	
-	
 	<div class="sliderContainer"><!-- 배너 컨테이너 배너 하나만 보여줌 -->
 	 <div id="slider"><!-- 배너 이미지 -->
 	 	
@@ -194,14 +209,50 @@ $(function() {
 	<button id="prev">❮</button>
 	<button id="next">❯</button>
 	</div>
+	<table>
+	<h1 id="popularRoom">인기 파티룸</h1> <!-- 좋아요 수 높은순 -->
+	<tr height="530">
+
+	<c:forEach items="${rdto}" var="rdto" varStatus="sts">
+	
+	<!-- 룸 사진 -->
+	<td id="imgTd" onclick="location='roomContent?rcode=${rdto.rcode}'">
+	<div id="imgContainer"><img src="../static/room/${rdto.pic}" alt="룸 이미지"></div>
+	
+	<!-- 할인율 -->
+	<c:if test="${rdto.halin>0}">
+		<div>할인율: ${rdto.halin}%</div>
+	</c:if>
+	
+	<!-- 룸 이름 -->
+	<div>${rdto.name}</div>
+	
+	<!-- 키워드 -->
+	<div>${rdto.keyword}</div>
+	
+	<div>
+	<!-- 단위 0일때:시간단위 아니면 패키지단위(패키지아직안함) -->
+	<c:choose>
+	<c:when test="${rdto.duration_type==0}">
+		<fmt:formatNumber value="${rdto.price}" type="number" pattern="#,###"/>원/시간
+	</c:when>
+	<c:when test="${rdto.duration_type==1}">
+	
+	</c:when>
+	<c:otherwise>
+			<fmt:formatNumber value="${rdto.price}" type="number" pattern="#,###"/>원/시간
+			
+	</c:otherwise>
+	</c:choose>
+	
+	<!-- 인원수 -->
+	최대${rdto.capacity}인
+	<!-- 댓글 수(답변기능 추가해야함) -->
+	<!-- 좋아요 수 -->
+	♡${rdto.heart}</div>
 	</td>
-	</tr>
-	
-	<tr height="730">
-	<td colspan="2">대표 메인 사진(jquery bxslider)</td>
-	
-	
-	
+	</c:forEach>
+   </table>
 	
 	<tr height="250">
 	<td>파티플레이스</td>
@@ -227,7 +278,6 @@ $(function() {
 	</td>
 	</tr>
 	
-</table>
 </section>
 </body>
 </html>

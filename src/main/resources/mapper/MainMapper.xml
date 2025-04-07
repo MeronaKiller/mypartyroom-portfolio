@@ -5,4 +5,9 @@
    
    <mapper namespace="com.example.demo.main.MainMapper">
 
+		<select id="HeartRanking" resultType="com.example.demo.dto.RoomDto">
+		SELECT * FROM room ORDER BY heart DESC LIMIT 3
+	</select>
+	
+
 </mapper>
