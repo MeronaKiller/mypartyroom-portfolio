@@ -227,12 +227,9 @@ mvn spring-boot:run
 
 ## 🔮 향후 계획
 
-- **🔄 현재 진행 중인 기능 완성** - 예약, 리뷰, 관리자 기능 안정화
-- **🚀 기존 기능 강화** - 파티룸 검색 필터 확장 및 성능 최적화
-- **📱 모바일 최적화** - 반응형 디자인 개선으로 모바일 접근성 향상
-- **📊 데이터 분석 도구** - 사용자 행동 패턴 분석 및 추천 시스템 구현
-- **🔒 보안 강화** - JWT 인증 개선 및 데이터 보호 강화
-- **💳 결제 시스템 고도화** - 다양한 결제 방식 지원 및 환불 정책 구현
+- **🧩 기능 완성** - 현재 진행 중인 모든 기능을 4월 말까지 완성
+- **🛠️ 안정화 작업** - 개발된 기능의 버그 수정 및 성능 최적화
+- **📝 코드 리팩토링** - 코드 품질 개선 및 유지보수성 강화
 
 ## 👨‍💻 개발자 정보
 
@@ -241,7 +238,7 @@ mvn spring-boot:run
   **MeronaKiller**
   
   [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/MeronaKiller)
-  [![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:contact@kkwsi1010@gmail.com)
+  [![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:kkwsi1010@gmail.com)
   
 </div>
 
