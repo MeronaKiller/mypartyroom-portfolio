@@ -13,6 +13,7 @@
  	 {
  	    width: 1100px;
   	    border-collapse: collapse;
+  	    table-layout: fixed;
  	 }
  	 .sliderContainer
  	 {
@@ -22,7 +23,7 @@
  	 	margin: auto;
  	 	overflow: hidden;
  	 	position: relative;
- 	 	margin-bottom: 150px;
+ 	 	margin-bottom: 50px;
  	 }
  	 .sliderContainer #slider
  	 {
@@ -34,7 +35,7 @@
  	 {
  	 	display: block;
  	 	width: 1100px;
- 	 	height: 200px;
+ 	 	max-height: 200px;
  	 }
  	 #prev, #next
  	 {
@@ -56,7 +57,7 @@
  	 }
  	 #prev:hover, #next:hover
  	 {
-    background-color: rgba(255, 255, 255, 0.9);
+    	background-color: rgba(255, 255, 255, 0.9);
 	 }
  	 #prev
  	 {
@@ -68,7 +69,10 @@
  	 }
  	 #imgTd
  	 {
- 	 	width: 30%;
+ 	 	width: 33.33%;
+ 	 	padding: 10px;
+ 	 	vertical-align: middle;
+ 	 	text-align: center;
  	 }
  	 #imgContainer
 	 {
@@ -86,6 +90,106 @@
 	 {
 	 	font-size: 25px;
 	 	font-style: bold;
+	 }
+	 #roomInfoCon
+	 {
+	 	width: 90%;
+	 	border-radius: 5px;
+	 	overflow: hidden;
+	 	box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+	 	cursor: pointer;
+	 	text-align: left;
+	 	margin: 0 auto;
+	 }
+	 #keywordCon
+	 {
+	 	font-size:12px;
+	 	background-color: #f5f5f5;
+	 	color: #55555;
+	 	border-radius: 5px;
+	 	width: auto;
+	 	padding: 3px;
+	 	text-align: center;
+		display: inline-block;
+	 }
+	 #PRoomTextCon
+	 {
+	 	padding: 10px;
+	 	line-height: 1.7;
+	 }
+	 #PRoomName
+	 {
+	 	font-weight: bold;
+	 	color: #262c4c;
+	 }
+	 #PRoomCapacity
+	 {
+	 	color: #848a8f;
+	 }
+	 #PRoomHeart
+	 {
+	 	color: #5A7D9A;
+	 }
+	 .rdtoprice
+	 {
+	 	font-weight: bold;
+	 	margin-left:0px;
+	 	
+	 	text-align: center;
+	 	display: inline-block;
+	 	display: flex;
+	 	justify-content: center;
+	 	align-items: center;
+	 }
+	 #rdtocapaheart1
+	 {
+	 	display: flex;
+	 	color: #262c4c;
+	 }
+	 #rdtocapaheart
+	 {
+		margin-left: auto;
+		display: flex;
+		color: #262c4c;
+	 }
+	 #reservbtnCon
+	 {
+	 	background-color: #5A7D9A;
+	 	border-radius: 15px;
+	 }
+	 #reservbtn1
+	 {
+	 	font-size: 30px;
+	 	font-weight: bold;
+	 	color: white;
+	 	padding-top:50px; 
+	 	padding-bottom:30px;
+	 	padding-left:50px;
+	 	padding-right:50px;
+	 }
+	 #reservbtn2
+	 {
+	 	font-size: 20px;
+	 	color: white;
+	 	opacity: 0.8;
+	 	padding-bottom:50px;
+	 }
+	 #reservbtn3
+	 {
+	 	padding-bottom: 50px;
+	 }
+	 #reservbtn4
+	 {
+	 	background-color: white;
+	 	border-radius: 30px;
+	 	padding: 25px;
+	 }
+	 #reservbtn3 a
+	 {
+	 	color: #5A7D9A;
+	 	cursor: pointer;
+	 	text-decoration: none;
+	 	font-weight: bold;
 	 }
 </style>
 <script src="https://code.jquery.com/jquery-latest.js"></script>
@@ -211,12 +315,15 @@ $(function() {
 	</div>
 	<table>
 	<h1 id="popularRoom">인기 파티룸</h1> <!-- 좋아요 수 높은순 -->
-	<tr height="530">
+	<tr height="300">
 
 	<c:forEach items="${rdto}" var="rdto" varStatus="sts">
 	
 	<!-- 룸 사진 -->
-	<td id="imgTd" onclick="location='roomContent?rcode=${rdto.rcode}'">
+	<td id="imgTd" onclick="location='../room/roomContent?rcode=${rdto.rcode}'">
+	
+	
+	<div id="roomInfoCon">
 	<div id="imgContainer"><img src="../static/room/${rdto.pic}" alt="룸 이미지"></div>
 	
 	<!-- 할인율 -->
@@ -224,35 +331,61 @@ $(function() {
 		<div>할인율: ${rdto.halin}%</div>
 	</c:if>
 	
+	
+	<div id="PRoomTextCon"> <!-- 인기 파티룸 내용 텍스트 아이디 -->
 	<!-- 룸 이름 -->
-	<div>${rdto.name}</div>
+	<div id="PRoomName">${rdto.name}</div>
 	
 	<!-- 키워드 -->
-	<div>${rdto.keyword}</div>
+	<div><span id="keywordCon">${rdto.keyword}</span></div>
 	
-	<div>
+	<div id="rdtocapaheart1">
 	<!-- 단위 0일때:시간단위 아니면 패키지단위(패키지아직안함) -->
 	<c:choose>
-	<c:when test="${rdto.duration_type==0}">
-		<fmt:formatNumber value="${rdto.price}" type="number" pattern="#,###"/>원/시간
-	</c:when>
-	<c:when test="${rdto.duration_type==1}">
-	
+	<c:when test="${rdto.duration_type==2}">
+		<span class="rdtoprice"><fmt:formatNumber value="${rdto.price}" type="number" pattern="#,###"/>원/시간</span>
 	</c:when>
 	<c:otherwise>
-			<fmt:formatNumber value="${rdto.price}" type="number" pattern="#,###"/>원/시간
+			
+		<c:set var="priceArray" value="${fn:split(rdto.pkgprice, ',')}" />
+		<c:set var="maxPrice" value="0" />
+		
+		<c:forEach var="price" items="${priceArray}">
+		 <c:if test="${not empty price and price != ''}">
+		 <c:set var="currentPrice" value="${price}"/>
+		 <c:if test="${currentPrice > maxPrice}">
+		 <c:set var="maxPrice" value="${currentPrice}" />
+		</c:if>
+		</c:if>
+		</c:forEach>
+		
+		<span class="rdtoprice"><fmt:formatNumber value="${maxPrice}" type="number" pattern="#,###"/>원/패키지</span>
 			
 	</c:otherwise>
 	</c:choose>
 	
 	<!-- 인원수 -->
-	최대${rdto.capacity}인
+	<span id="rdtocapaheart">
+	
+	<span id="PRoomCapacity">최대${rdto.capacity}인</span>
 	<!-- 댓글 수(답변기능 추가해야함) -->
 	<!-- 좋아요 수 -->
-	♡${rdto.heart}</div>
+	<span id="PRoomHeart">♥${rdto.heart}</span>
+	
+	</span></div>
+	</div>
 	</td>
 	</c:forEach>
    </table>
+   
+   
+   	<div id="reservbtnCon"><!-- 예약하기 div -->
+	
+	<div id="reservbtn1">특별한 날을 파티플레이스와 함께하세요</div>
+	<div id="reservbtn2">생일, 기념일, 프로포즈 등 모든 순간을 더욱 특별하게 만들어 드립니다.</div>
+	<div id="reservbtn3"><span id="reservbtn4" onclick="../room/roomList?rcode=r01"><a href="../room/roomList?rcode=r01">지금 예약하기</a></span></div>
+	
+	</div>
 	
 	<tr height="250">
 	<td>파티플레이스</td>
@@ -269,7 +402,7 @@ $(function() {
 	
 	
 	<tr height="250">
-	<td colspan="2"><a href="../room/roomList?rcode=r01">예약하기</a> / 파티룸 검색 기능(할거면 하고)</td>
+	<td colspan="2"><a>예약하기</a> / 파티룸 검색 기능(할거면 하고)</td>
 	</tr>
 	
 	<tr height="250">

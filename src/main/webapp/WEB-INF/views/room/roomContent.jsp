@@ -546,8 +546,37 @@ document.addEventListener("DOMContentLoaded", function () {
 	<div>결제 후 바로 예약확정</div>
 	<div>빠르고 확실한 예약을 위해 온라인 결제를 진행하세요!</div>
 	<div>
-		<input type="checkbox" checked onclick="return false">${rdto.name}&#8361;<fmt:formatNumber value="${roomInfo.halinprice}" type="number" pattern="#,###"/>
+		<input type="checkbox" checked onclick="return false">${rdto.name} &#8361;
+		
+		
+		<c:choose>
+		<c:when test="${roomInfo.halinprice>=0}">
+		<fmt:formatNumber value="${roomInfo.halinprice}" type="number" pattern="#,###"/>
+		</c:when>
+		<c:otherwise>
+		
+		<c:set var="priceArray" value="${fn:split(roomInfo.pkgprice, ',')}" />
+		<c:set var="maxPrice" value="0" />
+		
+		<c:forEach var="price" items="${priceArray}">
+		 <c:if test="${not empty price and price != ''}">
+		 <c:set var="currentPrice" value="${price}" />
+		 
+		 <c:if test="${currentPrice > maxPrice}">
+		 <c:set var="maxPrice" value="${currentPrice}" />
+		</c:if>
+		</c:if>
+		</c:forEach>
+		
+		<fmt:formatNumber value="${maxPrice}" type="number" pattern="#,###"/>원
+		</c:otherwise>
+		</c:choose>
+		
 	</div>
+	
+	
+	
+	
 	<div><img style="width:100%; height:50%;" src="../static/room/${rdto.pic}"></div>
 	<div><pre style="white-space: pre-wrap; font-size: 15px">${rdto.subdesc}</pre></div>
 	
