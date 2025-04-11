@@ -138,41 +138,49 @@
        	list-style: none;
        }
 
-</style>
-<style>/* 날짜 스타일 */
-.time-container { 
-    display: flex;
-    gap: 10px;
-    padding: 10px;
-    border: 1px solid black;
-    border-radius: 8px;
-    user-select: none;
-    flex-wrap: wrap;
-}
-
-.time-block {
-    min-width: 60px;
-    height: 50px;
-    background-color: #6a0dad;
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 5px;
-    cursor: pointer;
-    flex-shrink: 0;
-}
-
-.time-block.selected {
-    background-color: #f5b800;
-    color: #000;
-}
-
-.time-block.disabled {
-    background-color: #ddd;
-    color: #aaa;
-    cursor: not-allowed;
-}
+	</style>
+	<style>/* 날짜 스타일 */
+	.time-container { 
+	    display: flex;
+	    gap: 10px;
+	    padding: 10px;
+	    border: 1px solid black;
+	    border-radius: 8px;
+	    user-select: none;
+	    flex-wrap: wrap;
+	}
+	
+	.time-block {
+	    min-width: 60px;
+	    height: 50px;
+	    background-color: #6a0dad;
+	    color: #fff;
+	    display: flex;
+	    justify-content: center;
+	    align-items: center;
+	    border-radius: 5px;
+	    cursor: pointer;
+	    flex-shrink: 0;
+	}
+	
+	.time-block.selected {
+	    background-color: #f5b800;
+	    color: #000;
+	}
+	
+	.time-block.disabled {
+	    background-color: #ddd;
+	    color: #aaa;
+	    cursor: not-allowed;
+	}
+	#pkgConCss
+	{
+		border: 1px solid #ddd;
+		border-radius: 5px;
+		margin: 10px 0;
+		padding: 8px;
+		cursor: pointer;
+	}
 </style>
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script>
@@ -436,6 +444,64 @@ document.addEventListener("DOMContentLoaded", function () {
     
     
 </script>
+	<script> //패키지쪽
+	document.addEventListener("DOMContentLoaded", function() {
+		var pkgname='${rdto.pkgname}';
+		var pkgprice='${rdto.pkgprice}';
+		var pkgstart='${rdto.pkgstart}';
+		var pkgend='${rdto.pkgend}';
+		
+	if(pkgname && pkgstart && pkgend)
+		{
+		var names=pkgname.split(',');
+		var prices=pkgprice.split(',');
+		var starts=pkgstart.split(',');
+		var ends=pkgend.split(',');
+		
+		var results=[];
+		var minLength=Math.min(names.length, prices.length, starts.length, ends.length);
+		
+		var pkgResultsElement=document.getElementById('packageResults');
+		if(!pkgResultsElement)//없으면 div생성
+		{
+			pkgResultsElement=document.createElement('div');
+			pkgResultsElement.id='packageResults';
+			document.getElementById('pkgtimeDiv').appendChild(pkgResultsElement);
+		}
+		
+		pkgResultsElement.innerHTML='';
+		
+		for(var i=0;i<minLength;i++)
+			
+			// ,,사이에 빈값 체크
+			if(names[i] && names[i].trim() !== '' &&
+			   starts[i] && starts[i].trim() !== '' &&
+			   ends[i] && ends[i].trim() !== '')
+			{
+				
+				var price = (prices[i] && prices[i].trim() !== '') ? prices[i] : '가격 정보 없음';
+				
+			var item={
+					
+						name: names[i].trim(),
+						price: price,
+						start: starts[i].trim(),
+						end: ends[i].trim(),
+					};
+			
+			results.push(item);
+			
+			var htmlElement = '<div id="pkgConCss">패키지 ' + (i+1) + ': ' + names[i] + ', ' + prices[i] +', ' + starts[i] + ', ' + ends[i] + '</div>';
+		    document.getElementById('packageResults').innerHTML += htmlElement;	
+			}
+		
+		  } else
+			  {
+			  	console.warn("패키지 정보가 비어있습니다:", pkgname, pkgprice, pkgstart, pkgend);
+			  }
+		});
+	</script>
+	
 
 </head>
 <body>
@@ -813,6 +879,16 @@ document.addEventListener("DOMContentLoaded", function () {
 	
 <div id="pkgtimeDiv" style="display: none;">
     <div>패키지 단위 선택 영역</div>
+    <div id="packageResults"></div>
+    
+    <form action="roomReserv" method="get">
+	<input type="hidden" id="selectedDate" name="selectedDate">
+    <input type="hidden" id="startTime" name="startTime">
+    <input type="hidden" id="endTime" name="endTime">
+    <input type="hidden" name="rcode" value="${rdto.rcode}">
+    <button type="submit">예약하기</button>
+</form>
+
 </div>
 
 	
