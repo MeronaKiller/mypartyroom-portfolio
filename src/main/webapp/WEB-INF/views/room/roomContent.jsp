@@ -261,10 +261,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 {
                 	//alert(chk.responseText);
                 	//alert(document.getElementsByClassName("time-block").length);
-                	var dtos=JSON.parse(chk.responseText);
+                	
+                	var reservationData=JSON.parse(chk.responseText);//서버에서 받아온 예약 정보
                 	var timeblocks=document.getElementsByClassName("time-block");
-                	for( dto of dtos )
-                	{
+                	
+                	//일반예약
+                	if (reservationData.timeReservations)
+                		{
+                			for(var dto of reservationData.timeReservations)
                 		//alert(dto.startTime+" "+dto.endTime);
                 		var start=parseInt(dto.startTime);
                 		var end=parseInt(dto.endTime);
@@ -277,13 +281,72 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                 	}
                 }
+                
+                //패키지예약
+                if(reservationData.packageReservations)
+                {
+                	for(var pkg of reservationData.packageReservations)
+                	{
+                		var pkgStart=parseInt(pkg.startTime);
+                		var pkgEnd=parseInt(pkg.endTime);
+                		
+                		//시간 블록 비활성화
+                		for(var i=pkgStart; i<pkgEnd; i++)
+                		{
+                			if(timeblocks[i])
+                			{
+                				timeblocks[i].classList.add("disabled");
+                				timeblocks[i].style.pointerEvents="none";
+                			}
+                		}
+                		//패키지선택 비활성화 처리
+                		disablePackage(pkgStart, pkgEnd);
+                	}
+                }
+                
+
+                	}
+                }
+            };
                 chk.open("get","getReservTime?ymd="+dateStr+"&rcode=${rdto.rcode}");
                 chk.send();
                 
                 
             }
-        }
     });
+    
+    
+    
+    // 패키지 예약 시관과 겹치는지 확인해서 비활성화
+    function disablePackage(reservedStart, reservedEnd)
+    		{
+				var pkgItems=document.querySelectorAll('#packageResults #pkgConCss');
+				
+				pkgItems.forEach(function(item, index))
+				{
+				var pkgText=item.textContent;
+				var startMatch=pkgText.match(/~(\d+)시~/);
+				var endMatch=pkgText.match(/~(\d+)시/);
+				
+				if(startMatch && endMatch)
+				{
+					var pkgStart=parseInt(startMatch[1]);
+					var pkgEnd=parseInt(endMatch[1]);
+					
+					var isOverlap=(pkgStart < reservedEnd && pkgEnd > reservedStart);
+					
+					if(isOverlap)
+					{
+						item.classList.add('disabled');
+						item.style.backgroundColor='#ddd';
+						item.style.color='#888'
+						item.style.cursor='not-allowed';
+						item.onclick=null;
+					}
+				}
+    		});
+    	}
+    
 
     // 시간대 렌더링 함수
     function renderTimeSlots(selectedDateStr) {
@@ -444,7 +507,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
     
 </script>
-	<script> //패키지쪽
+	<script> //패키지쪽 패키지선택
 	document.addEventListener("DOMContentLoaded", function() {
 		var pkgname='${rdto.pkgname}';
 		var pkgprice='${rdto.pkgprice}';
@@ -491,7 +554,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			
 			results.push(item);
 			
-			var htmlElement = '<div id="pkgConCss">패키지 ' + (i+1) + ': ' + names[i] + ', ' + prices[i] +', ' + starts[i] + ', ' + ends[i] + '</div>';
+			var htmlElement = '<div id="pkgConCss">패키지 ' + (i+1) + ': ' + names[i] + ', ' + prices[i] +'원, ' + starts[i] + '시~' + ends[i] + '시</div>';
 		    document.getElementById('packageResults').innerHTML += htmlElement;	
 			}
 		
@@ -501,7 +564,9 @@ document.addEventListener("DOMContentLoaded", function () {
 			  }
 		});
 	</script>
-	
+	<script>
+		
+	</script>
 
 </head>
 <body>
@@ -867,27 +932,26 @@ document.addEventListener("DOMContentLoaded", function () {
 <div id="timeDiv" style="display: none;">
     <div id="calendar"></div>
     <div id="timeContainer" class="time-container"></div>
-<form action="roomReserv" method="get">
-	<input type="hidden" id="selectedDate" name="selectedDate">
-    <input type="hidden" id="startTime" name="startTime">
-    <input type="hidden" id="endTime" name="endTime">
-    <input type="hidden" name="rcode" value="${rdto.rcode}">
-    <button type="submit">예약하기</button>
-</form>
+	<form action="roomReserv" method="get">
+		<input type="hidden" id="selectedDate" name="selectedDate">
+	    <input type="hidden" id="startTime" name="startTime">
+	    <input type="hidden" id="endTime" name="endTime">
+	    <input type="hidden" name="rcode" value="${rdto.rcode}">
+	    <button type="submit">예약하기</button>
+	</form>
     
 </div>
 	
 <div id="pkgtimeDiv" style="display: none;">
-    <div>패키지 단위 선택 영역</div>
-    <div id="packageResults"></div>
-    
-    <form action="roomReserv" method="get">
-	<input type="hidden" id="selectedDate" name="selectedDate">
-    <input type="hidden" id="startTime" name="startTime">
-    <input type="hidden" id="endTime" name="endTime">
-    <input type="hidden" name="rcode" value="${rdto.rcode}">
-    <button type="submit">예약하기</button>
-</form>
+    <div id="calendar"></div>
+    <form action="pkgReserv" method="get">
+	    <div id="packageResults">
+		<input type="hidden" id="selectedPackage" name="selectedPackage">
+	    <input type="hidden" name="rcode" value="${rdto.rcode}">
+	    <button type="submit">예약하기</button>
+	    </div>
+	    
+	</form>
 
 </div>
 
