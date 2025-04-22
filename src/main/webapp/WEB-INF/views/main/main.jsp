@@ -134,7 +134,6 @@
 	 {
 	 	font-weight: bold;
 	 	margin-left:0px;
-	 	
 	 	text-align: center;
 	 	display: inline-block;
 	 	display: flex;

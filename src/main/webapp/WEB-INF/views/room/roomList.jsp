@@ -11,8 +11,8 @@
 <style>
 	section
 	{
-		width: 1100px;
-		height: auto;
+	  width: 1100px;
+	  height: auto;
 	}
    section > table {
       border-spacing:20px;
@@ -49,37 +49,37 @@
       color:white;
    }
 	#topDiv {
-		position:relative;
-		padding: 30px;
-		word-spacing: 10px;
-		text-align: left;
+	  position:relative;
+	  padding: 30px;
+	  word-spacing: 10px;
+	  text-align: left;
 	}
 	#imgContainer
 	{
-    width: 100%;
-    height: 180px;
+      width: 100%;
+      height: 180px;
 	}
 	#imgContainer img
 	{
 		
-		width: 100%;
-    	height: 100%;
-		object-fit: cover; /* 빈 공간 없이 채우기, 일부 잘림 */
+	  width: 100%;
+      height: 100%;
+	  object-fit: cover; /* 빈 공간 없이 채우기, 일부 잘림 */
 	}
 	#topDiv ul
 	{
-		display: flex;
-		list-style: none;
+	  display: flex;
+	  list-style: none;
 	}
 	
 	
 	#selectPeople
 	{	
-		position:absolute;
-		width:300px;
-		height:100px;
-		border: 1px solid black;
-		display:none;
+	  position:absolute;
+	  width:300px;
+	  height:100px;
+	  border: 1px solid black;
+	  display:none;
 	}
 	#selectDate
 	{	
@@ -104,8 +104,21 @@
 	}
 	#imgTd
 	{
-		width:30%;
+ 	 	width: 33.33%;
+ 	 	padding: 10px;
+ 	 	vertical-align: middle;
+ 	 	text-align: center;
 	}
+	#roomInfoCon
+	 {
+	 	width: 90%;
+	 	border-radius: 5px;
+	 	overflow: hidden;
+	 	box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+	 	cursor: pointer;
+	 	text-align: left;
+	 	margin: 0 auto;
+	 }
     .locCat
     {
 	   position:relative;
@@ -233,6 +246,9 @@
 	
 	<!-- 룸 사진 -->
 	<td id="imgTd" onclick="location='roomContent?rcode=${rdto.rcode}'">
+	
+	
+	<div id="roomInfoCon">
 	<div id="imgContainer"><img src="../static/room/${rdto.pic}" alt="룸 이미지"></div>
 	
 	<!-- 할인율 -->
@@ -266,6 +282,7 @@
 	<!-- 댓글 수(답변기능 추가해야함) -->
 	<!-- 좋아요 수 -->
 	♡${rdto.heart}</div>
+	</div>
 	</td>
    <c:if test="${sts.count%3==0}">	
      </tr>
