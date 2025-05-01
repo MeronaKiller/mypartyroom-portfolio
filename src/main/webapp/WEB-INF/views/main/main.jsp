@@ -319,10 +319,10 @@ $(function() {
 	<c:forEach items="${rdto}" var="rdto" varStatus="sts">
 	
 	<!-- 룸 사진 -->
-	<td id="imgTd" onclick="location='../room/roomContent?rcode=${rdto.rcode}'">
+	<td id="imgTd">
 	
 	
-	<div id="roomInfoCon">
+	<div id="roomInfoCon" onclick="location='../room/roomContent?rcode=${rdto.rcode}'">
 	<div id="imgContainer"><img src="../static/room/${rdto.pic}" alt="룸 이미지"></div>
 	
 	<!-- 할인율 -->
@@ -382,33 +382,15 @@ $(function() {
 	
 	<div id="reservbtn1">특별한 날을 파티플레이스와 함께하세요</div>
 	<div id="reservbtn2">생일, 기념일, 프로포즈 등 모든 순간을 더욱 특별하게 만들어 드립니다.</div>
-	<div id="reservbtn3"><span id="reservbtn4" onclick="../room/roomList?rcode=r01"><a href="../room/roomList?rcode=r01">지금 예약하기</a></span></div>
-	
+	<div id="reservbtn3">
+    <a id="reservbtn4" href="../room/roomList?rcode=r01" style="cursor:pointer; display:inline-block; text-decoration:none;">
+        지금 예약하기
+    </a>
 	</div>
 	
-	<tr height="250">
-	<td>파티플레이스</td>
-	<td>서비스 소개</td>
-	</tr>
-	
-	<tr height="730">
-	<td colspan="2">사진(파티룸 내부 사진 & 시설 정보) <br>
-	<a href="../room/roomInfo">파티룸 자세히 보기</a></td>
-	</tr>
 	
 	
 	
-	
-	
-	<tr height="250">
-	<td colspan="2"><a>예약하기</a> / 파티룸 검색 기능(할거면 하고)</td>
-	</tr>
-	
-	<tr height="250">
-	<td colspan="2">사용 후기 & 신뢰도 정보 (예: "누적 예약 10,000회" 등)<br>
-	<a href="../board/review">모든 리뷰 보기</a> <!-- 링크위치 임시 -->
-	</td>
-	</tr>
 	
 </section>
 </body>

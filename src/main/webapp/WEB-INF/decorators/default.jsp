@@ -272,7 +272,7 @@
   	  <div id="search-container" style="position: absolute; left: 50%; transform: translateX(-50%);">
         <form action="../room/roomList" method="get">
             <input type="text" name="searchKeyword" placeholder="파티룸 이름 또는 키워드 검색" style="width: 300px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-            <button type="submit" style="padding: 8px 15px; background: #0066ff; color: white; border: none; border-radius: 4px; cursor: pointer;">검색</button>
+            <button type="submit" style="padding: 8px 15px; background: #3A3A3A; color: white; border: none; border-radius: 4px; cursor: pointer;">검색</button>
         </form>
   	  </div>
         
