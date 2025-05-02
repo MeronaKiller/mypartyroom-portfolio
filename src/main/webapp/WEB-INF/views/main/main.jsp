@@ -312,6 +312,18 @@ $(function() {
 	<button id="prev">❮</button>
 	<button id="next">❯</button>
 	</div>
+	
+	   	<div id="reservbtnCon"><!-- 예약하기 div -->
+	
+	<div id="reservbtn1">특별한 날을 파티플레이스와 함께하세요</div>
+	<div id="reservbtn2">생일, 기념일, 프로포즈 등 모든 순간을 더욱 특별하게 만들어 드립니다.</div>
+	<div id="reservbtn3">
+    <a id="reservbtn4" href="../room/roomList?rcode=r01" style="cursor:pointer; display:inline-block; text-decoration:none;">
+        지금 예약하기
+    </a>
+	</div>
+	</div>
+	
 	<table>
 	<h1 id="popularRoom">인기 파티룸</h1> <!-- 좋아요 수 높은순 -->
 	<tr height="300">
@@ -378,15 +390,7 @@ $(function() {
    </table>
    
    
-   	<div id="reservbtnCon"><!-- 예약하기 div -->
-	
-	<div id="reservbtn1">특별한 날을 파티플레이스와 함께하세요</div>
-	<div id="reservbtn2">생일, 기념일, 프로포즈 등 모든 순간을 더욱 특별하게 만들어 드립니다.</div>
-	<div id="reservbtn3">
-    <a id="reservbtn4" href="../room/roomList?rcode=r01" style="cursor:pointer; display:inline-block; text-decoration:none;">
-        지금 예약하기
-    </a>
-	</div>
+
 	
 	
 	

@@ -63,102 +63,108 @@ public class RoomServiceImpl implements RoomService {
 	}
 	
 	@Override
-	public String roomReserv(HttpServletRequest request,HttpSession session,Model model)
-	{
-		String rcode=request.getParameter("rcode");
-		
-		if(session.getAttribute("userid")==null)
-		{
-			return "redirect:/login/login?rcode="+rcode;
-		}
-		else
-		{
-			String userid=session.getAttribute("userid").toString();
-			
-			//회원 정보 가져오기
-			MemberDto mdto=mapper.getMember(userid);
-			model.addAttribute("mdto",mdto);
-			
-			
-			//룸 정보 가져오기
-			RoomDto rdto=mapper.roomContent(rcode);
-			
-			int halin=rdto.getHalin();
-			int price=rdto.getPrice();
-			double discountRate = halin / 100.0;
-			int halinprice = (int) Math.round(price - (price * discountRate)); //할인 적용된 상품금액
-			
-			rdto.setHalinprice(halinprice);
-			model.addAttribute("rdto",rdto);
-			model.addAttribute("rcode", rcode);
-			
-			String selectedDate = request.getParameter("selectedDate");
-			String startTime = request.getParameter("startTime");
-			String endTime = request.getParameter("endTime");
-			
-		 // 1. 날짜 포맷 변경 (2025-03-18 -> 2025.03.18)
-		    String formattedDate = selectedDate.replace("-", ".");
-
-		    // 2. 요일 추출
-		    LocalDate date = LocalDate.parse(selectedDate);
-		    String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN); // 화
-
-		    // 3. 시간에서 분 제거 (11:00 → 11)
-		    String formattedStartTime = startTime.substring(0, 2); // "11"
-		    String formattedEndTime = endTime.substring(0, 2);     // "12"
-		    
-		    model.addAttribute("formattedDate", formattedDate);
-		    model.addAttribute("dayOfWeek", dayOfWeek);
-		    model.addAttribute("selectedDate", selectedDate);
-		    model.addAttribute("startTime", formattedStartTime);
-		    model.addAttribute("endTime", formattedEndTime);
-		}
-		return "/room/roomReserv";
+	public String roomReserv(HttpServletRequest request, HttpSession session, Model model) {
+	    String rcode = request.getParameter("rcode");
+	    
+	    if(session.getAttribute("userid") == null) {
+	        return "redirect:/login/login?rcode=" + rcode;
+	    } else {
+	        String userid = session.getAttribute("userid").toString();
+	        
+	        // 회원 정보 가져오기
+	        MemberDto mdto = mapper.getMember(userid);
+	        model.addAttribute("mdto", mdto);
+	        
+	        // 룸 정보 가져오기
+	        RoomDto rdto = mapper.roomContent(rcode);
+	        
+	        int halin = rdto.getHalin();
+	        int price = rdto.getPrice();
+	        double discountRate = halin / 100.0;
+	        int halinprice = (int) Math.round(price - (price * discountRate));
+	        
+	        // 패키지 정보가 있는 경우 가격 재계산
+	        String selectedPackage = request.getParameter("selectedPackage");
+	        if(selectedPackage != null && !selectedPackage.isEmpty()) {
+	            String[] packageParts = selectedPackage.split(",");
+	            if(packageParts.length >= 2) {
+	                try {
+	                    halinprice = Integer.parseInt(packageParts[1]);
+	                } catch (NumberFormatException e) {
+	                    // 가격 파싱 실패 시 기본 가격 유지
+	                }
+	            }
+	        }
+	        
+	        rdto.setHalinprice(halinprice);
+	        model.addAttribute("rdto", rdto);
+	        model.addAttribute("rcode", rcode);
+	        
+	        String selectedDate = request.getParameter("selectedDate");
+	        String startTime = request.getParameter("startTime");
+	        String endTime = request.getParameter("endTime");
+	        
+	        // 날짜 포맷 변경 (2025-03-18 -> 2025.03.18)
+	        String formattedDate = selectedDate.replace("-", ".");
+	        
+	        // 요일 추출
+	        LocalDate date = LocalDate.parse(selectedDate);
+	        String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
+	        
+	        // 시간에서 분 제거 (11:00 → 11)
+	        String formattedStartTime = startTime.substring(0, 2);
+	        String formattedEndTime = endTime.substring(0, 2);
+	        
+	        model.addAttribute("formattedDate", formattedDate);
+	        model.addAttribute("dayOfWeek", dayOfWeek);
+	        model.addAttribute("selectedDate", selectedDate);
+	        model.addAttribute("startTime", formattedStartTime);
+	        model.addAttribute("endTime", formattedEndTime);
+	        
+	        // 패키지 정보 전달
+	        if(selectedPackage != null) {
+	            model.addAttribute("selectedPackage", selectedPackage);
+	        }
+	    }
+	    return "/room/roomReserv";
 	}
 	
 	@Override
-	public String reservOk(ReservationDto rsdto, HttpSession session)
-	{
-		if(session.getAttribute("userid")==null)
-		{
-			return "redirect:/login/login";
-		}
-		else
-		{
-			System.out.println(rsdto.getSelectedDate()+" "+rsdto.getStartTime()+" "+rsdto.getEndTime());
-			
- 			String userid=session.getAttribute("userid").toString();
-			rsdto.setUserid(userid);		
-			//주문코드 만들기 => j20250211 + 001
-			String today=LocalDate.now().toString();
-			today=today.replace("-", "");
-			String jumuncode="j"+today;
-		
-			int num=mapper.getNumber(jumuncode);
-			jumuncode=jumuncode+String.format("%03d", num);
-			rsdto.setJumuncode(jumuncode);
-			
-			String[] rcodes=rsdto.getRcode().split("/");
-			
-			for(int i=0;i<rcodes.length;i++)
-			{
-				//배열에 각 요소에 있는 rcode로 setter
-				rsdto.setRcode(rcodes[i]);
-				
-				String fullStartTime=rsdto.getSelectedDate()+" "+rsdto.getStartTime();
-				String fullEndTime=rsdto.getSelectedDate()+" "+rsdto.getEndTime();
-				
-				rsdto.setStartTime(fullStartTime);
+	public String reservOk(ReservationDto rsdto, HttpSession session) {
+	    if(session.getAttribute("userid") == null) {
+	        return "redirect:/login/login";
+	    } else {
+	        String userid = session.getAttribute("userid").toString();
+	        rsdto.setUserid(userid);
+	        
+	        // 주문코드 만들기
+	        String today = LocalDate.now().toString().replace("-", "");
+	        String jumuncode = "j" + today;
+	        int num = mapper.getNumber(jumuncode);
+	        jumuncode = jumuncode + String.format("%03d", num);
+	        rsdto.setJumuncode(jumuncode);
+	        
+	        String[] rcodes = rsdto.getRcode().split("/");
+	        
+	        for(int i = 0; i < rcodes.length; i++) {
+	            rsdto.setRcode(rcodes[i]);
+	            
+	            // 패키지 정보가 있는 경우 처리
+	            if(rsdto.getSelectedPackage() != null && !rsdto.getSelectedPackage().isEmpty()) {
+	                // 패키지 정보를 데이터베이스에 저장하거나 다른 처리를 수행
+	                // 예: rsdto.setPackageInfo(rsdto.getSelectedPackage());
+	            }
+	            
+	            String fullStartTime = rsdto.getSelectedDate() + " " + rsdto.getStartTime();
+	            String fullEndTime = rsdto.getSelectedDate() + " " + rsdto.getEndTime();
+	            
+	            rsdto.setStartTime(fullStartTime);
 	            rsdto.setEndTime(fullEndTime);
-				
-				mapper.reservOk(rsdto);
-				
-			
-			}
-			return "redirect:/room/reservList?jumuncode="+jumuncode;
-			
-		}
-	
+	            
+	            mapper.reservOk(rsdto);
+	        }
+	        return "redirect:/room/reservList?jumuncode=" + jumuncode;
+	    }
 	}
 	@Override
 	public String reservList(HttpSession session, HttpServletRequest request,Model model,MemberDto mdto, ReservationDto rsdto, RoomDto rdto)
