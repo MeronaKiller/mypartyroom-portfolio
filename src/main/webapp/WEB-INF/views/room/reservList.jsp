@@ -164,7 +164,7 @@
             background-color: #3A3A3A;
             color: white;
             text-decoration: none;
-            padding: 12px 30px;
+            padding: 8px 16px;
             border-radius: 5px;
             font-family: 'LINESeedKR-Bold', sans-serif;
             text-align: center;

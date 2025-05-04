@@ -53,6 +53,7 @@
 			<option value="3">기타</option>
 		</select>
 		<div><input id="pititle" type= "text" name= "title" id= "title" placeholder= "제목을 입력하세요"></div>
+		<div><input id="pititle" type= "text" name= "title" id= "email" placeholder= "회신받으실 이메일을 입력하세요"></div>
 		<textarea id="picontent" name="content" id="content" placeholder= "문의사항을 입력하세요"></textarea>
 		<div><input type= "submit" value= "문의하기"></div>
 	</form>	

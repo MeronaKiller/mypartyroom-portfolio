@@ -70,4 +70,9 @@ public class BoardServiceImpl implements BoardService {
 		model.addAttribute("flist",flist);
 		return "/board/fna";
 	}
+	@Override
+	public String CRNotice()
+	{
+		return "/board/CRNotice";
+	}
 }

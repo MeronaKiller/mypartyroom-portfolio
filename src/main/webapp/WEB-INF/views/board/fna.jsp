@@ -113,14 +113,14 @@ pageEncoding="UTF-8"%>
         color: #888;
     }
 
-    ul {
+    #ul11 {
         list-style-type: none;
         padding: 0;
         margin: 0;
         width: 100%;
     }
 
-    li {
+    #li11 {
         margin-bottom: 10px;
         width: 100%;
     }
@@ -143,9 +143,9 @@ function fnaOpen(fnaid) {
 <body>
 <section>
     <h2>자주 묻는 질문</h2>
-    <ul>
+    <ul id="ul11">
         <c:forEach var="fdto" items="${flist}">
-            <li>
+            <li id="li11">
                 <div class="fnaOpen" onclick="fnaOpen(${fdto.fnaid})">
                     <span>Q</span>
                     <span>${fdto.title}</span>

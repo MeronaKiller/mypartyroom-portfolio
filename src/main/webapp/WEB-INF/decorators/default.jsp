@@ -229,8 +229,7 @@
        		<li><a href="../board/noticeList">공지사항</a></li>
        		<li><a href="../board/fna">자주하는 질문</a></li>
        		<li><a href="../member/personalInquiry">1:1 문의</a></li>
-       		<li><a href="">건의하기</a></li>	
-       		<li><a href="">취소/반품 안내</a></li>
+       		<li><a href="../board/CRNotice">취소/환불 안내</a></li>
        	</ul>
     </span>
     </div>
@@ -244,8 +243,7 @@
        		<li><a href="../board/noticeList">공지사항</a></li>
        		<li><a href="../board/fna">자주하는 질문</a></li>
        		<li><a href="../login/login">1:1 문의</a></li>
-       		<li><a href="../login/login">건의하기</a></li>	
-       		<li><a href="../login/login">취소/반품 안내</a></li>
+       		<li><a href="../board/CRNotice">취소/환불 안내</a></li>
        	</ul>
     </span>
     </div>
@@ -284,8 +282,7 @@
        	</a>
        	<ul id="mySub">
        		<li><a href="../login/login">주문내역</a></li> <!-- 프로필내역 메인 -->
-       		<li><a href="../login/login">취소/반품 내역</a></li>
-       		<li><a href="../login/login">개인 정보 수정</a></li>
+       		<li><a href="../login/login">취소/환불 내역</a></li>
        	</ul>       	
        	</span>
        	</c:if>
@@ -297,7 +294,6 @@
        	<ul id="mySub">
        		<li><a href="../member/order">예약내역</a></li> <!-- 프로필내역 메인 -->
        		<li><a href="../member/cancelReturnList">취소/환불 내역</a></li>
-       		<li><a href="../member/order">개인 정보 수정</a></li>
        		<li><a href="../login/logout">로그아웃</a></li>
        	</ul>
        	</span>
