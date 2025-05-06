@@ -1378,15 +1378,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	<div class="fimg">예약 선택</div>
 	<hr width="90%">
 	<div class="fimg">
-	<ul class="durationchk">
-	<c:if test="${rdto.duration_type==0 or rdto.duration_type==2}">
-	<li><input type="checkbox" id="timeduration" name="duration">시간 단위로 예약하기</li>
-	</c:if>
-	<c:if test="${rdto.duration_type==1 or rdto.duration_type==2}">
-	<li><input type="checkbox" id="pkgduration" name="duration">패키지 단위로 예약하기</li>
-	</c:if>
-	</ul>
-<div id="timeDiv" style="display: none;">
+<div id="timeDiv" style="display: block;">
     <div id="calendar"></div>
     <div id="timeContainer" class="time-container"></div>
 	<form action="roomReserv" method="get">
@@ -1398,21 +1390,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	</form>
     
 </div>
-	
-<div id="pkgtimeDiv" style="display: none;">
-    <div id="pkgCalendar"></div>
-    <div id="packageResults">
-        <!-- 패키지 정보가 여기에 표시됩니다 -->
-    </div>
-	<form action="roomReserv" method="get">
-	    <input type="hidden" id="pkgSelectedDate" name="selectedDate">
-	    <input type="hidden" id="pkgStartTime" name="startTime">
-	    <input type="hidden" id="pkgEndTime" name="endTime">
-	    <input type="hidden" id="selectedPackage" name="selectedPackage">
-	    <input type="hidden" name="rcode" value="${rdto.rcode}">
-	    <button type="submit">예약하기</button>
-	</form>
-</div>
+	 
 
 	
 	

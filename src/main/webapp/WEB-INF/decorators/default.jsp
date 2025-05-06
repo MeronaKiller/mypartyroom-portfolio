@@ -196,6 +196,8 @@
 	{
 		text-decoration: none;
 		color: white;
+		margin-left: 5px;
+		margin-right: 5px;
 	}
 </style>
 <script>

@@ -28,18 +28,23 @@
         <!-- 패키지 가격 설정 -->
         <c:set var="chongprice" value="${packagePrice}" />
         
-        <!-- 패키지 시간 계산 -->
-        <c:set var="startHour" value="${fn:substring(packageStartTime, 0, 2)}" />
-        <c:set var="endHour" value="${fn:substring(packageEndTime, 0, 2)}" />
-        <c:set var="duration" value="${endHour - startHour}" />
-        <c:if test="${duration < 0}">
-            <c:set var="duration" value="${24 + duration}" /> <!-- 다음날로 넘어가는 경우 처리 -->
-        </c:if>
+		<!-- 패키지 시간 계산 -->
+		<c:set var="startHour" value="${fn:substring(packageStartTime, 0, 2)}" />
+		<c:set var="endHour" value="${fn:substring(packageEndTime, 0, 2)}" />
+		<c:set var="startHourInt" value="${Integer.parseInt(startHour)}" />
+		<c:set var="endHourInt" value="${Integer.parseInt(endHour)}" />
+		<c:set var="duration" value="${endHourInt - startHourInt}" />
+		<c:if test="${duration < 0}">
+		    <c:set var="duration" value="${24 + duration}" /> <!-- 다음날로 넘어가는 경우 처리 -->
+		</c:if>
     </c:when>
     <c:otherwise>
-        <!-- 일반 시간 예약인 경우 -->
-        <c:set var="duration" value="${endTime - startTime}" />
-        <c:set var="chongprice" value="${duration * rdto.halinprice}" />
+<!-- 일반 시간 예약인 경우 -->
+<c:set var="duration" value="${endTime - startTime}" />
+<c:if test="${duration < 0}">
+    <c:set var="duration" value="${24 + duration}" /> <!-- 다음날로 넘어가는 경우 처리 -->
+</c:if>
+<c:set var="chongprice" value="${duration * rdto.halinprice}" />
     </c:otherwise>
 </c:choose>
 
@@ -407,7 +412,16 @@
 <div class="rContent_wrapper">
 <div>
 <div style="float: left;">예약 공간</div>
-<div style="float: right;"><fmt:formatNumber value="${rdto.halinprice}" type="number" pattern="#,###"/>원/시간</div>
+<div style="float: right;">
+    <c:choose>
+        <c:when test="${not empty selectedPackage}">
+            <fmt:formatNumber value="${packagePrice}" type="number" pattern="#,###"/>원/패키지
+        </c:when>
+        <c:otherwise>
+            <fmt:formatNumber value="${rdto.halinprice}" type="number" pattern="#,###"/>원/시간
+        </c:otherwise>
+    </c:choose>
+</div>
 </div>
 <div><!-- 회원 정보 -->
 <div>
