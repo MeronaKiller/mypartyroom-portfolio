@@ -75,4 +75,12 @@ public class BoardServiceImpl implements BoardService {
 	{
 		return "/board/CRNotice";
 	}
+	@Override
+	public String noticeContent(NoticeDto ndto, Model model, HttpServletRequest request)
+	{
+	    int noticeid = Integer.parseInt(request.getParameter("noticeList"));
+	    NoticeDto notice = mapper.getNoticeContent(noticeid);
+	    model.addAttribute("notice", notice);
+	    return "/board/noticeContent";
+	}
 }

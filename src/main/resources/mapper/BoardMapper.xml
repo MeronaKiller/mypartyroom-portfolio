@@ -26,7 +26,12 @@
    		SELECT * FROM fna ORDER BY fnaid DESC
    	</select>
 
-	
+	<select id="getNoticeContent" parameterType="int" resultType="com.example.demo.dto.NoticeDto">
+	    SELECT n.noticeid, n.title, a.admin_name, n.writeday, n.rnum, n.img, n.content
+	    FROM notice n
+	    INNER JOIN admin a ON n.admin_name = a.admin_name
+	    WHERE n.noticeid = #{noticeid}
+	</select>
 
    
    </mapper>

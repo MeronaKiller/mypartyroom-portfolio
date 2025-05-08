@@ -12,4 +12,5 @@ public interface BoardMapper {
 	ArrayList<NoticeDto> noticeList(int index);
 	int noticeGetChong();
 	ArrayList<FnaDto> fna();
+	NoticeDto getNoticeContent(int noticeid);
 }

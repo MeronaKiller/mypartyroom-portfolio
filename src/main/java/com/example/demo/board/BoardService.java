@@ -12,5 +12,6 @@ public interface BoardService {
 	String noticeList(NoticeDto ndto, Model model, HttpServletRequest request);
 	String fna(FnaDto fdto, Model model, HttpServletRequest request);
 	String CRNotice();
+	String noticeContent(NoticeDto ndto, Model model, HttpServletRequest request);
 
 }

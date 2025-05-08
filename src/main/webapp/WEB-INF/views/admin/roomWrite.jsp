@@ -65,6 +65,7 @@
 	<form name="rform" method="post" action="roomWriteOk" enctype="multipart/form-data">
 		<table width="1000" align="center">
 			<caption> <h3> 파티룸 등록 </h3> </caption>
+			<td><a href="../admin/adminTools">돌아가기</a></td>
 							<tr>
 				<td colspan="3"><hr></td>
 				</tr>

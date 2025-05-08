@@ -34,4 +34,9 @@ public class BoardController {
 	{
 		return service.CRNotice();
 	}
+	@GetMapping("/board/noticeContent")
+	public String noticeContent(NoticeDto ndto,Model model,HttpServletRequest request)
+	{
+		return service.noticeContent(ndto,model,request);
+	}
 }

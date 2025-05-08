@@ -42,6 +42,7 @@
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
             background-color: white;
             text-align: center;
+            margin-bottom: 10px;
         }
         
         /* 아이콘 스타일 */

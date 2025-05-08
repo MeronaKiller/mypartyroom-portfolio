@@ -8,5 +8,6 @@
 </head>
 <body>
 
+<div><a href="../admin/adminTools">돌아가기</a></div>
 </body>
 </html>
