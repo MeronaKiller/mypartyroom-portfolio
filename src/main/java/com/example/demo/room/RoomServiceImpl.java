@@ -46,20 +46,45 @@ public class RoomServiceImpl implements RoomService {
 	}
 	
 	@Override
-	public String roomContent(HttpServletRequest request,Model model,
-			HttpSession session,RoomDto rdto,ReservationDto rsdto)
-	{	
-		RoomDto roomInfo = mapper.roomContent(rdto.getRcode());
-		int halin=roomInfo.getHalin();
-		int price=roomInfo.getPrice();
-		double discountRate = halin / 100.0;
-		int halinprice = (int) Math.round(price - (price * discountRate)); //할인 적용된 상품금액
-		
-		roomInfo.setHalinprice(halinprice);
-		model.addAttribute("roomInfo",roomInfo);
-		
-		model.addAttribute("rdto",mapper.roomContent(rdto.getRcode()));
-		return "/room/roomContent";
+	public String roomContent(HttpServletRequest request, Model model,
+	                         HttpSession session, RoomDto rdto, ReservationDto rsdto)
+		{
+	    String rcode = request.getParameter("rcode");
+	    
+	    // request 파라미터에서 rcode를 가져오되, 없으면 rdto에서 가져옴
+	    if (rcode == null || rcode.isEmpty()) {
+	        rcode = rdto.getRcode();
+	    }
+	    
+	    // rcode로 방 정보 조회
+	    RoomDto roomInfo = mapper.roomContent(rcode);
+	    
+	    // 방이 존재하지 않거나 duration_type이 2가 아닌 경우
+	    if (roomInfo == null || roomInfo.getDuration_type() != 2) {
+	        // 경고창을 표시하는 JavaScript 코드를 모델에 추가
+	        model.addAttribute("alertScript", 
+	            "alert('존재하지 않거나 접근할 수 없는 페이지입니다.');");
+	        
+	        // 원래 페이지로 이동 없이 경고창만 표시
+	        model.addAttribute("errorMessage", "존재하지 않거나 접근할 수 없는 페이지입니다.");
+	        
+	        // 오류 메시지가 포함된 원래 페이지 반환
+	        return "/room/roomContent";
+	    }
+	    
+	    // 할인가 계산
+	    int halin = roomInfo.getHalin();
+	    int price = roomInfo.getPrice();
+	    double discountRate = halin / 100.0;
+	    int halinprice = (int) Math.round(price - (price * discountRate)); // 할인 적용된 상품금액
+	    
+	    roomInfo.setHalinprice(halinprice);
+	    
+	    // 모델에 정보 추가 (중복 제거)
+	    model.addAttribute("rdto", roomInfo);
+	    model.addAttribute("roomInfo", roomInfo);
+	    
+	    return "/room/roomContent";
 	}
 	
 	@Override
@@ -243,5 +268,43 @@ public class RoomServiceImpl implements RoomService {
 		String ymd=request.getParameter("ymd");
 		
 		return mapper.getReservTime(rcode,ymd);
+	}
+	@Override
+	public void addLike(String userId, int roomid) {
+	    // 이미 좋아요 했는지 확인
+	    boolean alreadyLiked = mapper.isLikedByUser(userId, roomid);
+	    
+	    if (!alreadyLiked) {
+	        mapper.insertLike(userId, roomid);
+	    }
+	}
+
+	@Override
+	public void removeLike(String userId, int roomid) {
+	    // 좋아요 여부 확인
+	    boolean liked = mapper.isLikedByUser(userId, roomid);
+	    
+	    if (liked) {
+	        // 좋아요 취소
+	        mapper.deleteLike(userId, roomid);
+	        mapper.decreaseRoomLike(roomid);
+	    }
+	}
+
+	@Override
+	public boolean isLikedByUser(String userId, int roomid) {
+	    if (userId == null) {
+	        return false;
+	    }
+	    return mapper.isLikedByUser(userId, roomid);
+	}
+
+	@Override
+	public String getRcodeByroomid(int roomid) {
+	    return mapper.getRcodeByroomid(roomid);
+	}
+	@Override
+	public void increaseRoomLike(int roomid) {
+	    mapper.increaseRoomLike(roomid);
 	}
 }

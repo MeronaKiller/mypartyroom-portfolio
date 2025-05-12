@@ -133,4 +133,33 @@ public class AdminController {
 		int reservationId = Integer.parseInt(request.getParameter("reservationId"));
 		return service.conformCancleNo(reservationId);
 	}
+	@GetMapping("/admin/deleteUser")
+	public String deleteUser(HttpServletRequest request)
+	{
+		int memberid = Integer.parseInt(request.getParameter("memberid"));
+		return service.deleteUser(memberid);
+	}
+	@GetMapping("/admin/reviveUser")
+	public String reviveUser(HttpServletRequest request)
+	{
+		int memberid = Integer.parseInt(request.getParameter("memberid"));
+		return service.reviveUser(memberid);
+	}
+	@GetMapping("/admin/roomDelete")
+	public String roomDelete(RoomDto rdto,Model model)
+	{
+		return service.roomDelete(rdto,model);
+	}
+	@GetMapping("/admin/roomDeleteOk")
+	public String roomDeleteOk(HttpServletRequest request)
+	{
+		int roomid = Integer.parseInt(request.getParameter("roomid"));
+		return service.roomDeleteOk(roomid);
+	}
+	@GetMapping("/admin/roomReviveOk")
+	public String roomReviveOk(HttpServletRequest request)
+	{
+		int roomid = Integer.parseInt(request.getParameter("roomid"));
+		return service.roomReviveOk(roomid);
+	}
 }

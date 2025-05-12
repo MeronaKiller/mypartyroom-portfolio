@@ -7,7 +7,7 @@
 	
 	<select id="loginOk" resultType="String">
 		SELECT name FROM member
-		WHERE userid=#{userid} AND pwd=#{pwd}
+		WHERE userid=#{userid} AND pwd=#{pwd} AND status = 0
 	</select>
 	
 </mapper>

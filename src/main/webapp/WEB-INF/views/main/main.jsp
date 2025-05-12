@@ -325,7 +325,7 @@ $(function() {
 	</div>
 	
 	<table>
-	<h1 id="popularRoom">인기 파티룸</h1> <!-- 좋아요 수 높은순 -->
+	<h1 id="popularRoom">인기 파티룸 (좋아요 TOP 3)</h1> <!-- 좋아요 수 높은순 -->
 	<tr height="300">
 
 	<c:forEach items="${rdto}" var="rdto" varStatus="sts">

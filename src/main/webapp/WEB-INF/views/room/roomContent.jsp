@@ -6,7 +6,18 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 <meta charset="UTF-8">
+
+    <!-- 경고창 스크립트가 있으면 실행 -->
+    <c:if test="${not empty alertScript}">
+    <script>
+        ${alertScript}
+    </script>
+    </c:if>
+
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 <title>Insert title here</title>
@@ -21,7 +32,43 @@
 <script src="https://cdn.jsdelivr.net/npm/dayjs/dayjs.min.js"></script>
 
     
-    
+<style>
+	.like-btn {
+	  background-color: transparent;
+	  border: none;
+	  cursor: pointer;
+	  font-size: 24px;
+	  transition: transform 0.2s;
+	  display: inline-flex;
+	  align-items: center;
+	  padding: 8px 15px;
+	  text-decoration: none;
+	}
+	
+	.like-btn:hover {
+	  transform: scale(1.1);
+	}
+	
+	.like-btn .fas {
+	  color: #ff4757; /* 좀 더 진한 빨강으로 변경 */
+	}
+	
+	.like-btn .far {
+	  color: #ff6b6b; /* 밝은 빨강으로 변경 */
+	}
+	
+	.like-btn span {
+	  font-size: 18px;
+	  margin-left: 8px;
+	  font-weight: bold;
+	  color: #333;
+	}
+  
+  #likeCount {
+    font-size: 16px;
+    margin-left: 5px;
+  }
+</style>    
 <style>
   /* 폰트 설정 */
   @font-face {
@@ -504,6 +551,37 @@
 }
   
 </style>
+
+<script>
+  function toggleLike(roomid) {
+    // 로그인 확인
+    <c:if test="${empty sessionScope.userid}">
+      alert("로그인 후 이용 가능합니다.");
+      return;
+    </c:if>
+    
+    // AJAX 요청으로 좋아요 토글
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/room/toggleLike', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        const response = JSON.parse(xhr.responseText);
+        
+        // 좋아요 상태 및 카운트 업데이트
+        const likeBtn = document.getElementById('likeBtn');
+        const likeCount = document.getElementById('likeCount');
+        
+        if (response.liked) {
+          likeBtn.innerHTML = '<i class="fas fa-heart"></i> <span id="likeCount">' + response.count + '</span>';
+        } else {
+          likeBtn.innerHTML = '<i class="far fa-heart"></i> <span id="likeCount">' + response.count + '</span>';
+        }
+      }
+    };
+    xhr.send('roomid=' + roomid);
+  }
+</script>
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script>
 //이미지 슬라이드 기능 추가
@@ -943,7 +1021,18 @@ document.addEventListener("DOMContentLoaded", function () {
 	</script>
 </head>
 <body>
-
+	<!-- 오류 메시지가 있으면 표시 -->
+	    <c:if test="${not empty errorMessage}">
+	        <div style="color: red; text-align: center; margin: 20px; padding: 10px; border: 1px solid red;">
+	            ${errorMessage}
+	        </div>
+	        
+	        <!-- 오류 시 내용을 숨김 -->
+	    </c:if>
+	    
+	    <!-- 오류가 없을 때만 내용 표시 -->
+	    <c:if test="${empty errorMessage}">
+	        <!-- 기존 페이지 내용 -->
 <div id="cContainer_top">
 	<div class="ctitle">
 		<div class="ctitle1">${rdto.name}</div>
@@ -952,11 +1041,27 @@ document.addEventListener("DOMContentLoaded", function () {
 	</div>
 </div>
 
-<div class="cContainer">
-  <div class="cContent_wrapper"> <!-- 왼쪽 메인 div -->
-<button id="prevBtn" disabled>이전</button>
-<button id="nextBtn">다음</button>
-
+	<div class="cContainer">
+	  <div class="cContent_wrapper"> <!-- 왼쪽 메인 div -->
+	<div style="display: flex; align-items: center; margin-bottom: 15px;">
+	  <button id="prevBtn" disabled>이전</button>
+	  <button id="nextBtn">다음</button>
+	  
+	  <c:choose>
+	    <c:when test="${likedByUser}">
+	      <!-- 이미 좋아요 한 경우 -->
+	      <a href="/room/like/${rdto.roomid}" class="like-btn liked" style="margin-left: auto;">
+	        <i class="fas fa-heart" style="font-size: 28px; color: #ff4757;"></i> <span style="font-weight: bold;">${rdto.heart}</span>
+	      </a>
+	    </c:when>
+	    <c:otherwise>
+	      <!-- 좋아요 안 한 경우 -->
+	      <a href="/room/like/${rdto.roomid}" class="like-btn" style="margin-left: auto;">
+	        <i class="far fa-heart" style="font-size: 28px; color: #ff6b6b;"></i> <span style="font-weight: bold;">${rdto.heart}</span>
+	      </a>
+	    </c:otherwise>
+	  </c:choose>
+	</div>
 
   	<div id="cImgMain">
   	 <div class="cImgAll">
@@ -1402,6 +1507,6 @@ document.addEventListener("DOMContentLoaded", function () {
   </aside>
   
 </div>
-
+</c:if>
 </body>
 </html>

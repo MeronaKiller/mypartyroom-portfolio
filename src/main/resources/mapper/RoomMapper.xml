@@ -21,6 +21,7 @@
                 OR keyword LIKE CONCAT('%', #{searchKeyword}, '%')
             )
         </if>
+    AND duration_type = 2
     </where>
     ORDER BY duration_type DESC
 	</select>
@@ -31,7 +32,7 @@
 	</select>
 	
 	<select id="getMember" resultType="com.example.demo.dto.MemberDto">
-		SELECT * FROM member WHERE userid=#{userid}
+		SELECT * FROM member WHERE roomid=#{roomid}
 	</select>
 
    <select id="getNumber" resultType="Integer">
@@ -42,9 +43,9 @@
    
    <insert id="reservOk" parameterType="com.example.demo.dto.ReservationDto">
    	INSERT INTO reservation(startTime,endTime,rcode,card1,tel,
-   	halbu1,bank1,card2,bank2,jumuncode,writeday,userid,purposeuse,requesttohost,reservprice)
+   	halbu1,bank1,card2,bank2,jumuncode,writeday,roomid,purposeuse,requesttohost,reservprice)
    	VALUES (#{startTime},#{endTime},#{rcode},#{card1},#{tel},#{halbu1},
-   	#{bank1},#{card2},#{bank2},#{jumuncode},now(),#{userid},#{purposeuse},#{requesttohost},#{reservprice})
+   	#{bank1},#{card2},#{bank2},#{jumuncode},now(),#{roomid},#{purposeuse},#{requesttohost},#{reservprice})
    </insert>
    
    <select id="reservList" parameterType="com.example.demo.dto.ReservationDto" resultType="com.example.demo.dto.ReservationDto">
@@ -60,11 +61,59 @@
 	     where rcode=#{rcode} and startTime like concat(#{ymd} , '%')
 	</select> 
 
-	<select id="getReservationsByUserId" resultType="com.example.demo.dto.ReservationDto">
-	    SELECT * FROM reservation WHERE userid=#{userid} ORDER BY writeday DESC
+	<select id="getReservationsByroomid" resultType="com.example.demo.dto.ReservationDto">
+	    SELECT * FROM reservation WHERE roomid=#{roomid} ORDER BY writeday DESC
 	</select>
-	
+	<!-- 좋아요 여부 확인 -->
+<select id="isLikedByUser" resultType="boolean">
+  <!-- userId가 null이면 false 반환 -->
+  <if test="userId == null">
+    SELECT false
+  </if>
+  <if test="userId != null">
+    SELECT heart > 0
+    FROM room
+    WHERE roomid = #{roomid}
+  </if>
+</select>
 
+<!-- 좋아요 추가 -->
+<update id="insertLike">
+  UPDATE room
+  SET heart = heart + 1
+  WHERE roomid = #{roomid}
+</update>
+
+<!-- 좋아요 삭제 -->
+<update id="deleteLike">
+  UPDATE room
+  SET heart = GREATEST(heart - 1, 0)
+  WHERE roomid = #{roomid}
+</update>
+
+<!-- 방 좋아요 수 증가 -->
+<update id="increaseRoomLike">
+    UPDATE room
+    SET heart = heart + 1
+    WHERE roomid = #{roomid}
+</update>
+
+<!-- 방 좋아요 수 감소 -->
+<update id="decreaseRoomLike">
+    UPDATE room
+    SET heart = GREATEST(heart - 1, 0)
+    WHERE roomid = #{roomid}
+</update>
+
+<!-- roomid로 rcode 조회 -->
+<select id="getRoomLikes" resultType="int">
+    SELECT heart
+    FROM room
+    WHERE roomid = #{roomid}
+</select>
+<select id="getRcodeByroomid" resultType="String">
+    SELECT rcode FROM room WHERE roomid = #{roomid}
+</select>
 </mapper>
 
 

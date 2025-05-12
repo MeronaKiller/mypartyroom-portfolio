@@ -7,9 +7,19 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
+<style>
+	#deleteUser
+	{
+		color: red;
+	}
+	#reviveUser
+	{
+		color: green;
+	}
+</style>
 <body>
-<!-- 회원 상세조회(예약 내역, 작성한 후기, 활동기록 등), 회원 삭제 -->
 <section>
+<a href="../admin/adminTools">돌아가기</a>
 <table>
 	<tr>
 		<td>번호</td>
@@ -30,7 +40,17 @@
 		<td>${mdto.phone}</td>
 		<td>${mdto.created_day}</td>
 		<td><a>예약내역 보기</a></td>
-		<td><a>삭제하기</a></td>
+	<c:choose>
+	    <c:when test="${mdto.status == 0}">  <!-- 활성 계정 -->
+	        <td><a id="deleteUser" href="/admin/deleteUser?memberid=${mdto.memberid}">계정 삭제하기</a></td>
+	    </c:when>
+	    <c:when test="${mdto.status == 1}">  <!-- 삭제된 계정 -->
+	        <td><a id="reviveUser" href="/admin/reviveUser?memberid=${mdto.memberid}">계정 복구하기</a></td>
+	    </c:when>
+	    <c:otherwise>
+	        <td>상태 알 수 없음(mdto.status의 값을 확인하세요)</td>
+	    </c:otherwise>
+	</c:choose>
 	</tr>
 	</c:forEach>
 </table>

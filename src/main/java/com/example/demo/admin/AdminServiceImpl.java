@@ -203,4 +203,34 @@ public class AdminServiceImpl implements AdminService {
 		mapper.updateReservationStatus(reservationId1, 0);
 		return "redirect:/admin/conformCancle";
 	}
+	@Override
+	public String deleteUser(int memberid) {
+		mapper.deleteUser(memberid, 1);
+		return "redirect:/admin/memberManage";
+	}
+	@Override
+	public String reviveUser(int memberid) {
+		mapper.reviveUser(memberid, 0);
+		return "redirect:/admin/memberManage";
+	}
+	@Override 
+	public String roomDelete(RoomDto rdto, Model model)
+	{
+	    ArrayList<ReservationDto> rlist=mapper.roomDelete(rdto.getRcode());
+	    
+	    model.addAttribute("rlist", rlist);
+		return "/admin/roomDelete";
+	}
+	@Override
+	public String roomDeleteOk(int roomid)
+	{
+		mapper.roomDeleteOk(roomid, 1);//1이 비활성화 
+	    return "redirect:/admin/roomDelete";
+	}
+	@Override
+	public String roomReviveOk(int roomid)
+	{
+		mapper.roomReviveOk(roomid, 0);//0이 복구
+		return "redirect:/admin/roomDelete";
+	}
 }

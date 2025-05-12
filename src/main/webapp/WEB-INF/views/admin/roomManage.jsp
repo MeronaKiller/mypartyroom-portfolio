@@ -7,7 +7,8 @@
 <title>Insert title here</title>
 </head>
 <body>
-<a href="../admin/roomWrite">파티룸 등록</a>
+<a href="../admin/roomWrite">새로운 파티룸 등록</a>
+<a href="../admin/roomDelete">파티룸 삭제</a>
 <div><a href="../admin/adminTools">돌아가기</a></div>
 </body>
 </html>

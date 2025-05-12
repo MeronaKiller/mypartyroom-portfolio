@@ -30,4 +30,9 @@ import jakarta.servlet.http.HttpSession;
 	String conformCancle(MemberDto mdto, ReservationDto rsdto, Model model);
 	String conformCancleOk(int reservationId);
 	String conformCancleNo(int reservationId1);
+	String deleteUser(int memberid);
+	String reviveUser(int memberid1);
+	String roomDelete(RoomDto rdto, Model model);
+	String roomDeleteOk(int roomid);
+	String roomReviveOk(int roomid);
 }

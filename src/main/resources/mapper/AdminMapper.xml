@@ -21,10 +21,6 @@
 		VALUES (#{price},#{rcode},#{name},#{description},#{capacity},#{pic},#{duration_type},#{subpic},#{halin},#{keyword},#{pkgname},#{pkgprice},#{pkgstart},#{pkgend},#{adress},#{roadadress},#{mapx},#{mapy},#{caution},#{refundpolicy},#{officehour},#{closedday},#{floor},#{car},#{elevator},#{fstatus},#{ininfo},#{play},#{kitchen},#{phone},#{subname},#{subdesc},now())
 	</insert>
 	
-	<select id="roomManage" resultType="HashMap">
-		SELECT 
-	</select>
-	
 	<select id="adminLoginOk" resultType="String">
 		SELECT admin_name FROM admin
 		WHERE admin_userid=#{admin_userid} AND pwd=#{pwd}
@@ -62,11 +58,36 @@
 	    WHERE reservationid = #{reservationId}
 	</update>
 	
-		<update id="updateReservationStatus1" parameterType="com.example.demo.dto.ReservationDto"><!-- 취소수락했을때 -->
+	<update id="updateReservationStatus1" parameterType="com.example.demo.dto.ReservationDto"><!-- 취소수락했을때 -->
 	  UPDATE reservation
 	  SET status = #{status},
 	      modified_at1 = NOW()
 	  WHERE reservationid = #{reservationid}
 	</update>
 	
+	<update id="deleteUser">
+		UPDATE member
+		SET status = #{status}
+		WHERE memberid = #{memberid}
+	</update>
+	<update id="reviveUser">
+		UPDATE member
+		SET status = #{status}
+		WHERE memberid = #{memberid}
+	</update>
+	
+	<select id="roomDelete" resultType="com.example.demo.dto.RoomDto">
+		Select * FROM room 
+	</select>
+	
+	<update id="roomDeleteOk" parameterType="com.example.demo.dto.RoomDto">
+	  UPDATE room
+	  SET duration_type = 1
+	  WHERE roomid = #{roomid}
+	</update>
+	<update id="roomReviveOk" parameterType="com.example.demo.dto.RoomDto">
+	  UPDATE room
+	  SET duration_type = 2
+	  WHERE roomid = #{roomid}
+	</update>
 </mapper>

@@ -27,4 +27,9 @@ public interface AdminMapper {
 	public ArrayList<MemberDto> getAllMember(String userid); // 특정 회원만 가져오기
 	public void updateReservationStatus(int reservationId, int status);
 	public ReservationDto getReservation(int reservationId);
+	public void deleteUser(int memberid, int status);
+	public void reviveUser(int memberid, int status);
+	public ArrayList<ReservationDto> roomDelete(String rcode);
+	public void roomDeleteOk(int roomid, int duration_type);
+	public void roomReviveOk(int roomid, int duration_type);
 }
