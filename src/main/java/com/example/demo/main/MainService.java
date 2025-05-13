@@ -10,5 +10,7 @@ public interface MainService {
 
 	public String main(HttpServletRequest request, Model model);
 	public String room();
+	public String terms();
+	public String privacy();
 
 }

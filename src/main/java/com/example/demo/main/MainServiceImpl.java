@@ -32,4 +32,14 @@ public class MainServiceImpl implements MainService {
 	{
 		return "/room/room";
 	}
+	@Override
+	public String terms()
+	{
+		return "/about/terms";
+	}
+	@Override
+	public String privacy()
+	{
+		return "/about/privacy";
+	}
 }
