@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.example.demo.dto.AdminDto;
 import com.example.demo.dto.DaeDto;
 import com.example.demo.dto.MemberDto;
+import com.example.demo.dto.NoticeDto;
 import com.example.demo.dto.ReservationDto;
 import com.example.demo.dto.RoomDto;
 import com.example.demo.dto.SoDto;
@@ -35,4 +36,8 @@ import jakarta.servlet.http.HttpSession;
 	String roomDelete(RoomDto rdto, Model model);
 	String roomDeleteOk(int roomid);
 	String roomReviveOk(int roomid);
+	String noticeManage(NoticeDto ndto, Model model, HttpServletRequest request);
+	String noticeContentManage(NoticeDto ndto, Model model, HttpServletRequest request);
+	String noticeWrite(Model model);
+	String noticeWriteOk(NoticeDto ndto);
 }

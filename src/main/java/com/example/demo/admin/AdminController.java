@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.example.demo.dto.AdminDto;
 import com.example.demo.dto.MemberDto;
+import com.example.demo.dto.NoticeDto;
 import com.example.demo.dto.ReservationDto;
 import com.example.demo.dto.RoomDto;
 import com.example.demo.dto.SoDto;
@@ -76,11 +77,6 @@ public class AdminController {
 	public String roomManage()
 	{
 		return "/admin/roomManage";
-	}
-	@GetMapping("/admin/noticeManage")
-	public String noticeManage()
-	{
-		return "/admin/noticeManage";
 	}
 	@GetMapping("/admin/qnaAnswer")
 	public String qnaAnswer()
@@ -161,5 +157,28 @@ public class AdminController {
 	{
 		int roomid = Integer.parseInt(request.getParameter("roomid"));
 		return service.roomReviveOk(roomid);
+	}
+	@GetMapping("/admin/noticeManage")
+	public String noticeManage(NoticeDto ndto,Model model,HttpServletRequest request)
+	{
+		return service.noticeManage(ndto,model,request);
+	}
+	@GetMapping("/admin/noticeContentManage")
+	public String noticeContent(NoticeDto ndto,Model model,HttpServletRequest request)
+	{
+		return service.noticeContentManage(ndto,model,request);
+	}
+	@GetMapping("/admin/noticeWrite")
+	public String noticeWrite(Model model)
+	{
+		return service.noticeWrite(model);
+	}
+	@PostMapping("/admin/noticeWriteOk")
+	public String noticeWriteOk(NoticeDto ndto, HttpSession session)
+	{
+	    String adminName = (String) session.getAttribute("admin_name");
+	    ndto.setAdmin_name(adminName);
+	    
+	    return service.noticeWriteOk(ndto);
 	}
 }

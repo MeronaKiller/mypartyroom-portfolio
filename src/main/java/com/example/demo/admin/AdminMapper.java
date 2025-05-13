@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.example.demo.dto.AdminDto;
 import com.example.demo.dto.DaeDto;
 import com.example.demo.dto.MemberDto;
+import com.example.demo.dto.NoticeDto;
 import com.example.demo.dto.ReservationDto;
 import com.example.demo.dto.RoomDto;
 import com.example.demo.dto.SoDto;
@@ -32,4 +33,8 @@ public interface AdminMapper {
 	public ArrayList<ReservationDto> roomDelete(String rcode);
 	public void roomDeleteOk(int roomid, int duration_type);
 	public void roomReviveOk(int roomid, int duration_type);
+	int noticeGetChong();
+	ArrayList<NoticeDto> noticeManage(int index);
+	NoticeDto getNoticeContentManage(int noticeid);
+	public void noticeWriteOk(NoticeDto ndto);
 }
