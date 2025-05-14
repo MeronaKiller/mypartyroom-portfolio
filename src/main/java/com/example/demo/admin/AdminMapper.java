@@ -37,4 +37,6 @@ public interface AdminMapper {
 	ArrayList<NoticeDto> noticeManage(int index);
 	NoticeDto getNoticeContentManage(int noticeid);
 	public void noticeWriteOk(NoticeDto ndto);
+	public void noticeContentDeleteOk(int noticeid, int i);
+	public void noticeContentReviveOk(int noticeid, int i);
 }

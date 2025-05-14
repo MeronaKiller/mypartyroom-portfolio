@@ -62,10 +62,19 @@
     
     .delete-btn {
         background-color: #FF5252;
+        display: inline-block;
+        padding: 8px 16px;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 14px;
+        margin: 0 5px;
+    }
     }
     
     .delete-btn:hover {
         background-color: #FF7676;
+        
     }
 </style>
 <script>
@@ -92,7 +101,7 @@
         
         <div class="ntc-footer">
             <span><a href="/admin/noticeManage" class="ntc-btn">목록</a></span>
-            <span><a href="/admin/noticeContentDeleteOk?noticeList=${notice.noticeid}">삭제</a></span>
+            <span><a href="/admin/noticeContentDeleteOk?noticeid=${notice.noticeid}" class="delete-btn">삭제</a></span>
         </div>
     </div>
 </body>

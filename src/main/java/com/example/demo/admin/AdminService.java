@@ -40,4 +40,6 @@ import jakarta.servlet.http.HttpSession;
 	String noticeContentManage(NoticeDto ndto, Model model, HttpServletRequest request);
 	String noticeWrite(Model model);
 	String noticeWriteOk(NoticeDto ndto);
+	String noticeContentDeleteOk(int noticeid);
+	String noticeContentReviveOk(int noticeid);
 }

@@ -181,4 +181,16 @@ public class AdminController {
 	    
 	    return service.noticeWriteOk(ndto);
 	}
+	@GetMapping("/admin/noticeContentDeleteOk")
+	public String noticeContentDeleteOk(HttpServletRequest request)
+	{
+		int noticeid = Integer.parseInt(request.getParameter("noticeid"));
+		return service.noticeContentDeleteOk(noticeid);
+	}
+	@GetMapping("/admin/roomContentReviveOk")
+	public String noticeReviveOk(HttpServletRequest request)
+	{
+		int noticeid = Integer.parseInt(request.getParameter("noticeid"));
+		return service.noticeContentReviveOk(noticeid);
+	}
 }

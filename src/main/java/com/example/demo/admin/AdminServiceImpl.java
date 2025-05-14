@@ -299,4 +299,16 @@ public class AdminServiceImpl implements AdminService {
 		
 		return "redirect:/admin/noticeManage";
 	}
+	@Override
+	public String noticeContentDeleteOk(int noticeid)
+	{
+		mapper.noticeContentDeleteOk(noticeid, 1);//1이 비활성화 
+	    return "redirect:/admin/noticeManage";
+	}
+	@Override
+	public String noticeContentReviveOk(int noticeid)
+	{
+		mapper.noticeContentReviveOk(noticeid, 0);//0이 복구
+		return "redirect:/admin/noticeManage";
+	}
 }

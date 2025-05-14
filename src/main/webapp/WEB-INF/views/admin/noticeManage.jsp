@@ -106,6 +106,26 @@
     .admin-link:hover {
         background-color: #555;
     }
+    
+    /* 삭제됨 및 삭제 버튼 스타일 */
+    .deleted-status {
+        color: #ff4040;
+        font-weight: bold;
+    }
+    
+    .delete-btn {
+        display: inline-block;
+        padding: 4px 8px;
+        background-color: #ff4040;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+    
+    .delete-btn:hover {
+        background-color: #cc3333;
+    }
 </style>
 </head>
 <body id="nl-body">
@@ -121,9 +141,10 @@
 <table>
     <tr class="table-header">
         <td width="8%">번호</td>
-        <td width="60%">제목</td>
-        <td width="12%">작성자</td>
-        <td width="20%">작성일</td>
+		<td width="50%">제목</td>
+		<td width="12%">작성자</td>
+		<td width="20%">작성일</td>
+		<td width="10%">삭제여부</td>
     </tr>
     
     <c:forEach var="notice" items="${nlist}">
@@ -136,16 +157,26 @@
             </td>
             <td>${notice.admin_name}</td>
             <td>${notice.writeday}</td>
+            <td>
+            
+			<c:if test="${notice.state==1}">
+			  <span class="deleted-status">삭제됨</span>
+			</c:if>
+			<c:if test="${notice.state==0}">
+			  <span><a href="/admin/noticeContentDeleteOk?noticeid=${notice.noticeid}" class="delete-btn">삭제</a></span>
+			</c:if>
+            
+            </td>
         </tr>
     </c:forEach>
     
     <!-- 페이지 출력 -->
     <tr>
-        <td colspan="4">
+        <td colspan="5">
             <div class="pagination">
                 <!-- 이전 그룹 -->
                 <c:if test="${pstart != 1}">
-                    <a href="noticeList?page=${pstart-1}">◁◁</a>
+                    <a href="noticeManage?page=${pstart-1}">◁◁</a>
                 </c:if>
                 <c:if test="${pstart == 1}">
                     <span class="disabled">◁◁</span>
@@ -153,7 +184,7 @@
                 
                 <!-- 이전 페이지 -->
                 <c:if test="${page != 1}">
-                    <a href="noticeList?page=${page-1}">◁</a>
+                    <a href="noticeManage?page=${page-1}">◁</a>
                 </c:if>
                 <c:if test="${page == 1}">
                     <span class="disabled">◁</span>
@@ -162,16 +193,16 @@
                 <!-- 페이지 번호 -->
                 <c:forEach var="i" begin="${pstart}" end="${pend}">
                     <c:if test="${page == i}">
-                        <a href="noticeList?page=${i}" class="current-page">${i}</a>
+                        <a href="noticeManage?page=${i}" class="current-page">${i}</a>
                     </c:if>
                     <c:if test="${page != i}">
-                        <a href="noticeList?page=${i}">${i}</a>
+                        <a href="noticeManage?page=${i}">${i}</a>
                     </c:if>
                 </c:forEach>
                 
                 <!-- 다음 페이지 -->
                 <c:if test="${page != noticeGetChong}">
-                    <a href="noticeList?page=${page+1}">▷</a>
+                    <a href="noticeManage?page=${page+1}">▷</a>
                 </c:if>
                 <c:if test="${page == noticeGetChong}">
                     <span class="disabled">▷</span>
@@ -179,7 +210,7 @@
                 
                 <!-- 다음 그룹 -->
                 <c:if test="${pend != noticeGetChong}">
-                    <a href="noticeList?page=${pend+1}">▷▷</a>
+                    <a href="noticeManage?page=${pend+1}">▷▷</a>
                 </c:if>
                 <c:if test="${pend == noticeGetChong}">
                     <span class="disabled">▷▷</span>

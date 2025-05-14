@@ -110,4 +110,14 @@
 	    INSERT INTO notice(title, content, admin_name, writeday, adminid)
 	    VALUES (#{title}, #{content}, '관리자', now(), #{adminid})
 	</insert>
+	<update id="noticeContentDeleteOk" parameterType="com.example.demo.dto.NoticeDto">
+	  UPDATE notice
+	  SET state = 1
+	  WHERE noticeid = #{noticeid}
+	</update>
+	<update id="noticeContentReviveOk" parameterType="com.example.demo.dto.NoticeDto">
+	  UPDATE notice
+	  SET state = 2
+	  WHERE noticeid = #{noticeid}
+	</update>
 </mapper>
