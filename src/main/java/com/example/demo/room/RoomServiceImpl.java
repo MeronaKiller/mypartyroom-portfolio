@@ -216,33 +216,37 @@ public class RoomServiceImpl implements RoomService {
 		}
 	}
 	@Override
-	public String reservChk(HttpSession session, HttpServletRequest request, Model model, MemberDto mdto, ReservationDto rsdto, RoomDto rdto)
-	{
-	    if(session.getAttribute("userid")==null)
-	    {
+	public String reservChk(HttpSession session, HttpServletRequest request, Model model, MemberDto mdto, ReservationDto rsdto, RoomDto rdto) {
+	    if(session.getAttribute("userid")==null) {
 	        return "redirect:/login/login";
-	    }
-	    else
-	    {    
+	    } else {    
 	        String userid = session.getAttribute("userid").toString();
+	        
+	        // reservationid 파라미터 처리 추가
+	        String reservationId = request.getParameter("reservationid");
 	        String jumuncode = request.getParameter("jumuncode");
 	        
-	        // 주문 코드가 전달되지 않은 경우
-	        if(jumuncode == null || jumuncode.isEmpty()) {
-	            // 사용자의 가장 최근 예약 정보 가져오기
-	            ArrayList<ReservationDto> userReservations = mapper.getReservationsByUserId(userid);
-	            
-	            if(userReservations == null || userReservations.isEmpty()) {
-	                // 예약 정보가 없는 경우
-	                return "redirect:/";
-	            }
-	            
-	            // 가장 최근 예약의 주문 코드 사용
-	            jumuncode = userReservations.get(0).getJumuncode();
+	        // reservationid가 있으면 이를 이용해 jumuncode 찾기
+	        if(reservationId != null && !reservationId.isEmpty()) {
+	            // 이 부분을 구현하려면 reservationid로 jumuncode를 조회하는 매퍼 메소드가 필요합니다.
+	            // 임시로 직접 jumuncode를 사용하는 방식으로 진행
 	        }
 	        
 	        // 주문 코드로 예약 정보 조회
-	        rsdto.setJumuncode(jumuncode);
+	        if(jumuncode != null && !jumuncode.isEmpty()) {
+	            rsdto.setJumuncode(jumuncode);
+	        } else {
+	            // 파라미터가 없는 경우 사용자의 최근 예약 사용
+	            ArrayList<ReservationDto> userReservations = mapper.getReservationsByUserId(userid);
+	            
+	            if(userReservations == null || userReservations.isEmpty()) {
+	                return "redirect:/";
+	            }
+	            
+	            jumuncode = userReservations.get(0).getJumuncode();
+	            rsdto.setJumuncode(jumuncode);
+	        }
+	        
 	        ReservationDto reservationData = mapper.reservChk(rsdto);
 	        
 	        if(reservationData == null) {

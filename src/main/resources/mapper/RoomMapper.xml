@@ -32,7 +32,7 @@
 	</select>
 	
 	<select id="getMember" resultType="com.example.demo.dto.MemberDto">
-		SELECT * FROM member WHERE roomid=#{roomid}
+	    SELECT * FROM member WHERE userid=#{userid}
 	</select>
 
    <select id="getNumber" resultType="Integer">
@@ -41,12 +41,13 @@
    	WHERE jumuncode LIKE CONCAT(#{jumuncode},'%')
    </select>
    
-   <insert id="reservOk" parameterType="com.example.demo.dto.ReservationDto">
-   	INSERT INTO reservation(startTime,endTime,rcode,card1,tel,
-   	halbu1,bank1,card2,bank2,jumuncode,writeday,roomid,purposeuse,requesttohost,reservprice)
-   	VALUES (#{startTime},#{endTime},#{rcode},#{card1},#{tel},#{halbu1},
-   	#{bank1},#{card2},#{bank2},#{jumuncode},now(),#{roomid},#{purposeuse},#{requesttohost},#{reservprice})
-   </insert>
+	<insert id="reservOk" parameterType="com.example.demo.dto.ReservationDto">
+	    INSERT INTO reservation(startTime,endTime,rcode,card1,tel,
+	    halbu1,bank1,card2,bank2,jumuncode,writeday,purposeuse,requesttohost,reservprice)
+	    VALUES (#{startTime},#{endTime},#{rcode},#{card1},#{tel},#{halbu1},
+	    #{bank1},#{card2},#{bank2},#{jumuncode},now(),#{purposeuse},#{requesttohost},#{reservprice})
+	</insert>
+
    
    <select id="reservList" parameterType="com.example.demo.dto.ReservationDto" resultType="com.example.demo.dto.ReservationDto">
 		SELECT * FROM reservation WHERE jumuncode=#{jumuncode}
@@ -113,6 +114,13 @@
 </select>
 <select id="getRcodeByroomid" resultType="String">
     SELECT rcode FROM room WHERE roomid = #{roomid}
+</select>
+<select id="getReservationsByUserId" resultType="com.example.demo.dto.ReservationDto">
+    SELECT r.*, rm.name as room_name
+    FROM reservation r 
+    LEFT JOIN room rm ON r.rcode = rm.rcode 
+    WHERE r.userid = #{userid} 
+    ORDER BY r.writeday DESC
 </select>
 </mapper>
 

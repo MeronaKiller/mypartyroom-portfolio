@@ -14,7 +14,7 @@
 	   padding-top: 75px;
 	   padding-bottom: 30px;
 	}
-	section #signupNotice /* 아직 스터디온 회원이 아니신가요? */
+	section #signupNotice /* 아직 마이파티룸 회원이 아니신가요? */
 	{
 		padding-top: 15px;
 	}
@@ -65,7 +65,7 @@
 		</c:if>
 		</div>
 		<div><input type= "submit" value= "로그인" id="submit"></div>
-		<div id="signupNotice">아직 파티플레이스 회원이 아니신가요? <a href="/member/member">회원가입</a></div>
+		<div id="signupNotice">아직 마이파티룸 회원이 아니신가요? <a href="/member/member">회원가입</a></div>
 
 	</form>	
 </section>

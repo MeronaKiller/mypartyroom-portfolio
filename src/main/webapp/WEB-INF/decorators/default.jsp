@@ -262,8 +262,8 @@
                 <!-- 로고 텍스트 -->
                 <a xlink:href="/"> <!-- xlink:href 사용해서 이동 -->
                 <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" dy="0.1em">
-                    파티플레이스<tspan fill="red"></tspan>
-                </text>
+				    마이<tspan fill="#FF5A5F">파티</tspan>룸
+				</text>
                 </a>
             </svg> 
         </div><!-- SVG 로고 끝 -->
@@ -311,7 +311,7 @@
     <div class="footer-container">
         <!-- 1. 회사 정보 -->
         <div class="footer-info">
-            <h3>파티플레이스</h3>
+            <h3>마이파티룸</h3>
             <p>특별한 순간을 위한 공간</p>
         </div>
 
@@ -337,7 +337,7 @@
 
         <!-- 5. 저작권 정보 -->
         <div class="footer-copyright">
-            <p>© 2025 파티플레이스. All rights reserved.</p>
+            <p>© 2025 마이파티룸. All rights reserved.</p>
         </div>
     </div>
     <div id="footer-wrap"></div>

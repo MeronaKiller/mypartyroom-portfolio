@@ -7,7 +7,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>파티플레이스</title>
+<title>마이파티룸</title>
 <style>
  	 table /*임시*/
  	 {
@@ -315,7 +315,7 @@ $(function() {
 	
 	   	<div id="reservbtnCon"><!-- 예약하기 div -->
 	
-	<div id="reservbtn1">특별한 날을 파티플레이스와 함께하세요</div>
+	<div id="reservbtn1">특별한 날을 마이파티룸과 함께하세요</div>
 	<div id="reservbtn2">생일, 기념일, 프로포즈 등 모든 순간을 더욱 특별하게 만들어 드립니다.</div>
 	<div id="reservbtn3">
     <a id="reservbtn4" href="../room/roomList?rcode=r01" style="cursor:pointer; display:inline-block; text-decoration:none;">

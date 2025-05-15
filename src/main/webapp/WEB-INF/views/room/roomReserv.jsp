@@ -771,6 +771,7 @@ ${duration}시간</div>
     <input type="hidden" value="${startTime}" name="startTime">
     <input type="hidden" value="${endTime}" name="endTime">
     <input type="hidden" value="${chongprice}" name="reservprice">
+    <input type="hidden" value="${rdto.name}" name="name">
     
     
 		<div> <input type="submit" value="예약하기"> </div><!-- 예약폼 시작 -->
