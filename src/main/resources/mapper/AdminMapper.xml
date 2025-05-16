@@ -91,7 +91,7 @@
 	  WHERE roomid = #{roomid}
 	</update>
    	<select id="noticeManage" resultType="com.example.demo.dto.NoticeDto"> <!-- member은 임시임 만약 admin테이블만들면 수정 -->
-   		SELECT n.noticeid, n.title, a.admin_name, n.writeday, n.rnum, n.img, n.content
+   		SELECT n.noticeid, n.title, a.admin_name, n.writeday, n.content, n.state
    		FROM notice n
    		INNER JOIN admin a ON n.admin_name = a.admin_name
    		ORDER BY n.noticeid DESC
@@ -101,7 +101,7 @@
    		SELECT CEIL( count(noticeid)/20 ) FROM notice 
    	</select>
 	<select id="getNoticeContentManage" parameterType="int" resultType="com.example.demo.dto.NoticeDto">
-	    SELECT n.noticeid, n.title, a.admin_name, n.writeday, n.rnum, n.img, n.content
+	    SELECT n.noticeid, n.title, a.admin_name, n.writeday, n.content
 	    FROM notice n
 	    INNER JOIN admin a ON n.admin_name = a.admin_name
 	    WHERE n.noticeid = #{noticeid}
@@ -117,7 +117,7 @@
 	</update>
 	<update id="noticeContentReviveOk" parameterType="com.example.demo.dto.NoticeDto">
 	  UPDATE notice
-	  SET state = 2
+	  SET state = 0
 	  WHERE noticeid = #{noticeid}
 	</update>
 </mapper>

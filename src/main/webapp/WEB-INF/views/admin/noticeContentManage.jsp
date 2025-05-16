@@ -70,6 +70,15 @@
         font-size: 14px;
         margin: 0 5px;
     }
+    .revive-btn {
+        background-color: green;
+        display: inline-block;
+        padding: 8px 16px;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 14px;
+        margin: 0 5px;
     }
     
     .delete-btn:hover {
@@ -77,13 +86,6 @@
         
     }
 </style>
-<script>
-    function confirmDelete() {
-        if(confirm("정말 삭제하시겠습니까?")) {
-            location.href="/admin/noticeDelete?noticeId=${notice.noticeid}";
-        }
-    }
-</script>
 </head>
 <body>
     <div class="ntc-container">
@@ -101,7 +103,12 @@
         
         <div class="ntc-footer">
             <span><a href="/admin/noticeManage" class="ntc-btn">목록</a></span>
-            <span><a href="/admin/noticeContentDeleteOk?noticeid=${notice.noticeid}" class="delete-btn">삭제</a></span>
+            <c:if test="${notice.state==1}">
+	            <span><a href="/admin/noticeContentDeleteOk?noticeid=${notice.noticeid}" class="delete-btn">삭제</a></span>
+	        </c:if>
+            <c:if test="${notice.state==0}">
+	            <span><a href="/admin/roomContentReviveOk?noticeid=${notice.noticeid}" class="revive-btn">복구</a></span>
+	        </c:if>
         </div>
     </div>
 </body>
