@@ -10,6 +10,7 @@ import com.example.demo.dto.AdminDto;
 import com.example.demo.dto.DaeDto;
 import com.example.demo.dto.MemberDto;
 import com.example.demo.dto.NoticeDto;
+import com.example.demo.dto.PersonalInquiryDto;
 import com.example.demo.dto.ReservationDto;
 import com.example.demo.dto.RoomDto;
 import com.example.demo.dto.SoDto;
@@ -42,4 +43,7 @@ import jakarta.servlet.http.HttpSession;
 	String noticeWriteOk(NoticeDto ndto);
 	String noticeContentDeleteOk(int noticeid);
 	String noticeContentReviveOk(int noticeid);
+	String qnaAnswer(Model model, HttpServletRequest request);
+	String qnaContent(int personalInquiryid, Model model);
+	String qnaAnswerOk(int personalInquiryid);
 }

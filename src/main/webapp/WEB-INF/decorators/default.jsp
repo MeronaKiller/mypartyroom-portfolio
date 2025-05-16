@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title><sitemesh:write property="title"/></title>
 <style>
 	@font-face {
 	    font-family: 'LINESeedKR-Light'; /* Light 버전 */
@@ -302,7 +302,7 @@
        </c:if>
        </div>
        
-       
+       <sitemesh:write property="head" excludeTags="title"/>
     </header> <!-- 헤더 끝 -->
 </div>
     <sitemesh:write property="body"/>

@@ -120,4 +120,29 @@
 	  SET state = 0
 	  WHERE noticeid = #{noticeid}
 	</update>
+	<!-- 문의 목록 가져오기 -->
+	<select id="getPersonalInquiryList" resultType="com.example.demo.dto.PersonalInquiryDto">
+	    SELECT * FROM personalinquiry
+	    ORDER BY personalInquiryid DESC
+	    LIMIT #{index}, 20
+	</select>
+	
+	<!-- 문의 상세 정보 가져오기 -->
+	<select id="getPersonalInquiry" parameterType="int" resultType="com.example.demo.dto.PersonalInquiryDto">
+	    SELECT * FROM personalinquiry
+	    WHERE personalInquiryid = #{personalInquiryid}
+	</select>
+	
+	<!-- 문의 답변 등록 및 상태 업데이트 -->
+	<update id="qnaAnswerOk" parameterType="com.example.demo.dto.PersonalInquiryDto">
+	    UPDATE personalinquiry
+	    SET state = 1, 
+	        answerwriteday = NOW()
+	    WHERE personalInquiryid = #{personalInquiryid}
+	</update>
+	
+	<!-- 문의 총 개수 가져오기 -->
+	<select id="qnaGetChong" resultType="Integer">
+	    SELECT CEIL(count(personalInquiryid)/20) FROM personalinquiry
+	</select>
 </mapper>

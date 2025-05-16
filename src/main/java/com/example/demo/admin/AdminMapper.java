@@ -8,6 +8,7 @@ import com.example.demo.dto.AdminDto;
 import com.example.demo.dto.DaeDto;
 import com.example.demo.dto.MemberDto;
 import com.example.demo.dto.NoticeDto;
+import com.example.demo.dto.PersonalInquiryDto;
 import com.example.demo.dto.ReservationDto;
 import com.example.demo.dto.RoomDto;
 import com.example.demo.dto.SoDto;
@@ -34,9 +35,13 @@ public interface AdminMapper {
 	public void roomDeleteOk(int roomid, int duration_type);
 	public void roomReviveOk(int roomid, int duration_type);
 	int noticeGetChong();
-	ArrayList<NoticeDto> noticeManage(int index);
-	NoticeDto getNoticeContentManage(int noticeid);
+	public ArrayList<NoticeDto> noticeManage(int index);
+	public NoticeDto getNoticeContentManage(int noticeid);
 	public void noticeWriteOk(NoticeDto ndto);
 	public void noticeContentDeleteOk(int noticeid, int i);
 	public void noticeContentReviveOk(int noticeid, int i);
+	public ArrayList<PersonalInquiryDto> getPersonalInquiryList(int index);
+	public PersonalInquiryDto getPersonalInquiry(int personalInquiryid);
+	int qnaGetChong();
+	public void qnaAnswerOk(int personalInquiryid, int i);
 }

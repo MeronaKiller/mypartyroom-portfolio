@@ -20,7 +20,7 @@
 
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-<title>Insert title here</title>
+<title>룸 예약하기</title>
 <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=mx8e1c4689"></script>
     
     
@@ -1019,6 +1019,25 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 	</script>
+	<script>
+		function validateForm() {
+		    var selectedDate = document.getElementById('selectedDate').value;
+		    var startTime = document.getElementById('startTime').value;
+		    var endTime = document.getElementById('endTime').value;
+		    
+		    if (!selectedDate || selectedDate.trim() === '') {
+		        alert('날짜를 선택해주세요.');
+		        return false;
+		    }
+		    
+		    if (!startTime || !endTime) {
+		        alert('시간을 선택해주세요.');
+		        return false;
+		    }
+		    
+		    return true;
+		}
+	</script>
 </head>
 <body>
 	<!-- 오류 메시지가 있으면 표시 -->
@@ -1486,7 +1505,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <div id="timeDiv" style="display: block;">
     <div id="calendar"></div>
     <div id="timeContainer" class="time-container"></div>
-	<form action="roomReserv" method="get">
+	<form action="roomReserv" method="get" onsubmit="return validateForm()">
 		<input type="hidden" id="selectedDate" name="selectedDate">
 	    <input type="hidden" id="startTime" name="startTime">
 	    <input type="hidden" id="endTime" name="endTime">

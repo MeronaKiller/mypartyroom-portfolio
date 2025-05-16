@@ -6,6 +6,12 @@
 <meta charset="UTF-8">
 <title>공지사항(관리자모드)</title>
 <style>
+    body {
+        font-family: 'Malgun Gothic', sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 20px;
+    }
     table {
         border-collapse: collapse;
         text-align: center;
@@ -126,10 +132,32 @@
     .delete-btn:hover {
         background-color: #cc3333;
     }
+    .error-message {
+        color: red;
+        font-weight: bold;
+        text-align: center;
+        padding: 20px;
+        background-color: #ffe6e6;
+        border: 1px solid #ff9999;
+        border-radius: 5px;
+        margin: 50px auto;
+        max-width: 500px;
+    }
 </style>
 </head>
 <body id="nl-body">
-
+<!-- 관리자 확인 -->
+<c:if test="${admin_userid ne 'pkc'}">
+    <div class="error-message">
+        잘못된 접근입니다. 관리자 로그인이 필요합니다.
+        <script>
+            setTimeout(function() {
+                window.location.href = "/admin/adminLogin";
+            }, 3000); // 3초 후 로그인 페이지로 이동
+        </script>
+    </div>
+</c:if>
+<c:if test="${admin_userid eq 'pkc'}">
 <h1>공지사항(관리자모드)</h1>
 
 <!-- 버튼 컨테이너 추가 -->
@@ -141,10 +169,10 @@
 <table>
     <tr class="table-header">
         <td width="8%">번호</td>
-		<td width="50%">제목</td>
-		<td width="12%">작성자</td>
-		<td width="20%">작성일</td>
-		<td width="10%">삭제여부</td>
+        <td width="50%">제목</td>
+        <td width="12%">작성자</td>
+        <td width="20%">작성일</td>
+        <td width="10%">삭제여부</td>
     </tr>
     
     <c:forEach var="notice" items="${nlist}">
@@ -159,12 +187,12 @@
             <td>${notice.writeday}</td>
             <td>
             
-			<c:if test="${notice.state==1}">
-			  <span class="deleted-status">삭제됨</span>
-			</c:if>
-			<c:if test="${notice.state==0}">
-			  <span><a href="/admin/noticeContentDeleteOk?noticeid=${notice.noticeid}" class="delete-btn">삭제</a></span>
-			</c:if>
+            <c:if test="${notice.state==1}">
+              <span class="deleted-status">삭제됨</span>
+            </c:if>
+            <c:if test="${notice.state==0}">
+              <span><a href="/admin/noticeContentDeleteOk?noticeid=${notice.noticeid}" class="delete-btn">삭제</a></span>
+            </c:if>
             
             </td>
         </tr>
@@ -219,6 +247,6 @@
         </td>
     </tr>
 </table>
-
+</c:if>
 </body>
 </html>

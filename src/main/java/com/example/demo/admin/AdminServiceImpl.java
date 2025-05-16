@@ -23,6 +23,7 @@ import com.example.demo.dto.AdminDto;
 import com.example.demo.dto.DaeDto;
 import com.example.demo.dto.MemberDto;
 import com.example.demo.dto.NoticeDto;
+import com.example.demo.dto.PersonalInquiryDto;
 import com.example.demo.dto.ReservationDto;
 import com.example.demo.dto.RoomDto;
 import com.example.demo.dto.SoDto;
@@ -310,5 +311,53 @@ public class AdminServiceImpl implements AdminService {
 	{
 		mapper.noticeContentReviveOk(noticeid, 0);//0이 복구
 		return "redirect:/admin/noticeManage";
+	}
+	@Override
+	public String qnaAnswer(Model model, HttpServletRequest request) {
+	    // 시작페이지 인덱스값 구하기
+	    int page;
+	    if(request.getParameter("page")==null) {
+	        page=1;
+	    } else {
+	        page=Integer.parseInt(request.getParameter("page"));
+	    }
+	    
+	    int pstart, pend, qnaGetChong;
+	    
+	    pstart=page/10;
+	    if(page%10==0)
+	        pstart=pstart-1;
+	    
+	    pstart=(pstart*10)+1;
+	    pend=pstart+9;
+	    
+	    qnaGetChong=mapper.qnaGetChong();
+	    if(pend>qnaGetChong)
+	        pend=qnaGetChong;
+	    
+	    int index=(page-1)*20;
+	    ArrayList<PersonalInquiryDto> qlist=mapper.getPersonalInquiryList(index);
+	    
+	    model.addAttribute("qlist", qlist);
+	    model.addAttribute("page", page);
+	    model.addAttribute("pstart", pstart);
+	    model.addAttribute("pend", pend);
+	    model.addAttribute("qnaGetChong", qnaGetChong);
+	    
+	    return "/admin/qnaAnswer";
+	}
+
+	@Override
+	public String qnaContent(int personalInquiryid, Model model) {
+	    PersonalInquiryDto qdto = mapper.getPersonalInquiry(personalInquiryid);
+	    model.addAttribute("qdto", qdto);
+	    return "/admin/qnaContent";
+	}
+
+	@Override
+	public String qnaAnswerOk(int personalInquiryid)
+	{
+		mapper.qnaAnswerOk(personalInquiryid, 1);//1이 답변완료
+		return "redirect:/admin/qnaAnswer";
 	}
 }

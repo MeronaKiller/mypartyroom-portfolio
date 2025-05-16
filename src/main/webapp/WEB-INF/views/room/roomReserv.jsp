@@ -10,7 +10,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>룸 예약하기</title>
 
 <!-- 패키지 정보 파싱 -->
 <c:set var="selectedPackage" value="${param.selectedPackage}" />

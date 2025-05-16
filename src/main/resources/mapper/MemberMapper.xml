@@ -73,8 +73,8 @@
   </select>
   
 	<insert id="personalInquiryOk" parameterType="com.example.demo.dto.PersonalInquiryDto"> <!-- 회원이 문의를 보낼때 -->
-		INSERT INTO personalInquiry(userid,title,content,writeday,category)
-		VALUES(#{userid},#{title},#{content},now(),#{category})
+		INSERT INTO personalInquiry(userid,title,content,writeday,category,email)
+		VALUES(#{userid},#{title},#{content},now(),#{category},#{email})
 	</insert>
   	
 		

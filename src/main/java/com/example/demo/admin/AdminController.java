@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.example.demo.dto.AdminDto;
 import com.example.demo.dto.MemberDto;
 import com.example.demo.dto.NoticeDto;
+import com.example.demo.dto.PersonalInquiryDto;
 import com.example.demo.dto.ReservationDto;
 import com.example.demo.dto.RoomDto;
 import com.example.demo.dto.SoDto;
@@ -77,11 +78,6 @@ public class AdminController {
 	public String roomManage()
 	{
 		return "/admin/roomManage";
-	}
-	@GetMapping("/admin/qnaAnswer")
-	public String qnaAnswer()
-	{
-		return "/admin/qnaAnswer";
 	}
 	@GetMapping("/admin/adminLoginHistory")
 	public String adminLoginHistory()
@@ -192,5 +188,22 @@ public class AdminController {
 	{
 		int noticeid = Integer.parseInt(request.getParameter("noticeid"));
 		return service.noticeContentReviveOk(noticeid);
+	}
+	@GetMapping("/admin/qnaAnswer")
+	public String qnaAnswer(Model model, HttpServletRequest request) {
+	    return service.qnaAnswer(model, request);
+	}
+
+	@GetMapping("/admin/qnaContent")
+	public String qnaContent(HttpServletRequest request, Model model) {
+	    int personalInquiryid = Integer.parseInt(request.getParameter("personalInquiryid"));
+	    return service.qnaContent(personalInquiryid, model);
+	}
+
+	@GetMapping("/admin/qnaAnswerOk")
+	public String qnaAnswerOk(HttpServletRequest request)
+	{
+		int personalInquiryid = Integer.parseInt(request.getParameter("personalInquiryid"));
+		return service.qnaAnswerOk(personalInquiryid);
 	}
 }

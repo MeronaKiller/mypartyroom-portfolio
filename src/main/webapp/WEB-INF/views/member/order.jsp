@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>예약내역</title>
 <script>
 function handleCancelRequest(reservationId, currentStatus) {
   // 현재 상태를 기반으로 링크 텍스트와 확인 메시지 설정
