@@ -354,6 +354,11 @@
     text-align: right;
     margin: 15px 0;
   }
+  /* 기존 CSS에 추가 */
+	.pay:nth-child(n+3)
+	{
+	    display: none;
+	}
 </style>
 <script>
 	function wordlen(my)

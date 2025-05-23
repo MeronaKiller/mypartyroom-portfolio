@@ -14,34 +14,33 @@
 		VALUES(#{userid},#{name},#{pwd},#{email},#{phone},now(),now())
 	</insert>
 	
-	  <select id="order" resultType="HashMap">
-  	SELECT
-  	rs.writeday,
-  	rs.startTime,
-  	rs.endTime,
-  	rs.review,
-  	rs.reservationid,
-  	rs.status,
-  	rs.card1,
-  	rs.halbu1,
-  	rs.bank1,
-  	rs.card2,
-  	r.pic,
-  	r.name,
-  	r.rcode,
-  	r.name
-  	FROM room AS r
-  	INNER JOIN
-  	reservation AS rs ON r.rcode=rs.rcode
-  	<if test="month != 0">
-  	<![CDATA[
-  	AND
-  	rs.writeday >=#{start}
-  	AND
-  	rs.writeday <= #{end}
-  	]]>
-  	</if>
-  </select>
+	<select id="order" resultType="HashMap">
+	    SELECT
+	        rs.writeday,
+	        rs.startTime,
+	        rs.endTime,
+	        rs.review,
+	        rs.reservationid,
+	        rs.status,
+	        rs.card1,
+	        rs.halbu1,
+	        rs.bank1,
+	        rs.card2,
+	        r.pic,
+	        r.rcode,
+	        r.name
+	    FROM room AS r
+	    INNER JOIN reservation AS rs ON r.rcode = rs.rcode
+	    <where>
+	        <if test="month != null and month != 0">
+	            <![CDATA[
+	            rs.writeday >= #{start}
+	            AND rs.writeday <= #{end}
+	            ]]>
+	        </if>
+	    </where>
+	    ORDER BY rs.reservationid DESC
+	</select>
   
 	<update id="updateReservationStatus" parameterType="com.example.demo.dto.ReservationDto"><!-- 취소신청했을때 -->
 	  UPDATE reservation

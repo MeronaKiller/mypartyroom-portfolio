@@ -194,7 +194,7 @@
             </tr>
             <tr>
                 <td class="label-col">예약공간</td>
-                <td>${rsdto.name}</td>
+                <td>${rdto.name}</td>
             </tr>
             <tr>
                 <td class="label-col">예약내용</td>

@@ -8,6 +8,7 @@ import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
 import com.example.demo.dto.MemberDto;
@@ -155,6 +156,7 @@ public class RoomServiceImpl implements RoomService {
 	}
 	
 	@Override
+	@Transactional  // 트랜잭션 처리 추가
 	public String reservOk(ReservationDto rsdto, HttpSession session) {
 	    if(session.getAttribute("userid") == null) {
 	        return "redirect:/login/login";
@@ -170,6 +172,7 @@ public class RoomServiceImpl implements RoomService {
 	        rsdto.setJumuncode(jumuncode);
 	        
 	        String[] rcodes = rsdto.getRcode().split("/");
+	        boolean allReservationsSuccessful = true;
 	        
 	        for(int i = 0; i < rcodes.length; i++) {
 	            rsdto.setRcode(rcodes[i]);
@@ -177,7 +180,6 @@ public class RoomServiceImpl implements RoomService {
 	            // 패키지 정보가 있는 경우 처리
 	            if(rsdto.getSelectedPackage() != null && !rsdto.getSelectedPackage().isEmpty()) {
 	                // 패키지 정보를 데이터베이스에 저장하거나 다른 처리를 수행
-	                // 예: rsdto.setPackageInfo(rsdto.getSelectedPackage());
 	            }
 	            
 	            String fullStartTime = rsdto.getSelectedDate() + " " + rsdto.getStartTime();
@@ -186,9 +188,31 @@ public class RoomServiceImpl implements RoomService {
 	            rsdto.setStartTime(fullStartTime);
 	            rsdto.setEndTime(fullEndTime);
 	            
-	            mapper.reservOk(rsdto);
+	            // 원자적 연산을 통한 동시성 제어
+	            boolean isAvailable = mapper.isTimeSlotAvailable(rsdto.getRcode(), rsdto.getStartTime(), rsdto.getEndTime());
+	            
+	            if(isAvailable) {
+	                // 예약 시간이 가능하면 예약 진행
+	                int result = mapper.insertReservationWithCheck(rsdto);
+	                
+	                if(result == 0) {
+	                    // 동시 접근으로 인해 예약 삽입에 실패한 경우
+	                    allReservationsSuccessful = false;
+	                    break;
+	                }
+	            } else {
+	                // 이미 예약된 시간대
+	                allReservationsSuccessful = false;
+	                break;
+	            }
 	        }
-	        return "redirect:/room/reservList?jumuncode=" + jumuncode;
+	        
+	        if(allReservationsSuccessful) {
+	            return "redirect:/room/reservList?jumuncode=" + jumuncode;
+	        } else {
+	            // 예약 실패 시 에러 페이지로 리다이렉트
+	            return "redirect:/room/reservFailure";
+	        }
 	    }
 	}
 	@Override

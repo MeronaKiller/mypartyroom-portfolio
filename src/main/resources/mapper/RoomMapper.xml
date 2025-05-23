@@ -122,6 +122,45 @@
     WHERE r.userid = #{userid} 
     ORDER BY r.writeday DESC
 </select>
+
+
+<!-- 동시성 낙관적락 -->
+<!-- 시간대 충돌 확인 쿼리 -->
+<select id="isTimeSlotAvailable" resultType="boolean">
+    SELECT COUNT(*) = 0
+    FROM reservation
+    WHERE rcode = #{rcode}
+    AND (
+        (startTime &lt;= #{endTime} AND endTime &gt;= #{startTime})
+    )
+</select>
+
+<!-- 원자적 예약 삽입 쿼리 - 조건부 INSERT -->
+<insert id="insertReservationWithCheck">
+    INSERT INTO reservation(startTime, endTime, rcode, userid, card1, tel, 
+    halbu1, bank1, card2, bank2, jumuncode, writeday, purposeuse, requesttohost, reservprice)
+    SELECT #{rsdto.startTime}, #{rsdto.endTime}, #{rsdto.rcode}, #{rsdto.userid}, #{rsdto.card1}, #{rsdto.tel}, #{rsdto.halbu1},
+    #{rsdto.bank1}, #{rsdto.card2}, #{rsdto.bank2}, #{rsdto.jumuncode}, now(), #{rsdto.purposeuse}, #{rsdto.requesttohost}, #{rsdto.reservprice}
+    FROM dual
+    WHERE NOT EXISTS (
+        SELECT 1 FROM reservation 
+        WHERE rcode = #{rsdto.rcode}
+        AND (startTime &lt;= #{rsdto.endTime} AND endTime &gt;= #{rsdto.startTime})
+    )
+</insert>
+
+<!-- 예약 버전 조회 (낙관적 락 구현 시) -->
+<select id="getReservationVersion" resultType="int">
+    SELECT IFNULL(MAX(version), 0) FROM reservation_version WHERE rcode = #{rcode}
+</select>
+
+<!-- 낙관적 락을 이용한 업데이트 -->
+<update id="updateReservationWithVersion">
+    UPDATE reservation_version
+    SET version = version + 1
+    WHERE rcode = #{rsdto.rcode} AND version = #{version}
+</update>
+
 </mapper>
 
 

@@ -154,4 +154,9 @@ public class RoomController {
         return "redirect:/room/roomContent?rcode=" + service.getRcodeByroomid(roomid);
     }
     
+    @GetMapping("/room/reservFailure")
+	    public String reservFailure() {
+	        return "/room/reservFailure";
+	    }
+    
 }

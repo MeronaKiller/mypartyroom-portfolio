@@ -31,4 +31,15 @@ public interface RoomMapper {
 	void increaseRoomLike(int roomid);
 	void decreaseRoomLike(int roomid);
 	String getRcodeByroomid(int roomid);
+	
+	
+	
+	boolean isTimeSlotAvailable(@Param("rcode") String rcode, 
+	                           @Param("startTime") String startTime, 
+	                           @Param("endTime") String endTime);
+
+	int insertReservationWithCheck(@Param("rsdto") ReservationDto rsdto);
+
+	int getReservationVersion(String rcode);
+	boolean updateReservationWithVersion(@Param("rsdto") ReservationDto rsdto, @Param("version") int version);
 }
