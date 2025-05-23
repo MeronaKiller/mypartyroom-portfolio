@@ -1,5 +1,9 @@
 package com.example.demo.room;
 
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,27 +18,31 @@ public class ReservationQueueService {
     private RedisTemplate<String, Object> redisTemplate;
     
     @Autowired
-    private RoomMapper mapper; // 데이터베이스 작업을 위해 추가
+    private RoomMapper mapper;
     
+    private static final String QUEUE_KEY = "reservation_queue";
+    
+    // 큐에 예약 추가
     public void addToQueue(ReservationDto rdto) {
-        redisTemplate.opsForList().rightPush("reservation_queue", rdto);
+        redisTemplate.opsForList().rightPush(QUEUE_KEY, rdto);
+        System.out.println("큐에 추가됨: " + rdto.getJumuncode());
     }
 
-    @Scheduled(fixedDelay = 1000) // 1초마다 실행
+    // 1초마다 큐 처리
+    @Scheduled(fixedDelay = 1000)
     public void processQueue() {
         ReservationDto rdto = (ReservationDto) redisTemplate
-            .opsForList().leftPop("reservation_queue");
+            .opsForList().leftPop(QUEUE_KEY);
 
         if (rdto != null) {
-            // 예약 처리 로직
+            System.out.println("큐에서 처리 시작: " + rdto.getJumuncode());
             processReservation(rdto);
         }
     }
     
-    // processReservation 메서드 추가
     private void processReservation(ReservationDto rdto) {
         try {
-            // 시간대 가능 여부 확인
+            // 시간대 중복 확인
             boolean isAvailable = mapper.isTimeSlotAvailable(
                 rdto.getRcode(), 
                 rdto.getStartTime(), 
@@ -42,20 +50,15 @@ public class ReservationQueueService {
             );
             
             if (isAvailable) {
-                // 예약 삽입 시도
-                int result = mapper.insertReservationWithCheck(rdto);
-                
-                if (result > 0) {
-                    System.out.println("예약 성공: " + rdto.getJumuncode());
-                } else {
-                    System.out.println("예약 실패 (동시성): " + rdto.getJumuncode());
-                }
+                // 예약 삽입
+                mapper.reservOk(rdto); // insertReservationWithCheck 대신 기존 메서드 사용
+                System.out.println("예약 성공: " + rdto.getJumuncode());
             } else {
                 System.out.println("예약 실패 (시간 충돌): " + rdto.getJumuncode());
             }
         } catch (Exception e) {
             System.err.println("예약 처리 중 오류: " + e.getMessage());
-            // 실패한 예약을 다시 큐에 넣거나 별도 처리
+            e.printStackTrace();
         }
     }
 }

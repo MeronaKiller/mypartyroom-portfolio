@@ -5,8 +5,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
+@EnableScheduling
+
 public class MypartyroomApplication {
 
 	public static void main(String[] args) {
@@ -19,4 +22,7 @@ public class MypartyroomApplication {
 	    filterRegistrationBean.addUrlPatterns("/*"); // 모든 URL 패턴에 적용
 	    return filterRegistrationBean;
 	}
+	
+	
+	
 }

@@ -155,66 +155,45 @@ public class RoomServiceImpl implements RoomService {
 	    return "/room/roomReserv";
 	}
 	
+	@Autowired
+	private ReservationQueueService queueService;
+
 	@Override
-	@Transactional  // 트랜잭션 처리 추가
+	@Transactional
 	public String reservOk(ReservationDto rsdto, HttpSession session) {
 	    if(session.getAttribute("userid") == null) {
 	        return "redirect:/login/login";
-	    } else {
-	        String userid = session.getAttribute("userid").toString();
-	        rsdto.setUserid(userid);
-	        
-	        // 주문코드 만들기
-	        String today = LocalDate.now().toString().replace("-", "");
-	        String jumuncode = "j" + today;
-	        int num = mapper.getNumber(jumuncode);
-	        jumuncode = jumuncode + String.format("%03d", num);
-	        rsdto.setJumuncode(jumuncode);
-	        
-	        String[] rcodes = rsdto.getRcode().split("/");
-	        boolean allReservationsSuccessful = true;
-	        
-	        for(int i = 0; i < rcodes.length; i++) {
-	            rsdto.setRcode(rcodes[i]);
-	            
-	            // 패키지 정보가 있는 경우 처리
-	            if(rsdto.getSelectedPackage() != null && !rsdto.getSelectedPackage().isEmpty()) {
-	                // 패키지 정보를 데이터베이스에 저장하거나 다른 처리를 수행
-	            }
-	            
-	            String fullStartTime = rsdto.getSelectedDate() + " " + rsdto.getStartTime();
-	            String fullEndTime = rsdto.getSelectedDate() + " " + rsdto.getEndTime();
-	            
-	            rsdto.setStartTime(fullStartTime);
-	            rsdto.setEndTime(fullEndTime);
-	            
-	            // 원자적 연산을 통한 동시성 제어
-	            boolean isAvailable = mapper.isTimeSlotAvailable(rsdto.getRcode(), rsdto.getStartTime(), rsdto.getEndTime());
-	            
-	            if(isAvailable) {
-	                // 예약 시간이 가능하면 예약 진행
-	                int result = mapper.insertReservationWithCheck(rsdto);
-	                
-	                if(result == 0) {
-	                    // 동시 접근으로 인해 예약 삽입에 실패한 경우
-	                    allReservationsSuccessful = false;
-	                    break;
-	                }
-	            } else {
-	                // 이미 예약된 시간대
-	                allReservationsSuccessful = false;
-	                break;
-	            }
-	        }
-	        
-	        if(allReservationsSuccessful) {
-	            return "redirect:/room/reservList?jumuncode=" + jumuncode;
-	        } else {
-	            // 예약 실패 시 에러 페이지로 리다이렉트
-	            return "redirect:/room/reservFailure";
-	        }
 	    }
+	    
+	    String userid = session.getAttribute("userid").toString();
+	    rsdto.setUserid(userid);
+	    
+	    // 주문코드 생성
+	    String today = LocalDate.now().toString().replace("-", "");
+	    String jumuncode = "j" + today;
+	    int num = mapper.getNumber(jumuncode);
+	    jumuncode = jumuncode + String.format("%03d", num);
+	    rsdto.setJumuncode(jumuncode);
+	    
+	    String[] rcodes = rsdto.getRcode().split("/");
+	    
+	    for(int i = 0; i < rcodes.length; i++) {
+	        rsdto.setRcode(rcodes[i]);
+	        
+	        String fullStartTime = rsdto.getSelectedDate() + " " + rsdto.getStartTime();
+	        String fullEndTime = rsdto.getSelectedDate() + " " + rsdto.getEndTime();
+	        
+	        rsdto.setStartTime(fullStartTime);
+	        rsdto.setEndTime(fullEndTime);
+	        
+	        // 큐에 추가하여 비동기 처리
+	        queueService.addToQueue(rsdto);
+	    }
+	    
+	    // 바로 성공 페이지로 이동 (실제 처리는 백그라운드에서)
+	    return "redirect:/room/reservList?jumuncode=" + jumuncode;
 	}
+	
 	@Override
 	public String reservList(HttpSession session, HttpServletRequest request,Model model,MemberDto mdto, ReservationDto rsdto, RoomDto rdto)
 	{
