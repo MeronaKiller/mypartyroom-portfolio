@@ -637,31 +637,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const times = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0') + ':00');
 
-    // 패키지 예약 시간과 겹치는지 확인해서 비활성화
-    function disablePackage(reservedStart, reservedEnd) {
-        var pkgItems = document.querySelectorAll('#packageResults .pkgConCss');
-        
-        pkgItems.forEach(function(item) {
-            var pkgText = item.textContent;
-            var startMatch = pkgText.match(/(\d+)시~/);
-            var endMatch = pkgText.match(/~(\d+)시/);
-            
-            if(startMatch && endMatch) {
-                var pkgStart = parseInt(startMatch[1]);
-                var pkgEnd = parseInt(endMatch[1]);
-                
-                var isOverlap = (pkgStart < reservedEnd && pkgEnd > reservedStart);
-                
-                if(isOverlap) {
-                    item.classList.add('disabled');
-                    item.style.backgroundColor = '#ddd';
-                    item.style.color = '#888';
-                    item.style.cursor = 'not-allowed';
-                    item.onclick = null;
-                }
-            }
-        });
-    }
 
     // 시간대 렌더링 함수
     function renderTimeSlots(selectedDateStr) {
@@ -768,141 +743,6 @@ document.addEventListener("DOMContentLoaded", function () {
         selectedEndTime = null;
     }
 
-    function renderPackageInfo(selectedDate) {
-        // AJAX 요청을 통해 해당 날짜의 예약 정보 가져오기
-        var chk = new XMLHttpRequest();
-        chk.onload = function() {
-            var reservationData = JSON.parse(chk.responseText);
-            var reservedTimes = [];
-            
-            // 일반 예약 및 패키지 예약 시간 수집
-            if(reservationData.timeReservations) {
-                for(var dto of reservationData.timeReservations) {
-                    reservedTimes.push({
-                        start: parseInt(dto.startTime.split(':')[0]), // 시간 부분만 추출하여 숫자로 변환
-                        end: parseInt(dto.endTime.split(':')[0])
-                    });
-                }
-            }
-            
-            if(reservationData.packageReservations) {
-                for(var pkg of reservationData.packageReservations) {
-                    reservedTimes.push({
-                        start: parseInt(pkg.startTime.split(':')[0]), // 시간 부분만 추출하여 숫자로 변환
-                        end: parseInt(pkg.endTime.split(':')[0])
-                    });
-                }
-            }
-            
-            // 디버깅용 로그 추가
-            console.log("예약된 시간:", reservedTimes);
-            
-            // 패키지 정보 불러오기
-            var pkgname = '${rdto.pkgname}';
-            var pkgprice = '${rdto.pkgprice}';
-            var pkgstart = '${rdto.pkgstart}';
-            var pkgend = '${rdto.pkgend}';
-            
-            console.log("패키지 정보:", pkgname, pkgprice, pkgstart, pkgend);
-            
-            if(pkgname && pkgstart && pkgend) {
-                var names = pkgname.split(',');
-                var prices = pkgprice.split(',');
-                var starts = pkgstart.split(',');
-                var ends = pkgend.split(',');
-                
-                var results = [];
-                var minLength = Math.min(names.length, prices.length, starts.length, ends.length);
-                
-                var pkgResultsElement = document.getElementById('packageResults');
-                if(!pkgResultsElement) {
-                    pkgResultsElement = document.createElement('div');
-                    pkgResultsElement.id = 'packageResults';
-                    document.getElementById('pkgtimeDiv').appendChild(pkgResultsElement);
-                }
-                
-                pkgResultsElement.innerHTML = '';
-                
-                for(var i = 0; i < minLength; i++) {
-                    // 콤마 사이에 빈값 체크
-                    if(names[i] && names[i].trim() !== '' &&
-                       starts[i] && starts[i].trim() !== '' &&
-                       ends[i] && ends[i].trim() !== '') {
-                        
-                        var price = (prices[i] && prices[i].trim() !== '') ? prices[i] : '가격 정보 없음';
-                        
-                        var item = {
-                            name: names[i].trim(),
-                            price: price,
-                            start: parseInt(starts[i].trim()),
-                            end: parseInt(ends[i].trim())
-                        };
-                        
-                        results.push(item);
-                        
-                        var isDisabled = false;
-                        
-                        // 예약된 시간과 겹치는지 확인 (수정된 로직)
-                        for(var j = 0; j < reservedTimes.length; j++) {
-                            var reserved = reservedTimes[j];
-                            // 겹치는 경우 확인: 하나의 시작이 다른 하나의 끝보다 앞에 있고, 하나의 끝이 다른 하나의 시작보다 뒤에 있으면 겹침
-                            if((item.start < reserved.end) && (item.end > reserved.start)) {
-                                console.log("패키지 겹침 발견:", item.name, item.start, item.end, "예약:", reserved.start, reserved.end);
-                                isDisabled = true;
-                                break;
-                            }
-                        }
-                        
-                        var pkgDiv = document.createElement('div');
-                        pkgDiv.className = 'pkgConCss' + (isDisabled ? ' disabled' : '');
-                        pkgDiv.textContent = '패키지 ' + (i+1) + ': ' + names[i] + ', ' + price + '원, ' + starts[i] + '시~' + ends[i] + '시';
-                        
-                        if(isDisabled) {
-                            pkgDiv.style.backgroundColor = '#ddd';
-                            pkgDiv.style.color = '#888';
-                            pkgDiv.style.cursor = 'not-allowed';
-                        } else {
-                            pkgDiv.setAttribute('data-name', names[i]);
-                            pkgDiv.setAttribute('data-price', price);
-                            pkgDiv.setAttribute('data-start', starts[i]);
-                            pkgDiv.setAttribute('data-end', ends[i]);
-                            
-                            pkgDiv.addEventListener('click', function() {
-                                // 이미 선택된 패키지가 있으면 선택 해제
-                                document.querySelectorAll('.pkgConCss').forEach(pkg => {
-                                    pkg.classList.remove('selected');
-                                    pkg.style.border = '1px solid #ddd';
-                                });
-                                
-                                // 현재 클릭한 패키지 선택
-                                this.classList.add('selected');
-                                this.style.border = '2px solid #DDD';
-                                
-                                // 선택한 패키지 정보를 hidden input에 저장
-                                var pkgName = this.getAttribute('data-name');
-                                var pkgPrice = this.getAttribute('data-price');
-                                var pkgStart = this.getAttribute('data-start');
-                                var pkgEnd = this.getAttribute('data-end');
-                                
-                                document.getElementById('selectedPackage').value = pkgName + ',' + pkgPrice + ',' + pkgStart + ',' + pkgEnd;
-                                
-                                // 시간 정보도 폼에 저장 (예약하기 버튼 클릭 시 전송되도록)
-                                document.getElementById('pkgStartTime').value = pkgStart + ':00';
-                                document.getElementById('pkgEndTime').value = pkgEnd + ':00';
-                            });
-                        }
-                        
-                        pkgResultsElement.appendChild(pkgDiv);
-                    }
-                }
-            } else {
-                console.warn("패키지 정보가 비어있습니다:", pkgname, pkgprice, pkgstart, pkgend);
-            }
-        };
-        
-        chk.open("get", "getReservTime?ymd=" + selectedDate + "&rcode=${rdto.rcode}");
-        chk.send();
-    }
 
     // Flatpickr 설정 (공통)
     const flatpickrConfig = {
@@ -985,17 +825,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-    // 패키지 단위 예약용 Flatpickr
-    flatpickr("#pkgCalendar", {
-        ...flatpickrConfig,
-        onChange: function(selectedDates, dateStr) {
-            if(dateStr) {
-                // 패키지 예약 폼의 selectedDate 값 설정
-                document.getElementById('pkgSelectedDate').value = dateStr;
-                renderPackageInfo(dateStr);
-            }
-        }
-    });
 
     // 예약 방식 선택 이벤트
     timeDurationCheckbox.addEventListener('change', () => {

@@ -3,6 +3,7 @@ package com.example.demo.room;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -42,4 +43,6 @@ public interface RoomMapper {
 
 	int getReservationVersion(String rcode);
 	boolean updateReservationWithVersion(@Param("rsdto") ReservationDto rsdto, @Param("version") int version);
+	public int insertReservationBatch(List<ReservationDto> validReservations);
+	public Set<String> getReservationTimesByRcodeAndDate(String rcode, String date);
 }

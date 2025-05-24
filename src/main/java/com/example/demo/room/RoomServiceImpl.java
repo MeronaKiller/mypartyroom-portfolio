@@ -23,6 +23,9 @@ public class RoomServiceImpl implements RoomService {
 	@Autowired
 	private RoomMapper mapper;
 	
+	@Autowired
+	private ReservationQueueService reservationQueueService;
+	
 	@Override
 	public String roomInfo(HttpServletRequest request,Model model,RoomDto rdto)
 	{
@@ -109,19 +112,6 @@ public class RoomServiceImpl implements RoomService {
 	        double discountRate = halin / 100.0;
 	        int halinprice = (int) Math.round(price - (price * discountRate));
 	        
-	        // 패키지 정보가 있는 경우 가격 재계산
-	        String selectedPackage = request.getParameter("selectedPackage");
-	        if(selectedPackage != null && !selectedPackage.isEmpty()) {
-	            String[] packageParts = selectedPackage.split(",");
-	            if(packageParts.length >= 2) {
-	                try {
-	                    halinprice = Integer.parseInt(packageParts[1]);
-	                } catch (NumberFormatException e) {
-	                    // 가격 파싱 실패 시 기본 가격 유지
-	                }
-	            }
-	        }
-	        
 	        rdto.setHalinprice(halinprice);
 	        model.addAttribute("rdto", rdto);
 	        model.addAttribute("rcode", rcode);
@@ -147,24 +137,18 @@ public class RoomServiceImpl implements RoomService {
 	        model.addAttribute("startTime", formattedStartTime);
 	        model.addAttribute("endTime", formattedEndTime);
 	        
-	        // 패키지 정보 전달
-	        if(selectedPackage != null) {
-	            model.addAttribute("selectedPackage", selectedPackage);
-	        }
 	    }
 	    return "/room/roomReserv";
 	}
 	
-	@Autowired
-	private ReservationQueueService queueService;
-
 	@Override
 	@Transactional
 	public String reservOk(ReservationDto rsdto, HttpSession session) {
-	    if(session.getAttribute("userid") == null) {
+	    
+	    if(session.getAttribute("userid") == null) { 
 	        return "redirect:/login/login";
 	    }
-	    
+
 	    String userid = session.getAttribute("userid").toString();
 	    rsdto.setUserid(userid);
 	    
@@ -178,16 +162,34 @@ public class RoomServiceImpl implements RoomService {
 	    String[] rcodes = rsdto.getRcode().split("/");
 	    
 	    for(int i = 0; i < rcodes.length; i++) {
-	        rsdto.setRcode(rcodes[i]);
+	        // 새로운 객체 생성 (중요!)
+	        ReservationDto newReservation = new ReservationDto();
 	        
+	         //기존 데이터 복사
+	        newReservation.setUserid(userid);
+	        newReservation.setJumuncode(jumuncode);
+	        newReservation.setRcode(rcodes[i]); // 각각 다른 방 코드
+	        newReservation.setCard1(rsdto.getCard1());
+	        newReservation.setTel(rsdto.getTel());
+	        newReservation.setHalbu1(rsdto.getHalbu1());
+	        newReservation.setBank1(rsdto.getBank1());
+	        newReservation.setCard2(rsdto.getCard2());
+	        newReservation.setBank2(rsdto.getBank2());
+	        newReservation.setPurposeuse(rsdto.getPurposeuse());
+	        newReservation.setRequesttohost(rsdto.getRequesttohost());
+	        newReservation.setReservprice(rsdto.getReservprice());
+	        
+	        // 시간 설정
 	        String fullStartTime = rsdto.getSelectedDate() + " " + rsdto.getStartTime();
 	        String fullEndTime = rsdto.getSelectedDate() + " " + rsdto.getEndTime();
 	        
-	        rsdto.setStartTime(fullStartTime);
-	        rsdto.setEndTime(fullEndTime);
+	        newReservation.setStartTime(fullStartTime);
+	        newReservation.setEndTime(fullEndTime);
 	        
-	        // 큐에 추가하여 비동기 처리
-	        queueService.addToQueue(rsdto);
+	        // 큐에 추가 (기존 queueService.addToQueue => reservationQueueService.enqueue로 변경)
+	        reservationQueueService.enqueue(newReservation);
+	        
+	        System.out.println("큐에 추가됨: " + rcodes[i] + " | " + fullStartTime + "~" + fullEndTime);
 	    }
 	    
 	    // 바로 성공 페이지로 이동 (실제 처리는 백그라운드에서)
@@ -195,29 +197,47 @@ public class RoomServiceImpl implements RoomService {
 	}
 	
 	@Override
-	public String reservList(HttpSession session, HttpServletRequest request,Model model,MemberDto mdto, ReservationDto rsdto, RoomDto rdto)
-	{
-		if(session.getAttribute("userid")==null)
-		{
-			return "redirect:/login/login";
-		}
-		else
-		{	
-			String userid=session.getAttribute("userid").toString();
-			
-			
-	        ReservationDto reservationData = mapper.reservList(rsdto);
-	        model.addAttribute("rsdto", reservationData);
+	public String reservList(HttpSession session, HttpServletRequest request, Model model, MemberDto mdto, ReservationDto rsdto, RoomDto rdto) {
+	    if(session.getAttribute("userid") == null) {
+	        return "redirect:/login/login";
+	    } else {    
+	        System.out.println("🔍 reservList 실행됨");
+	        System.out.println("jumuncode: " + request.getParameter("jumuncode"));
+	        
+	        try {
+	            ReservationDto reservationData = mapper.reservList(rsdto);
+	            
+	            // null 체크 추가
+	            if (reservationData == null) {
+	                System.out.println("❌ reservationData가 null입니다.");
+	                System.out.println("전달받은 jumuncode: " + rsdto.getJumuncode());
+	                
+	                // 에러 페이지로 이동하거나 기본값 설정
+	                model.addAttribute("errorMessage", "예약 정보를 찾을 수 없습니다.");
+	                return "/room/reservFailure"; // 또는 다른 에러 페이지
+	            }
+	            
+	            System.out.println("✅ reservationData 조회 성공: " + reservationData.getRcode());
+	            
+	            model.addAttribute("rsdto", reservationData);
 
-	        String rcode = reservationData.getRcode(); 
+	            String rcode = reservationData.getRcode(); 
 
-	        RoomDto roomData = mapper.roomContent(rcode);
-	        model.addAttribute("rdto", roomData);
-	        model.addAttribute("rcode", rcode);
-	        model.addAttribute("mdto", mapper.getMember(userid));
-			return "/room/reservList";
-		}
+	            RoomDto roomData = mapper.roomContent(rcode);
+	            model.addAttribute("rdto", roomData);
+	            model.addAttribute("rcode", rcode);
+	            
+	            return "/room/reservList";
+	            
+	        } catch (Exception e) {
+	            System.err.println("reservList 에러: " + e.getMessage());
+	            e.printStackTrace();
+	            model.addAttribute("errorMessage", "예약 정보 조회 중 오류가 발생했습니다.");
+	            return "/room/reservFailure";
+	        }
+	    }
 	}
+	
 	@Override
 	public String reservChk(HttpSession session, HttpServletRequest request, Model model, MemberDto mdto, ReservationDto rsdto, RoomDto rdto) {
 	    if(session.getAttribute("userid")==null) {

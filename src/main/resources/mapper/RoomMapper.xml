@@ -43,9 +43,9 @@
    
 	<insert id="reservOk" parameterType="com.example.demo.dto.ReservationDto">
 	    INSERT INTO reservation(startTime,endTime,rcode,card1,tel,
-	    halbu1,bank1,card2,bank2,jumuncode,writeday,purposeuse,requesttohost,reservprice)
+	    halbu1,bank1,card2,bank2,jumuncode,writeday,purposeuse,requesttohost,reservprice,userid)
 	    VALUES (#{startTime},#{endTime},#{rcode},#{card1},#{tel},#{halbu1},
-	    #{bank1},#{card2},#{bank2},#{jumuncode},now(),#{purposeuse},#{requesttohost},#{reservprice})
+	    #{bank1},#{card2},#{bank2},#{jumuncode},now(),#{purposeuse},#{requesttohost},#{reservprice},#{userid})
 	</insert>
 
    
@@ -160,6 +160,23 @@
     SET version = version + 1
     WHERE rcode = #{rsdto.rcode} AND version = #{version}
 </update>
+
+<insert id="insertReservationBatch" parameterType="list">
+    INSERT IGNORE INTO reservation(startTime, endTime, rcode, userid, jumuncode, writeday, reservprice)
+    VALUES 
+    <foreach collection="list" item="item" separator=",">
+        (#{item.startTime}, #{item.endTime}, #{item.rcode}, 
+         #{item.userid}, #{item.jumuncode}, now(), #{item.reservprice})
+    </foreach>
+</insert>
+
+<select id="getReservationTimesByRcodeAndDate" resultType="string">
+    SELECT CONCAT(TIME(startTime), '~', TIME(endTime)) as timeSlot
+    FROM reservation 
+    WHERE rcode = #{rcode} 
+    AND DATE(startTime) = #{date}
+    ORDER BY startTime
+</select>
 
 </mapper>
 

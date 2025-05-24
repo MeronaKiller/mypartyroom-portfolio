@@ -12,41 +12,13 @@
 <meta charset="UTF-8">
 <title>룸 예약하기</title>
 
-<!-- 패키지 정보 파싱 -->
-<c:set var="selectedPackage" value="${param.selectedPackage}" />
-<c:set var="isPackage" value="${not empty selectedPackage}" />
 
-<c:choose>
-    <c:when test="${isPackage}">
-        <!-- 패키지 정보가 있는 경우 -->
-        <c:set var="packageParts" value="${fn:split(selectedPackage, ',')}" />
-        <c:set var="packageName" value="${packageParts[0]}" />
-        <c:set var="packagePrice" value="${packageParts[1]}" />
-        <c:set var="packageStartTime" value="${packageParts[2]}" />
-        <c:set var="packageEndTime" value="${packageParts[3]}" />
-        
-        <!-- 패키지 가격 설정 -->
-        <c:set var="chongprice" value="${packagePrice}" />
-        
-		<!-- 패키지 시간 계산 -->
-		<c:set var="startHour" value="${fn:substring(packageStartTime, 0, 2)}" />
-		<c:set var="endHour" value="${fn:substring(packageEndTime, 0, 2)}" />
-		<c:set var="startHourInt" value="${Integer.parseInt(startHour)}" />
-		<c:set var="endHourInt" value="${Integer.parseInt(endHour)}" />
-		<c:set var="duration" value="${endHourInt - startHourInt}" />
-		<c:if test="${duration < 0}">
-		    <c:set var="duration" value="${24 + duration}" /> <!-- 다음날로 넘어가는 경우 처리 -->
-		</c:if>
-    </c:when>
-    <c:otherwise>
-<!-- 일반 시간 예약인 경우 -->
+<!-- 일반 시간 예약 -->
 <c:set var="duration" value="${endTime - startTime}" />
 <c:if test="${duration < 0}">
     <c:set var="duration" value="${24 + duration}" /> <!-- 다음날로 넘어가는 경우 처리 -->
 </c:if>
 <c:set var="chongprice" value="${duration * rdto.halinprice}" />
-    </c:otherwise>
-</c:choose>
 
 <c:set var="hphone" value="${rdto.phone}" />
 
@@ -397,19 +369,7 @@
 </script>
 </head>
 <body>
-<c:set var="selectedPackage" value="${param.selectedPackage}" />
 
-<!-- 패키지 정보가 있는 경우 처리 -->
-<c:if test="${not empty selectedPackage}">
-    <c:set var="packageParts" value="${fn:split(selectedPackage, ',')}" />
-    <c:set var="packageName" value="${packageParts[0]}" />
-    <c:set var="packagePrice" value="${packageParts[1]}" />
-    <c:set var="packageStartTime" value="${packageParts[2]}" />
-    <c:set var="packageEndTime" value="${packageParts[3]}" />
-    
-    <!-- 패키지 정보를 hidden 필드로 추가 -->
-    <input type="hidden" name="selectedPackage" value="${selectedPackage}">
-</c:if>
 
 <form method="post" action="reservOk" onsubmit="return check()">
 <div id="rContainer_top">예약하기</div>
@@ -418,14 +378,7 @@
 <div>
 <div style="float: left;">예약 공간</div>
 <div style="float: right;">
-    <c:choose>
-        <c:when test="${not empty selectedPackage}">
-            <fmt:formatNumber value="${packagePrice}" type="number" pattern="#,###"/>원/패키지
-        </c:when>
-        <c:otherwise>
             <fmt:formatNumber value="${rdto.halinprice}" type="number" pattern="#,###"/>원/시간
-        </c:otherwise>
-    </c:choose>
 </div>
 </div>
 <div><!-- 회원 정보 -->

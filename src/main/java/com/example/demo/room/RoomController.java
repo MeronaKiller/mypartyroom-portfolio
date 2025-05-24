@@ -2,6 +2,7 @@ package com.example.demo.room;
 
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,6 +28,9 @@ public class RoomController {
 	@Autowired
 	@Qualifier("rs")
 	private RoomService service;
+	
+	@Autowired
+    private ReservationQueueService queueService;
 	
 	@GetMapping("/room/roomInfo")
 	public String roomInfo(HttpServletRequest request, Model model,RoomDto rdto)
@@ -158,5 +162,11 @@ public class RoomController {
 	    public String reservFailure() {
 	        return "/room/reservFailure";
 	    }
+
+    @GetMapping("/room/queueStats")
+    @ResponseBody
+    public Map<String, Object> getQueueStatistics() {
+        return queueService.getStatistics();
+    }
     
 }
