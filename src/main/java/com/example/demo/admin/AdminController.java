@@ -14,6 +14,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.example.demo.dto.AdminDto;
 import com.example.demo.dto.MemberDto;
+import com.example.demo.dto.NoticeDto;
+import com.example.demo.dto.PersonalInquiryDto;
 import com.example.demo.dto.ReservationDto;
 import com.example.demo.dto.RoomDto;
 import com.example.demo.dto.SoDto;
@@ -77,16 +79,6 @@ public class AdminController {
 	{
 		return "/admin/roomManage";
 	}
-	@GetMapping("/admin/noticeManage")
-	public String noticeManage()
-	{
-		return "/admin/noticeManage";
-	}
-	@GetMapping("/admin/qnaAnswer")
-	public String qnaAnswer()
-	{
-		return "/admin/qnaAnswer";
-	}
 	@GetMapping("/admin/adminLoginHistory")
 	public String adminLoginHistory()
 	{
@@ -132,5 +124,86 @@ public class AdminController {
 	{
 		int reservationId = Integer.parseInt(request.getParameter("reservationId"));
 		return service.conformCancleNo(reservationId);
+	}
+	@GetMapping("/admin/deleteUser")
+	public String deleteUser(HttpServletRequest request)
+	{
+		int memberid = Integer.parseInt(request.getParameter("memberid"));
+		return service.deleteUser(memberid);
+	}
+	@GetMapping("/admin/reviveUser")
+	public String reviveUser(HttpServletRequest request)
+	{
+		int memberid = Integer.parseInt(request.getParameter("memberid"));
+		return service.reviveUser(memberid);
+	}
+	@GetMapping("/admin/roomDelete")
+	public String roomDelete(RoomDto rdto,Model model)
+	{
+		return service.roomDelete(rdto,model);
+	}
+	@GetMapping("/admin/roomDeleteOk")
+	public String roomDeleteOk(HttpServletRequest request)
+	{
+		int roomid = Integer.parseInt(request.getParameter("roomid"));
+		return service.roomDeleteOk(roomid);
+	}
+	@GetMapping("/admin/roomReviveOk")
+	public String roomReviveOk(HttpServletRequest request)
+	{
+		int roomid = Integer.parseInt(request.getParameter("roomid"));
+		return service.roomReviveOk(roomid);
+	}
+	@GetMapping("/admin/noticeManage")
+	public String noticeManage(NoticeDto ndto,Model model,HttpServletRequest request)
+	{
+		return service.noticeManage(ndto,model,request);
+	}
+	@GetMapping("/admin/noticeContentManage")
+	public String noticeContent(NoticeDto ndto,Model model,HttpServletRequest request)
+	{
+		return service.noticeContentManage(ndto,model,request);
+	}
+	@GetMapping("/admin/noticeWrite")
+	public String noticeWrite(Model model)
+	{
+		return service.noticeWrite(model);
+	}
+	@PostMapping("/admin/noticeWriteOk")
+	public String noticeWriteOk(NoticeDto ndto, HttpSession session)
+	{
+	    String adminName = (String) session.getAttribute("admin_name");
+	    ndto.setAdmin_name(adminName);
+	    
+	    return service.noticeWriteOk(ndto);
+	}
+	@GetMapping("/admin/noticeContentDeleteOk")
+	public String noticeContentDeleteOk(HttpServletRequest request)
+	{
+		int noticeid = Integer.parseInt(request.getParameter("noticeid"));
+		return service.noticeContentDeleteOk(noticeid);
+	}
+	@GetMapping("/admin/roomContentReviveOk")
+	public String noticeReviveOk(HttpServletRequest request)
+	{
+		int noticeid = Integer.parseInt(request.getParameter("noticeid"));
+		return service.noticeContentReviveOk(noticeid);
+	}
+	@GetMapping("/admin/qnaAnswer")
+	public String qnaAnswer(Model model, HttpServletRequest request) {
+	    return service.qnaAnswer(model, request);
+	}
+
+	@GetMapping("/admin/qnaContent")
+	public String qnaContent(HttpServletRequest request, Model model) {
+	    int personalInquiryid = Integer.parseInt(request.getParameter("personalInquiryid"));
+	    return service.qnaContent(personalInquiryid, model);
+	}
+
+	@GetMapping("/admin/qnaAnswerOk")
+	public String qnaAnswerOk(HttpServletRequest request)
+	{
+		int personalInquiryid = Integer.parseInt(request.getParameter("personalInquiryid"));
+		return service.qnaAnswerOk(personalInquiryid);
 	}
 }

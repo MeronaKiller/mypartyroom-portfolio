@@ -6,10 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import com.example.demo.dto.MemberDto;
-import com.example.demo.dto.RoomDto;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @Service
@@ -24,6 +22,7 @@ public class LoginServiceImpl implements LoginService {
 		
 		String err=request.getParameter("err");
 		model.addAttribute("err",err);
+		model.addAttribute("mdto",mdto);
 		
 		
 		

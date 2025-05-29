@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>회원 관리</title>
+<title>파티룸 삭제</title>
 <style>
     body {
         font-family: 'Malgun Gothic', sans-serif;
@@ -21,7 +21,7 @@
         padding: 20px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
-    .header {
+    .page-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -29,7 +29,7 @@
         padding-bottom: 10px;
         border-bottom: 1px solid #ddd;
     }
-    h3 {
+    .page-title {
         font-size: 20px;
         font-weight: bold;
         margin: 0;
@@ -46,33 +46,33 @@
         background-color: #e0e0e0;
     }
     
-    /* 테이블 스타일 - 심플화 */
-    table {
+    /* 테이블 스타일 - 단순화 */
+    .room-table {
         width: 100%;
         border-collapse: collapse;
         margin-top: 10px;
         font-size: 14px;
     }
-    thead {
+    .room-table th {
         background-color: #f0f0f0;
-    }
-    th {
-        padding: 8px 6px;
-        font-weight: bold;
-        text-align: left;
         color: #333;
+        padding: 8px 6px;
+        text-align: center;
+        font-weight: bold;
         border-bottom: 2px solid #ddd;
     }
-    td {
+    .room-table td {
         padding: 8px 6px;
+        text-align: center;
         border-bottom: 1px solid #eee;
+        vertical-align: middle;
     }
-    tr:hover {
+    .room-table tr:hover {
         background-color: #f9f9f9;
     }
     
-    /* 액션 버튼 - 심플화 */
-    .action-link {
+    /* 삭제/복구 버튼 - 단순화 */
+    .action-btn {
         display: inline-block;
         padding: 4px 8px;
         color: #fff;
@@ -93,24 +93,20 @@
         background-color: #0069d9;
     }
     
-    /* 상태 표시 - 심플화 */
-    .status-badge {
+    /* 상태 라벨 - 단순화 */
+    .status-label {
         display: inline-block;
-        font-size: 13px;
-        font-weight: bold;
-    }
-    .active {
-        color: #28a745;
-    }
-    .inactive {
         color: #dc3545;
+        font-weight: bold;
+        font-size: 13px;
     }
     
-    /* 데이터 없음 메시지 */
-    .no-data {
-        text-align: center;
-        padding: 20px 0;
-        color: #666;
+    /* 반응형 테이블 */
+    @media (max-width: 1000px) {
+        .room-table {
+            display: block;
+            overflow-x: auto;
+        }
     }
     
     /* 에러 메시지 */
@@ -126,12 +122,11 @@
         max-width: 500px;
     }
     
-    /* 반응형 테이블 */
-    @media (max-width: 1000px) {
-        table {
-            display: block;
-            overflow-x: auto;
-        }
+    /* 데이터 없음 메시지 */
+    .no-data {
+        text-align: center;
+        padding: 20px 0;
+        color: #666;
     }
 </style>
 </head>
@@ -149,65 +144,53 @@
 </c:if>
 <c:if test="${admin_userid eq 'pkc'}">
 <div class="container">
-    <div class="header">
-        <h3>회원 관리</h3>
+    <div class="page-header">
+        <h1 class="page-title">파티룸 삭제</h1>
         <a href="../admin/adminTools" class="back-link">돌아가기</a>
     </div>
     
-    <table>
+    <table class="room-table">
         <thead>
             <tr>
-                <th>번호</th>
+                <th>룸 ID</th>
+                <th>코드</th>
                 <th>이름</th>
-                <th>아이디</th>
-                <th>이메일</th>
-                <th>전화번호</th>
-                <th>가입일</th>
-                <th>상태</th>
+                <th>시간당 가격</th>
+                <th>등록일</th>
+                <th>좋아요</th>
+                <th>키워드</th>
                 <th>관리</th>
+                <th>상태</th>
             </tr>
         </thead>
         <tbody>
-            <c:if test="${empty mlist}">
+            <c:if test="${empty rlist}">
                 <tr>
-                    <td colspan="8" class="no-data">등록된 회원이 없습니다.</td>
+                    <td colspan="9" class="no-data">등록된 파티룸이 없습니다.</td>
                 </tr>
             </c:if>
-            <c:forEach items="${mlist}" var="mdto" varStatus="sts">
-                <tr>
-                    <td>${mdto.memberid}</td>
-                    <td>${mdto.name}</td>
-                    <td>${mdto.userid}</td>
-                    <td>${mdto.email}</td>
-                    <td>${mdto.phone}</td>
-                    <td>${mdto.created_day}</td>
-                    <td>
-                        <c:choose>
-                            <c:when test="${mdto.status == 0}">
-                                <span class="status-badge active">활성</span>
-                            </c:when>
-                            <c:when test="${mdto.status == 1}">
-                                <span class="status-badge inactive">삭제됨</span>
-                            </c:when>
-                            <c:otherwise>
-                                <span class="status-badge">알 수 없음</span>
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
-                    <td>
-                        <c:choose>
-                            <c:when test="${mdto.status == 0}">  <!-- 활성 계정 -->
-                                <a href="/admin/deleteUser?memberid=${mdto.memberid}" class="action-link delete-btn">삭제</a>
-                            </c:when>
-                            <c:when test="${mdto.status == 1}">  <!-- 삭제된 계정 -->
-                                <a href="/admin/reviveUser?memberid=${mdto.memberid}" class="action-link restore-btn">복구</a>
-                            </c:when>
-                            <c:otherwise>
-                                <span>상태 오류</span>
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
-                </tr>
+            <c:forEach items="${rlist}" var="rdto">
+            <tr>
+                <td>${rdto.roomid}</td>
+                <td>${rdto.rcode}</td>
+                <td>${rdto.name}</td>
+                <td>${rdto.price}원</td>
+                <td>${rdto.writeday}</td>
+                <td>${rdto.heart}</td>
+                <td>
+                    <c:if test="${not empty rdto.keyword}">
+                        ${rdto.keyword}
+                    </c:if>
+                </td>
+                <c:if test="${rdto.duration_type==2}">
+                <td><a href="/admin/roomDeleteOk?roomid=${rdto.roomid}" class="action-btn delete-btn">삭제</a></td>
+                <td></td>
+                </c:if>
+                <c:if test="${rdto.duration_type==1}">
+                <td><a href="/admin/roomReviveOk?roomid=${rdto.roomid}" class="action-btn restore-btn">복구</a></td>
+                <td><span class="status-label">삭제됨</span></td>
+                </c:if>
+            </tr>
             </c:forEach>
         </tbody>
     </table>

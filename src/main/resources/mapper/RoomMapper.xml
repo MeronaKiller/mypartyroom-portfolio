@@ -21,17 +21,19 @@
                 OR keyword LIKE CONCAT('%', #{searchKeyword}, '%')
             )
         </if>
+    AND duration_type = 2
     </where>
     ORDER BY duration_type DESC
 	</select>
 
 
-	<select id="roomContent" resultType="com.example.demo.dto.RoomDto">
-		SELECT * FROM room WHERE rcode=#{rcode}
+	<select id="roomContent" resultType="com.example.demo.dto.RoomDto" useCache="true">
+	    SELECT * FROM room WHERE rcode = #{rcode}
 	</select>
+
 	
 	<select id="getMember" resultType="com.example.demo.dto.MemberDto">
-		SELECT * FROM member WHERE userid=#{userid}
+	    SELECT * FROM member WHERE userid=#{userid}
 	</select>
 
    <select id="getNumber" resultType="Integer">
@@ -40,12 +42,13 @@
    	WHERE jumuncode LIKE CONCAT(#{jumuncode},'%')
    </select>
    
-   <insert id="reservOk" parameterType="com.example.demo.dto.ReservationDto">
-   	INSERT INTO reservation(startTime,endTime,rcode,card1,tel,
-   	halbu1,bank1,card2,bank2,jumuncode,writeday,userid,purposeuse,requesttohost,reservprice)
-   	VALUES (#{startTime},#{endTime},#{rcode},#{card1},#{tel},#{halbu1},
-   	#{bank1},#{card2},#{bank2},#{jumuncode},now(),#{userid},#{purposeuse},#{requesttohost},#{reservprice})
-   </insert>
+	<insert id="reservOk" parameterType="com.example.demo.dto.ReservationDto">
+	    INSERT INTO reservation(startTime,endTime,rcode,card1,tel,
+	    halbu1,bank1,card2,bank2,jumuncode,writeday,purposeuse,requesttohost,reservprice,userid)
+	    VALUES (#{startTime},#{endTime},#{rcode},#{card1},#{tel},#{halbu1},
+	    #{bank1},#{card2},#{bank2},#{jumuncode},now(),#{purposeuse},#{requesttohost},#{reservprice},#{userid})
+	</insert>
+
    
    <select id="reservList" parameterType="com.example.demo.dto.ReservationDto" resultType="com.example.demo.dto.ReservationDto">
 		SELECT * FROM reservation WHERE jumuncode=#{jumuncode}
@@ -54,17 +57,183 @@
 		SELECT * FROM reservation WHERE jumuncode=#{jumuncode}
 	</select>
 	
-	  <select id="getReservTime"  resultType="com.example.demo.dto.ReservationDto">
-	    select substring(startTime,12,2) as startTime  , substring(endTime,12,2) as endTime 
-	    from reservation
-	     where rcode=#{rcode} and startTime like concat(#{ymd} , '%')
-	</select> 
-
-	<select id="getReservationsByUserId" resultType="com.example.demo.dto.ReservationDto">
-	    SELECT * FROM reservation WHERE userid=#{userid} ORDER BY writeday DESC
+	<select id="getReservTime" resultType="com.example.demo.dto.ReservationDto">
+	    SELECT TIME_FORMAT(startTime, '%H') as startTime, 
+	           TIME_FORMAT(endTime, '%H') as endTime 
+	    FROM reservation USE INDEX(idx_reservation_rcode_date)
+	    WHERE rcode = #{rcode} 
+	    AND DATE(startTime) = #{ymd}
+	    ORDER BY startTime
 	</select>
-	
+
+	<select id="getReservationsByroomid" resultType="com.example.demo.dto.ReservationDto">
+	    SELECT * FROM reservation WHERE roomid=#{roomid} ORDER BY writeday DESC
+	</select>
+	<!-- 좋아요 여부 확인 -->
+<select id="isLikedByUser" resultType="boolean">
+  <!-- userId가 null이면 false 반환 -->
+  <if test="userId == null">
+    SELECT false
+  </if>
+  <if test="userId != null">
+    SELECT heart > 0
+    FROM room
+    WHERE roomid = #{roomid}
+  </if>
+</select>
+
+<!-- 좋아요 추가 -->
+<update id="insertLike">
+  UPDATE room
+  SET heart = heart + 1
+  WHERE roomid = #{roomid}
+</update>
+
+<!-- 좋아요 삭제 -->
+<update id="deleteLike">
+  UPDATE room
+  SET heart = GREATEST(heart - 1, 0)
+  WHERE roomid = #{roomid}
+</update>
+
+<!-- 방 좋아요 수 증가 -->
+<update id="increaseRoomLike">
+    UPDATE room
+    SET heart = heart + 1
+    WHERE roomid = #{roomid}
+</update>
+
+<!-- 방 좋아요 수 감소 -->
+<update id="decreaseRoomLike">
+    UPDATE room
+    SET heart = GREATEST(heart - 1, 0)
+    WHERE roomid = #{roomid}
+</update>
+
+<!-- roomid로 rcode 조회 -->
+<select id="getRoomLikes" resultType="int">
+    SELECT heart
+    FROM room
+    WHERE roomid = #{roomid}
+</select>
+<select id="getRcodeByroomid" resultType="String">
+    SELECT rcode FROM room WHERE roomid = #{roomid}
+</select>
+<select id="getReservationsByUserId" resultType="com.example.demo.dto.ReservationDto">
+    SELECT r.*, rm.name as room_name
+    FROM reservation r 
+    LEFT JOIN room rm ON r.rcode = rm.rcode 
+    WHERE r.userid = #{userid} 
+    ORDER BY r.writeday DESC
+</select>
+
+
+<!-- 동시성 낙관적락 -->
+<!-- 시간대 충돌 확인 쿼리 -->
+<select id="isTimeSlotAvailable" resultType="boolean">
+    SELECT COUNT(*) = 0
+    FROM reservation
+    WHERE rcode = #{rcode}
+    AND (
+        (startTime &lt;= #{endTime} AND endTime &gt;= #{startTime})
+    )
+</select>
+
+<!-- 원자적 예약 삽입 쿼리 - 조건부 INSERT -->
+<insert id="insertReservationWithCheck" parameterType="com.example.demo.dto.ReservationDto">
+    INSERT INTO reservation(startTime, endTime, rcode, userid, card1, tel, 
+    halbu1, bank1, card2, bank2, jumuncode, writeday, purposeuse, requesttohost, reservprice)
+    SELECT #{startTime}, #{endTime}, #{rcode}, #{userid}, #{card1}, #{tel}, #{halbu1},
+    #{bank1}, #{card2}, #{bank2}, #{jumuncode}, now(), #{purposeuse}, #{requesttohost}, #{reservprice}
+    FROM dual
+    WHERE NOT EXISTS (
+        SELECT 1 FROM reservation 
+        WHERE rcode = #{rcode}
+        AND (startTime &lt;= #{endTime} AND endTime &gt;= #{startTime})
+    )
+</insert>
+
+<!-- 예약 버전 조회 (낙관적 락 구현 시) -->
+<select id="getReservationVersion" resultType="int">
+    SELECT IFNULL(MAX(version), 0) FROM reservation_version WHERE rcode = #{rcode}
+</select>
+
+<!-- 낙관적 락을 이용한 업데이트 -->
+<update id="updateReservationWithVersion">
+    UPDATE reservation_version
+    SET version = version + 1
+    WHERE rcode = #{rsdto.rcode} AND version = #{version}
+</update>
+
+<insert id="insertReservationBatch" parameterType="list">
+    INSERT INTO reservation(
+        startTime, endTime, rcode, userid, card1, tel, 
+        halbu1, bank1, card2, bank2, jumuncode, writeday, 
+        purposeuse, requesttohost, reservprice
+    ) VALUES 
+    <foreach collection="list" item="item" separator=",">
+        (#{item.startTime}, #{item.endTime}, #{item.rcode}, 
+         #{item.userid}, #{item.card1}, #{item.tel}, #{item.halbu1},
+         #{item.bank1}, #{item.card2}, #{item.bank2}, #{item.jumuncode}, 
+         now(), #{item.purposeuse}, #{item.requesttohost}, #{item.reservprice})
+    </foreach>
+    ON DUPLICATE KEY UPDATE 
+        reservprice = VALUES(reservprice),
+        modified_at = now()
+</insert>
+
+<select id="getReservationTimesByRcodeAndDate" resultType="string">
+    SELECT CONCAT(TIME(startTime), '~', TIME(endTime)) as timeSlot
+    FROM reservation 
+    WHERE rcode = #{rcode} 
+    AND DATE(startTime) = #{date}
+    ORDER BY startTime
+</select>
+
+
+
+<!-- 빠른 중복 체크 -->
+<select id="countConflictingReservations" resultType="int" parameterType="com.example.demo.dto.ReservationDto">
+    SELECT COUNT(*) 
+    FROM reservation USE INDEX(idx_reservation_rcode_time)
+    WHERE rcode = #{rcode}
+    AND startTime &lt; #{endTime} 
+    AND endTime &gt; #{startTime}
+</select>
+
+<!-- 빠른 삽입 (중복 체크 없이) -->
+<insert id="insertReservationSimple" parameterType="com.example.demo.dto.ReservationDto">
+    INSERT INTO reservation(
+        startTime, endTime, rcode, userid, card1, tel, 
+        halbu1, bank1, card2, bank2, jumuncode, writeday, 
+        purposeuse, requesttohost, reservprice
+    ) VALUES (
+        #{startTime}, #{endTime}, #{rcode}, #{userid}, #{card1}, #{tel}, #{halbu1},
+        #{bank1}, #{card2}, #{bank2}, #{jumuncode}, now(), 
+        #{purposeuse}, #{requesttohost}, #{reservprice}
+    )
+</insert>
+
+<!-- INSERT IGNORE 사용 (가장 빠름) -->
+<insert id="insertReservationFast" parameterType="com.example.demo.dto.ReservationDto">
+    INSERT IGNORE INTO reservation(
+        startTime, endTime, rcode, userid, card1, tel, 
+        halbu1, bank1, card2, bank2, jumuncode, writeday, 
+        purposeuse, requesttohost, reservprice
+    ) VALUES (
+        #{startTime}, #{endTime}, #{rcode}, #{userid}, #{card1}, #{tel}, #{halbu1},
+        #{bank1}, #{card2}, #{bank2}, #{jumuncode}, now(), 
+        #{purposeuse}, #{requesttohost}, #{reservprice}
+    )
+</insert>
+
+<select id="getReservationsByUserIdPaged" resultType="com.example.demo.dto.ReservationDto">
+    SELECT r.*, rm.name as room_name
+    FROM reservation r USE INDEX(idx_reservation_userid)
+    LEFT JOIN room rm ON r.rcode = rm.rcode 
+    WHERE r.userid = #{userid} 
+    ORDER BY r.writeday DESC
+    LIMIT #{offset}, #{limit}
+</select>
 
 </mapper>
-
-

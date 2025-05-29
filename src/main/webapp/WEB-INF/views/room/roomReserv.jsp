@@ -10,107 +10,326 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>룸 예약하기</title>
+
+
+<!-- 일반 시간 예약 -->
+<c:set var="duration" value="${endTime - startTime}" />
+<c:if test="${duration < 0}">
+    <c:set var="duration" value="${24 + duration}" /> <!-- 다음날로 넘어가는 경우 처리 -->
+</c:if>
+<c:set var="chongprice" value="${duration * rdto.halinprice}" />
+
+<c:set var="hphone" value="${rdto.phone}" />
+
 <style>
-	#roomrservtitle
-	{
-	
-	}
-	html
-  	{
-    scroll-behavior: smooth;
-	}
-  #rContainer_top
-  {
-  	width: 1100px;
-  	height:300px;
-  	border: 1px solid black;
-  	margin:auto;
-  }  
+  /* 폰트 설정 */
+  @font-face {
+    font-family: 'LINESeedKR-Light';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/LINESeedKR-Rg.woff2') format('woff2');
+    font-weight: 300;
+    font-style: normal;
+  }
   
-  .rContainer
-  {
-  	width: 1100px;
-    margin:auto;
+  @font-face {
+    font-family: 'LINESeedKR-Bold';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/LINESeedKR-Bd.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'BMJUA';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  /* 기본 스타일 */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'LINESeedKR-Light', sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    background-color: #f9f9f9;
+    line-height: 1.6;
+    margin-top: 130px;
+  }
+  
+  /* 상단 컨테이너 */
+  #rContainer_top {
+    width: 1100px;
+    height: 160px;
+    margin: 30px auto;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'LINESeedKR-Bold', sans-serif;
+    font-size: 28px;
+    border-radius: 15px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+  }
+  
+  .rContainer {
+    width: 1100px;
+    margin: 0 auto 50px;
+    overflow: hidden;
+    display: flex;
+    gap: 20px;
   }
 
-  .rContent_wrapper
-  {
-    width:65%;
-    height:auto;
-    border: 1px solid black;
-    overflow: auto;
-    float:left;
+  .rContent_wrapper {
+    width: 70%;
+  height: auto;
+  border: none;
+  overflow: visible; /* auto에서 visible로 변경하여 스크롤바 제거 */
+  padding: 25px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  margin-bottom: 20px;
   }
 
-.facility-list {
-      display: flex;
-      flex-wrap: wrap;
-      padding: 0;
-      list-style: none;
-      }
-      .fimg
-      {
-      	margin-left: 20px;
-            flex-grow: 1;
-      }
-	.fimg img
+  .rAside_menu {
+    width: 27%;
+    height: auto;
+    border: none;
+    position: sticky;
+    top: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    right: auto;
+  }
+  
+  /* 시설 리스트 */
+  .facility-list {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+    list-style: none;
+    gap: 10px;
+  }
+  
+  .facility-item {
+    width: 12%;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .facility-item img {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 5px;
+  }
+  
+  .facility-item p {
+    margin: 5px 0 0;
+    font-size: 13px;
+    text-align: center;
+  }
+  
+  .fimg {
+    margin-left: 0;
+    margin-bottom: 25px;
+  }
+  
+  /* 섹션 제목 스타일 */
+  .section-title {
+    font-family: 'LINESeedKR-Bold', sans-serif;
+    font-size: 20px;
+    border-bottom: 2px solid #DDD;
+    padding-bottom: 10px;
+    margin: 30px 0 15px;
+    color: #333;
+  }
+  
+  /* 예약 정보 스타일 */
+  .reservinfo {
+    border: none;
+    padding: 15px 0;
+    font-family: 'LINESeedKR-Bold', sans-serif;
+    font-size: 20px;
+    border-bottom: 2px solid #DDD;
+    margin: 30px 0 15px;
+  }
+  
+  /* 사이드바 예약 정보 */
+  .rAside_menu .rAside_both {
+    overflow: hidden;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .rAside_menu .rAside_left {
+    width: 60%;
+    float: left;
+  }
+  
+  .rAside_menu .rAside_right {
+    width: 40%;
+    float: right;
+    font-weight: bold;
+    text-align: right;
+    font-size: 16px;
+    word-break: break-all;
+  }
+  
+  /* 버튼 스타일 */
+  input[type="submit"] {
+    width: 100%;
+    background-color: #3A3A3A;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    font-family: 'LINESeedKR-Bold', sans-serif;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s;
+    margin-top: 15px;
+  }
+  
+  input[type="submit"]:hover {
+    background-color: #DDD;
+    color: #333;
+  }
+  
+  /* 결제 수단 스타일 */
+  .tdPay {
+    width: 100%;
+    height: auto;
+    border: none;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .pay {
+    margin-bottom: 10px;
+  }
+  
+  .rform {
+    margin: 10px 0 10px 20px;
+  }
+  
+  /* 라디오 버튼 스타일 */
+  input[type="radio"] {
+    margin-right: 10px;
+  }
+  
+  /* 셀렉트 스타일 */
+  select {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    margin-right: 10px;
+  }
+  
+  /* 텍스트 에어리어 스타일 */
+  textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    margin: 10px 0;
+    font-family: 'LINESeedKR-Light', sans-serif;
+    resize: vertical;
+  }
+  
+  /* 화살표 버튼 */
+  #arrow {
+    cursor: pointer;
+  }
+  
+  /* 공간 정보 영역 */
+  .space-info {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .space-info img, div[style*="padding:30px"] img {
+  width: 200px; /* 140px에서 200px로 크기 증가 */
+  height: 200px; /* 140px에서 200px로 크기 증가 */
+  object-fit: cover;
+  border-radius: 8px;
+  }
+  
+  .space-details {
+    flex-grow: 1;
+  }
+  
+  .space-name {
+    font-family: 'LINESeedKR-Bold', sans-serif;
+    font-size: 20px;
+    margin-bottom: 5px;
+  }
+  
+  .space-desc {
+    color: #666;
+    margin-bottom: 10px;
+  }
+  
+  /* 카테고리 제목 */
+  .category-title {
+    font-family: 'LINESeedKR-Bold', sans-serif;
+    font-size: 18px;
+    margin: 20px 0 10px;
+  }
+  
+  /* pre 태그 스타일 */
+  pre {
+    white-space: pre-wrap;
+    font-family: 'LINESeedKR-Light', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 10px 0;
+  }
+  
+  /* 글자수 카운터 */
+  #chongWord, #chongWord1 {
+    color: #888;
+  }
+  
+  /* 호스트 정보 섹션 */
+  .host-info {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+  }
+  
+  /* 가격 표시 */
+  .price-display {
+    font-family: 'LINESeedKR-Bold', sans-serif;
+    font-size: 24px;
+    color: #333;
+    text-align: right;
+    margin: 15px 0;
+  }
+  /* 기존 CSS에 추가 */
+	.pay:nth-child(n+3)
 	{
-		width: 40px;
-		height: 40px;
-	}
-	.facility-item {
-            width: 10%; /* 한 줄에 3개씩 */
-            text-align: center;
-        }
-        .facility-item img {
-            width: 30px;
-            height: 30px;
-        }
-        .facility-item p {
-            margin-top: 5px;
-            font-size: 14px;
-        }
-        #reserveinfo1
-        {
-        float: right;
-        }
-        .reservinfo
-        {
-        	border: 1px solid black;
-        }
-        .rAside_menu
-        {
-		    width: 25%;
-		    height: auto;
-		    border: 1px solid black;
-		    position: fixed;
-		    right: 13%;
-        }
-        .rAside_menu .rAside_both
-        {
-        	overflow: hidden;
-        }
-        .rAside_menu .rAside_left
-        {
-        	width: 65%;
-        	float: left;
-        }
-        .rAside_menu .rAside_right
-        {
-        	width: 30%;
-        	float: right;
-        }
-        section .rform{
-		display:none;
-	}
-	section .tdPay{
-		width:1100px;
-		height:150px;
-		border:1px solid green;
-	}
-	section .pay{
-		display:none;
+	    display: none;
 	}
 </style>
 <script>
@@ -150,13 +369,17 @@
 </script>
 </head>
 <body>
+
+
 <form method="post" action="reservOk" onsubmit="return check()">
 <div id="rContainer_top">예약하기</div>
 <div class="rContainer">
 <div class="rContent_wrapper">
 <div>
 <div style="float: left;">예약 공간</div>
-<div style="float: right;"><fmt:formatNumber value="${rdto.halinprice}" type="number" pattern="#,###"/>원/시간</div>
+<div style="float: right;">
+            <fmt:formatNumber value="${rdto.halinprice}" type="number" pattern="#,###"/>원/시간
+</div>
 </div>
 <div><!-- 회원 정보 -->
 <div>
@@ -506,6 +729,7 @@ ${duration}시간</div>
     <input type="hidden" value="${startTime}" name="startTime">
     <input type="hidden" value="${endTime}" name="endTime">
     <input type="hidden" value="${chongprice}" name="reservprice">
+    <input type="hidden" value="${rdto.name}" name="name">
     
     
 		<div> <input type="submit" value="예약하기"> </div><!-- 예약폼 시작 -->

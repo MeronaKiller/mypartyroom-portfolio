@@ -6,27 +6,33 @@
    <mapper namespace="com.example.demo.board.BoardMapper">
    
    	<select id="noticeList" resultType="com.example.demo.dto.NoticeDto"> <!-- member은 임시임 만약 admin테이블만들면 수정 -->
-   		SELECT n.noticeid, n.title, a.admin_name, n.writeday, n.rnum, n.img, n.content
+   		SELECT n.noticeid, n.title, a.admin_name, n.writeday, n.content, n.state
    		FROM notice n
    		INNER JOIN admin a ON n.admin_name = a.admin_name
+   		WHERE n.state = 0
    		ORDER BY n.noticeid DESC
    		LIMIT #{index}, 20
    	</select>
    	
    	<select id="noticeGetChong" resultType="Integer">
-   		SELECT CEIL( count(noticeid)/20 ) FROM notice 
+   		SELECT CEIL( count(noticeid)/20 ) FROM notice WHERE state = 0
    	</select>
    	
    	<insert id="noticeWrite" parameterType="com.example.demo.dto.NoticeDto"> <!-- 공지사항 글쓰기(관리자용) -->
-	    INSERT INTO notice (title, memberid, writeday, rnum, img, content)
-	    VALUES (#{title}, #{memberid}, NOW(), #{rnum}, #{img}, #{content})
+	    INSERT INTO notice (title, memberid, writeday, content)
+	    VALUES (#{title}, #{memberid}, NOW(), #{content})
 	</insert>
 	
 	<select id="fna" resultType="com.example.demo.dto.FnaDto">
    		SELECT * FROM fna ORDER BY fnaid DESC
    	</select>
 
-	
+	<select id="getNoticeContent" parameterType="int" resultType="com.example.demo.dto.NoticeDto">
+	    SELECT n.noticeid, n.title, a.admin_name, n.writeday, n.content, n.state
+	    FROM notice n
+	    INNER JOIN admin a ON n.admin_name = a.admin_name
+	    WHERE n.noticeid = #{noticeid}
+	</select>
 
    
    </mapper>

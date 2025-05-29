@@ -21,10 +21,6 @@
 		VALUES (#{price},#{rcode},#{name},#{description},#{capacity},#{pic},#{duration_type},#{subpic},#{halin},#{keyword},#{pkgname},#{pkgprice},#{pkgstart},#{pkgend},#{adress},#{roadadress},#{mapx},#{mapy},#{caution},#{refundpolicy},#{officehour},#{closedday},#{floor},#{car},#{elevator},#{fstatus},#{ininfo},#{play},#{kitchen},#{phone},#{subname},#{subdesc},now())
 	</insert>
 	
-	<select id="roomManage" resultType="HashMap">
-		SELECT 
-	</select>
-	
 	<select id="adminLoginOk" resultType="String">
 		SELECT admin_name FROM admin
 		WHERE admin_userid=#{admin_userid} AND pwd=#{pwd}
@@ -62,11 +58,91 @@
 	    WHERE reservationid = #{reservationId}
 	</update>
 	
-		<update id="updateReservationStatus1" parameterType="com.example.demo.dto.ReservationDto"><!-- 취소수락했을때 -->
+	<update id="updateReservationStatus1" parameterType="com.example.demo.dto.ReservationDto"><!-- 취소수락했을때 -->
 	  UPDATE reservation
 	  SET status = #{status},
 	      modified_at1 = NOW()
 	  WHERE reservationid = #{reservationid}
 	</update>
 	
+	<update id="deleteUser">
+		UPDATE member
+		SET status = #{status}
+		WHERE memberid = #{memberid}
+	</update>
+	<update id="reviveUser">
+		UPDATE member
+		SET status = #{status}
+		WHERE memberid = #{memberid}
+	</update>
+	
+	<select id="roomDelete" resultType="com.example.demo.dto.RoomDto">
+		Select * FROM room 
+	</select>
+	
+	<update id="roomDeleteOk" parameterType="com.example.demo.dto.RoomDto">
+	  UPDATE room
+	  SET duration_type = 1
+	  WHERE roomid = #{roomid}
+	</update>
+	<update id="roomReviveOk" parameterType="com.example.demo.dto.RoomDto">
+	  UPDATE room
+	  SET duration_type = 2
+	  WHERE roomid = #{roomid}
+	</update>
+   	<select id="noticeManage" resultType="com.example.demo.dto.NoticeDto"> <!-- member은 임시임 만약 admin테이블만들면 수정 -->
+   		SELECT n.noticeid, n.title, a.admin_name, n.writeday, n.content, n.state
+   		FROM notice n
+   		INNER JOIN admin a ON n.admin_name = a.admin_name
+   		ORDER BY n.noticeid DESC
+   		LIMIT #{index}, 20
+   	</select>
+   	<select id="noticeGetChong" resultType="Integer">
+   		SELECT CEIL( count(noticeid)/20 ) FROM notice 
+   	</select>
+	<select id="getNoticeContentManage" parameterType="int" resultType="com.example.demo.dto.NoticeDto">
+	    SELECT n.noticeid, n.title, a.admin_name, n.writeday, n.content
+	    FROM notice n
+	    INNER JOIN admin a ON n.admin_name = a.admin_name
+	    WHERE n.noticeid = #{noticeid}
+	</select>
+	<insert id="noticeWriteOk" parameterType="com.example.demo.dto.NoticeDto">
+	    INSERT INTO notice(title, content, admin_name, writeday, adminid)
+	    VALUES (#{title}, #{content}, '관리자', now(), #{adminid})
+	</insert>
+	<update id="noticeContentDeleteOk" parameterType="com.example.demo.dto.NoticeDto">
+	  UPDATE notice
+	  SET state = 1
+	  WHERE noticeid = #{noticeid}
+	</update>
+	<update id="noticeContentReviveOk" parameterType="com.example.demo.dto.NoticeDto">
+	  UPDATE notice
+	  SET state = 0
+	  WHERE noticeid = #{noticeid}
+	</update>
+	<!-- 문의 목록 가져오기 -->
+	<select id="getPersonalInquiryList" resultType="com.example.demo.dto.PersonalInquiryDto">
+	    SELECT * FROM personalinquiry
+	    ORDER BY personalInquiryid DESC
+	    LIMIT #{index}, 20
+	</select>
+	
+	<!-- 문의 상세 정보 가져오기 -->
+	<select id="getPersonalInquiry" parameterType="int" resultType="com.example.demo.dto.PersonalInquiryDto">
+	    SELECT * FROM personalinquiry
+	    WHERE personalInquiryid = #{personalInquiryid}
+	</select>
+	
+	<!-- 문의 답변 등록 및 상태 업데이트 -->
+	<update id="qnaAnswerOk" parameterType="com.example.demo.dto.PersonalInquiryDto">
+	    UPDATE personalinquiry
+	    SET state = 1, 
+	        answerwriteday = NOW()
+	    WHERE personalInquiryid = #{personalInquiryid}
+	</update>
+	
+	<!-- 문의 총 개수 가져오기 -->
+	<select id="qnaGetChong" resultType="Integer">
+	    SELECT CEIL(count(personalInquiryid)/20) FROM personalinquiry
+	</select>
 </mapper>

@@ -6,10 +6,21 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 <meta charset="UTF-8">
+
+    <!-- 경고창 스크립트가 있으면 실행 -->
+    <c:if test="${not empty alertScript}">
+    <script>
+        ${alertScript}
+    </script>
+    </c:if>
+
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-<title>Insert title here</title>
+<title>룸 예약하기</title>
 <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=mx8e1c4689"></script>
     
     
@@ -21,139 +32,279 @@
 <script src="https://cdn.jsdelivr.net/npm/dayjs/dayjs.min.js"></script>
 
     
-    
 <style>
-  html
-  	{
-    scroll-behavior: smooth;
+	.like-btn {
+	  background-color: transparent;
+	  border: none;
+	  cursor: pointer;
+	  font-size: 24px;
+	  transition: transform 0.2s;
+	  display: inline-flex;
+	  align-items: center;
+	  padding: 8px 15px;
+	  text-decoration: none;
 	}
-  #cContainer_top
-  {
-  	width: 1100px;
-  	height:300px;
-  	border: 1px solid black;
-  	margin:auto;
-  }  
+	
+	.like-btn:hover {
+	  transform: scale(1.1);
+	}
+	
+	.like-btn .fas {
+	  color: #ff4757; /* 좀 더 진한 빨강으로 변경 */
+	}
+	
+	.like-btn .far {
+	  color: #ff6b6b; /* 밝은 빨강으로 변경 */
+	}
+	
+	.like-btn span {
+	  font-size: 18px;
+	  margin-left: 8px;
+	  font-weight: bold;
+	  color: #333;
+	}
   
-  .cContainer
-  {
-  	width: 1100px;
-    margin:auto;
+  #likeCount {
+    font-size: 16px;
+    margin-left: 5px;
   }
-
-  .cContent_wrapper
-  {
-    width:70%;
-    height:auto;
-    border: 1px solid black;
-    overflow: auto;
-    float:left;
+</style>    
+<style>
+  /* 폰트 설정 */
+  @font-face {
+    font-family: 'LINESeedKR-Light';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/LINESeedKR-Rg.woff2') format('woff2');
+    font-weight: 300;
+    font-style: normal;
   }
+  
+  @font-face {
+    font-family: 'LINESeedKR-Bold';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/LINESeedKR-Bd.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'BMJUA';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  /* 기본 스타일 */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'LINESeedKR-Light', sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    background-color: #f9f9f9;
+    line-height: 1.6;
+    margin-top: 130px;
+  }
+  
+  /* 상단 컨테이너 */
+  #cContainer_top {
+    width: 1100px;
+    height: 300px;
+    margin: 30px auto;
+  }
+  
+  .cContainer {
+    width: 1100px;
+    margin: 0 auto 50px;
+    overflow: hidden;
+    display: flex;
+    gap: 20px; /* 두 요소 사이의 간격 */
+}
 
-  .cAside_menu
-  {
-    width: 25%;
-    height:auto;
-    float:right;
-    border: 1px solid black;
-    }
-    
-   #cImgMain
-   {
-     width:770px;
-     height:480px;
-     margin:auto;
-     overflow:hidden;
-     position: relative;
-   }
-   .cImgAll .cImg
-   {
-	 width: 100%;
-     height: 100%;
-	 object-fit: cover; /* 빈 공간 없이 채우기, 일부 잘림 */
-   }
-   .cImg {
-    position: absolute; /* 겹치게 설정 */
+/* float 속성 제거 */
+.cContent_wrapper {
+    width: 70%;
+    padding: 25px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    /* float: left; 제거 */
+    margin-bottom: 20px;
+}
+
+.cAside_menu {
+    width: 27%;
+    padding: 20px;
+    box-sizing: border-box;
+    /* float: right; 제거 */
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    position: sticky;
+    top: 130px;
+}
+  
+  /* 메인 이미지 */
+  #cImgMain {
+    width: 100%;
+    height: 480px;
+    margin: 0 auto 30px;
+    overflow: hidden;
+    position: relative;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cImgAll .cImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .cImg {
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: none; /* 처음에는 전부 숨김 */
-	}
-
-	.cImg:first-child {
-	    display: block; /* 첫 번째 이미지만 보이게 */
-	}
-	.cfloor
-	{
-		width: 100px;
-		height: 100px;
-	}
-	.topinfodiv
-	{
-		display: flex;
-	}
-	.topinfodiv .topinfo img
-	{
-		width: 40px;
-		height: 40px;
-	}
-	.ctitle
-	{
-		text-align: center;
-		font-size: 30px;
-	}
-    .facility-list {
-      display: flex;
-      flex-wrap: wrap;
-      padding: 0;
-      list-style: none;
-      }
-      .fimg
-      {
-      	margin-left: 20px;
-            flex-grow: 1;
-      }
-	.fimg img
-	{
-		width: 40px;
-		height: 40px;
-	}
-	.facility-item {
-            width: 23%; /* 한 줄에 3개씩 */
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        .facility-item img {
-            width: 40px;
-            height: 40px;
-        }
-        .facility-item p {
-            margin-top: 5px;
-            font-size: 14px;
-        }
-       .durationchk
-       {
-       	list-style: none;
-       }
-
-</style>
-<style>/* 날짜 스타일 */
-.time-container { 
+    display: none;
+  }
+  
+  .cImg:first-child {
+    display: block;
+  }
+  
+  /* 타이틀 스타일 */
+  .ctitle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+  
+  .ctitle1 {
+    text-align: center;
+    font-size: 30px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-family: 'LINESeedKR-Bold', sans-serif;
+  }
+  
+  .ctitle2 {
+    text-align: center;
+    font-size: 20px;
+    color: #5A5A5A;
+    margin-bottom: 10px;
+  }
+  
+  .ctitle3 {
+    text-align: center;
+    font-size: 20px;
+    color: black;
+    background-color: #FAFAFA;
+    border-radius: 5px;
+    padding: 5px 15px;
+  }
+  
+  /* 섹션 구분 */
+  .section-title {
+    font-family: 'LINESeedKR-Bold', sans-serif;
+    font-size: 22px;
+    border-bottom: 2px solid #DDD;
+    padding-bottom: 10px;
+    margin: 30px 0 15px;
+    color: #333;
+  }
+  
+  /* 상단 정보 영역 */
+  .topinfodiv {
+    display: flex;
+    gap: 20px;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+  }
+  
+  .topinfo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .topinfo img {
+    width: 40px;
+    height: 40px;
+  }
+  
+  /* 시설 리스트 */
+  .facility-list {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+    list-style: none;
+    gap: 10px;
+  }
+  
+  .facility-item {
+    width: 23%;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .facility-item img {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 5px;
+  }
+  
+  .facility-item p {
+    margin: 5px 0 0;
+    font-size: 14px;
+    text-align: center;
+  }
+  
+  /* 예약 선택 스타일 */
+  .durationchk {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .durationchk li {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .durationchk input[type="checkbox"] {
+    margin-right: 10px;
+  }
+  
+  /* 날짜 및 시간 스타일 */
+  .time-container {
     display: flex;
     gap: 10px;
-    padding: 10px;
-    border: 1px solid black;
+    padding: 15px;
+    border: 1px solid #eee;
     border-radius: 8px;
     user-select: none;
     flex-wrap: wrap;
-}
-
-.time-block {
+    margin: 20px 0;
+  }
+  
+  .time-block {
     min-width: 60px;
     height: 50px;
-    background-color: #6a0dad;
+    background-color: #3A3A3A;
     color: #fff;
     display: flex;
     justify-content: center;
@@ -161,66 +312,319 @@
     border-radius: 5px;
     cursor: pointer;
     flex-shrink: 0;
-}
-
-.time-block.selected {
-    background-color: #f5b800;
-    color: #000;
-}
-
-.time-block.disabled {
-    background-color: #ddd;
-    color: #aaa;
+    transition: all 0.2s ease;
+  }
+  
+  .time-block.selected {
+  background-color: #DDD;
+  color: #000;
+  border-color: #DDD;
+  transform: scale(1.05);
+  }
+  
+  .time-block.disabled {
+  background-color: #f1f1f1;
+  color: #999;
+  cursor: not-allowed;
+  border-color: #ddd;
+  }
+  
+  /* 패키지 스타일 */
+  .pkgConCss {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin: 10px 0;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .pkgConCss:hover:not(.disabled) {
+    border-color: #DDD;
+    background-color: #fffdf5;
+    transform: translateY(-2px);
+  }
+  
+  .pkgConCss.selected {
+    border: 2px solid #DDD;
+    background-color: yellow;
+  }
+  
+  .pkgConCss.disabled {
+    background-color: #f5f5f5;
+    color: #888;
     cursor: not-allowed;
+  }
+  
+  /* 버튼 스타일 */
+  button {
+    background-color: #3A3A3A;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    font-family: 'LINESeedKR-Bold', sans-serif;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s;
+    margin-top: 15px;
+  }
+  
+  button:hover {
+    background-color: #DDD;
+    color: #333;
+  }
+  
+  button:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+  }
+  
+  /* 이미지 네비게이션 버튼 */
+  #prevBtn, #nextBtn {
+    padding: 8px 15px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+  
+  /* 설명 텍스트 */
+  pre {
+    white-space: pre-wrap;
+    font-family: 'LINESeedKR-Light', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 10px 0;
+  }
+  
+  /* 환불 정책 리스트 */
+  .refund-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .refund-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+  }
+  
+  /* 지도 컨테이너 */
+  #map {
+    width: 100%;
+    height: 450px;
+    margin: 30px 0;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  /* 사이드바 스타일 */
+  .side-section {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .side-title {
+    font-family: 'LINESeedKR-Bold', sans-serif;
+    font-size: 18px;
+    margin: 0 0 10px;
+  }
+  
+  .side-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 15px;
+  }
+  
+  .side-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+  
+  .side-info-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .side-info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .reservation-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #DDD;
+    color: #333;
+    font-weight: bold;
+    margin-top: 20px;
+  }
+  
+  .warning-text {
+    color: #e74c3c;
+    font-size: 14px;
+    margin: 15px 0;
+  }
+  
+/* 날짜 선택 캘린더 스타일 수정 */
+	.flatpickr-calendar {
+	  width: 100% !important;
+	  max-width: 320px !important; /* 280px에서 320px로 증가 */
+	  font-size: 14px !important;
+	  margin: 0 auto !important;
+	  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+	  border-radius: 8px !important;
+	}
+
+.flatpickr-day {
+  height: 32px !important;
+  line-height: 32px !important;
+  margin: 2px !important;
 }
+
+	.flatpickr-month {
+	  height: 50px !important; /* 40px에서 50px로 증가 */
+	  padding: 5px 0 !important;
+	}
+	
+	.flatpickr-current-month {
+	  padding: 0 10px !important;
+	  width: auto !important;
+	}
+
+/* 시간 선택 블록 스타일 수정 */
+.time-container {
+  display: flex;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  user-select: none;
+  flex-wrap: wrap;
+  margin: 15px 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.time-block {
+  min-width: 55px;
+  height: 40px;
+  background-color: white;
+  color: #333;
+  border: 1px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  font-size: 13px;
+  margin-bottom: 5px;
+}
+
+.time-block:hover:not(.disabled) {
+  border-color: #3A3A3A;
+  background-color: #f8f4ff;
+}
+/* 캘린더 컨테이너가 부모 div를 벗어나지 않도록 설정 */
+#calendar, #pkgCalendar {
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+/* 패키지 아이템 스타일 개선 */
+.pkgConCss {
+  padding: 12px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+  
 </style>
+
+<script>
+  function toggleLike(roomid) {
+    // 로그인 확인
+    <c:if test="${empty sessionScope.userid}">
+      alert("로그인 후 이용 가능합니다.");
+      return;
+    </c:if>
+    
+    // AJAX 요청으로 좋아요 토글
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/room/toggleLike', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        const response = JSON.parse(xhr.responseText);
+        
+        // 좋아요 상태 및 카운트 업데이트
+        const likeBtn = document.getElementById('likeBtn');
+        const likeCount = document.getElementById('likeCount');
+        
+        if (response.liked) {
+          likeBtn.innerHTML = '<i class="fas fa-heart"></i> <span id="likeCount">' + response.count + '</span>';
+        } else {
+          likeBtn.innerHTML = '<i class="far fa-heart"></i> <span id="likeCount">' + response.count + '</span>';
+        }
+      }
+    };
+    xhr.send('roomid=' + roomid);
+  }
+</script>
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script>
-$(function() {
+//이미지 슬라이드 기능 추가
+document.addEventListener("DOMContentLoaded", function () {
+    const images = document.querySelectorAll('.cImg');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
     let currentIndex = 0;
-    const $images = $(".cImg");
-    const totalImages = $images.length;
+    const imageCount = images.length;
 
-    // 초기 상태: 이전 버튼 비활성화
-    updateButtons();
+    // 초기 버튼 상태 설정
+    updateButtonStates();
 
-    // 다음 버튼 클릭
-    $("#nextBtn").click(function() {
-        if (currentIndex < totalImages - 1) {
-            const $currentImg = $images.eq(currentIndex);
-            const $nextImg = $images.eq(currentIndex + 1);
-
-            $currentImg.css("z-index", 1).fadeOut(150);
-            $nextImg.css("z-index", 2).fadeIn(150);
-
+    // 다음 버튼 클릭 이벤트
+    nextBtn.addEventListener('click', function() {
+        if (currentIndex < imageCount - 1) {
+            images[currentIndex].style.display = 'none';
             currentIndex++;
-            updateButtons();
+            images[currentIndex].style.display = 'block';
+            updateButtonStates();
         }
     });
 
-    // 이전 버튼 클릭
-    $("#prevBtn").click(function() {
+    // 이전 버튼 클릭 이벤트
+    prevBtn.addEventListener('click', function() {
         if (currentIndex > 0) {
-            const $currentImg = $images.eq(currentIndex);
-            const $prevImg = $images.eq(currentIndex - 1);
-
-            $currentImg.css("z-index", 1).fadeOut(150);
-            $prevImg.css("z-index", 2).fadeIn(150);
-
+            images[currentIndex].style.display = 'none';
             currentIndex--;
-            updateButtons();
+            images[currentIndex].style.display = 'block';
+            updateButtonStates();
         }
     });
 
     // 버튼 상태 업데이트 함수
-    function updateButtons() {
-        $("#prevBtn").prop("disabled", currentIndex === 0);
-        $("#nextBtn").prop("disabled", currentIndex === totalImages - 1);
+    function updateButtonStates() {
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex === imageCount - 1;
     }
 });
 
-</script>
-<script>
+// 기존 DOMContentLoaded 이벤트에 영향을 주지 않기 위해 별도로 처리
+
+
 document.addEventListener("DOMContentLoaded", function () {
     const timeContainer = document.getElementById('timeContainer');
     const timeDiv = document.getElementById('timeDiv');
@@ -233,49 +637,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const times = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0') + ':00');
 
-    flatpickr("#calendar", {
-        inline: true,
-        enableTime: false,
-        dateFormat: "Y-m-d",
-        minDate: "today",
-        onChange: function (selectedDates, dateStr) {
-            if (dateStr) {
-                //alert(dateStr);
-              
-                
-                selectedDateStr = dateStr;
-                document.getElementById('selectedDate').value = dateStr; // Hidden input에 날짜 저장
-                renderTimeSlots(dateStr);
-                //alert(document.getElementsByClassName("time-block").length);
-
-                var chk=new XMLHttpRequest();
-                chk.onload=function()
-                {
-                	//alert(chk.responseText);
-                	//alert(document.getElementsByClassName("time-block").length);
-                	var dtos=JSON.parse(chk.responseText);
-                	var timeblocks=document.getElementsByClassName("time-block");
-                	for( dto of dtos )
-                	{
-                		//alert(dto.startTime+" "+dto.endTime);
-                		var start=parseInt(dto.startTime);
-                		var end=parseInt(dto.endTime);
-                		
-                		for (let i = start; i < end; i++) {  // `<=` 대신 `<` 사용 (끝 시간은 선택 가능하도록)
-                            if (timeblocks[i]) {
-                                timeblocks[i].classList.add("disabled"); // `disabled` 클래스 추가
-                                timeblocks[i].style.pointerEvents = "none"; // 클릭 비활성화
-                            }
-                        }
-                	}
-                }
-                chk.open("get","getReservTime?ymd="+dateStr+"&rcode=${rdto.rcode}");
-                chk.send();
-                
-                
-            }
-        }
-    });
 
     // 시간대 렌더링 함수
     function renderTimeSlots(selectedDateStr) {
@@ -307,47 +668,47 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 시간 선택 핸들러
     function handleTimeSelection(block) {
-    const selectedTime = block.dataset.time;
+        const selectedTime = block.dataset.time;
 
-    if (block.classList.contains('selected')) {
-        resetSelection();
-        return;
-    }
-
-    if (!selectedStartTime) {
-        resetSelection();
-        selectedStartTime = selectedTime;
-        block.classList.add('selected');
-    } 
-    else if (!selectedEndTime) {
-        if (selectedTime > selectedStartTime) {
-            let hasDisabledBlocks = false;
-            document.querySelectorAll('.time-block').forEach(timeBlock => {
-                const blockTime = timeBlock.dataset.time;
-                if (blockTime > selectedStartTime && blockTime <= selectedTime) {
-                    if (timeBlock.classList.contains('disabled')) {
-                        hasDisabledBlocks = true;
-                    }
-                }
-            });
-
-            if (hasDisabledBlocks) {
-                alert("선택한 시간 범위에 이미 예약된 시간이 포함되어 있습니다.");
-                resetSelection();
-            } else {
-                selectedEndTime = selectedTime;
-                selectTimeRange();
-            }
-        } else {
-            alert("끝나는 시간은 시작 시간보다 늦어야 합니다.");
+        if (block.classList.contains('selected')) {
+            resetSelection();
+            return;
         }
-    } 
-    else {
-        resetSelection();
-        selectedStartTime = selectedTime;
-        block.classList.add('selected');
+
+        if (!selectedStartTime) {
+            resetSelection();
+            selectedStartTime = selectedTime;
+            block.classList.add('selected');
+        } 
+        else if (!selectedEndTime) {
+            if (selectedTime > selectedStartTime) {
+                let hasDisabledBlocks = false;
+                document.querySelectorAll('.time-block').forEach(timeBlock => {
+                    const blockTime = timeBlock.dataset.time;
+                    if (blockTime > selectedStartTime && blockTime <= selectedTime) {
+                        if (timeBlock.classList.contains('disabled')) {
+                            hasDisabledBlocks = true;
+                        }
+                    }
+                });
+
+                if (hasDisabledBlocks) {
+                    alert("선택한 시간 범위에 이미 예약된 시간이 포함되어 있습니다.");
+                    resetSelection();
+                } else {
+                    selectedEndTime = selectedTime;
+                    selectTimeRange();
+                }
+            } else {
+                alert("끝나는 시간은 시작 시간보다 늦어야 합니다.");
+            }
+        } 
+        else {
+            resetSelection();
+            selectedStartTime = selectedTime;
+            block.classList.add('selected');
+        }
     }
-}
 
     // 선택된 시간 범위 표시 및 값 저장
     function selectTimeRange() {
@@ -382,6 +743,89 @@ document.addEventListener("DOMContentLoaded", function () {
         selectedEndTime = null;
     }
 
+
+    // Flatpickr 설정 (공통)
+    const flatpickrConfig = {
+        inline: true,
+        enableTime: false,
+        dateFormat: "Y-m-d",
+        minDate: "today"
+    };
+
+ // Flatpickr 날짜 선택 이벤트
+    flatpickr("#calendar", {
+        ...flatpickrConfig,
+        onChange: function (selectedDates, dateStr) {
+            if (dateStr) {
+                selectedDateStr = dateStr;
+                document.getElementById('selectedDate').value = dateStr;
+                
+                // 먼저 시간 블록 렌더링
+                renderTimeSlots(dateStr);
+                
+                // 그 다음 AJAX로 예약 정보 가져와서 비활성화 처리
+                fetchReservations(dateStr);
+            }
+        }
+    });
+
+    // 예약 정보를 가져오는 함수
+    function fetchReservations(dateStr) {
+    var chk = new XMLHttpRequest();
+    chk.onload = function() {
+        if (chk.status === 200 && chk.responseText) {
+            try {
+                console.log("원본 응답:", chk.responseText); // 원본 데이터 확인
+                var reservationData = JSON.parse(chk.responseText);
+                console.log("파싱된 예약 데이터:", reservationData);
+                console.log("시간 예약:", reservationData.timeReservations);
+                
+                if (reservationData.timeReservations && reservationData.timeReservations.length > 0) {
+                    console.log("첫 번째 예약 시간:", reservationData.timeReservations[0].startTime, "~", reservationData.timeReservations[0].endTime);
+                }
+                
+                // 예약된 시간대 비활성화 처리
+                disableReservedTimeSlots(reservationData);
+            } catch (e) {
+                console.error("예약 데이터 처리 오류:", e);
+            }
+        }
+    };
+    chk.open("get", "getReservTime?ymd=" + dateStr + "&rcode=${rdto.rcode}");
+    chk.send();
+}
+
+    function disableReservedTimeSlots(reservations) {
+        console.log("비활성화 함수 실행됨");
+
+        reservations.forEach(function(reservation, index) {
+            let startTime = reservation.startTime;
+            let endTime = reservation.endTime;
+
+            let startHour = parseInt(startTime.toString().split(':')[0], 10);
+            let endHour = parseInt(endTime.toString().split(':')[0], 10);
+
+            console.log(`예약 ${index + 1}: ${startHour}시 ~ ${endHour}시`);
+
+            document.querySelectorAll('.time-block').forEach(function(block) {
+                let blockTime = block.getAttribute('data-time');
+                let blockHour = parseInt(blockTime.split(':')[0], 10);
+
+                if (blockHour >= startHour && blockHour < endHour) {
+                    console.log("비활성화 대상 시간 블록:", blockHour);
+
+                    block.classList.add('disabled');
+                    block.style.backgroundColor = "#ddd";
+                    block.style.color = "#aaa";
+                    block.style.cursor = "not-allowed";
+                }
+            });
+        });
+    }
+
+
+
+
     // 예약 방식 선택 이벤트
     timeDurationCheckbox.addEventListener('change', () => {
         if (timeDurationCheckbox.checked) {
@@ -403,56 +847,69 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
-
-
-</script>
-<script>
-
-    // 예약된 시간 저장 (JavaScript 배열)
-    var reservedTimes = [];
-
-    <c:forEach var="time" items="${reservedTimes}">
-        reservedTimes.push({ startTime: "${time.startTime}", endTime: "${time.endTime}" });
-    </c:forEach>;
-
-    function disableReservedTimes() {
-        let buttons = document.querySelectorAll(".time-slot");
-
-        buttons.forEach(button => {
-            let time = button.getAttribute("data-time");
-
-            reservedTimes.forEach(reserved => {
-                let startTime = reserved.startTime.substring(11, 13); // HH 부분 추출
-                let endTime = reserved.endTime.substring(11, 13);
-
-                if (time >= startTime && time < endTime) {
-                    button.classList.add("disabled");
-                }
-            });
-        });
-    }
-
-    window.onload = disableReservedTimes;
-    
-    
-</script>
-
+	</script>
+	<script>
+		function validateForm() {
+		    var selectedDate = document.getElementById('selectedDate').value;
+		    var startTime = document.getElementById('startTime').value;
+		    var endTime = document.getElementById('endTime').value;
+		    
+		    if (!selectedDate || selectedDate.trim() === '') {
+		        alert('날짜를 선택해주세요.');
+		        return false;
+		    }
+		    
+		    if (!startTime || !endTime) {
+		        alert('시간을 선택해주세요.');
+		        return false;
+		    }
+		    
+		    return true;
+		}
+	</script>
 </head>
 <body>
-
+	<!-- 오류 메시지가 있으면 표시 -->
+	    <c:if test="${not empty errorMessage}">
+	        <div style="color: red; text-align: center; margin: 20px; padding: 10px; border: 1px solid red;">
+	            ${errorMessage}
+	        </div>
+	        
+	        <!-- 오류 시 내용을 숨김 -->
+	    </c:if>
+	    
+	    <!-- 오류가 없을 때만 내용 표시 -->
+	    <c:if test="${empty errorMessage}">
+	        <!-- 기존 페이지 내용 -->
 <div id="cContainer_top">
 	<div class="ctitle">
-		<div>${rdto.name}</div>
-		<div>${rdto.subname}</div>
-		<div>${rdto.keyword}</div>
+		<div class="ctitle1">${rdto.name}</div>
+		<div class="ctitle2">${rdto.subname}</div>
+		<div class="ctitle3">${rdto.keyword}</div>
 	</div>
 </div>
 
-<div class="cContainer">
-  <div class="cContent_wrapper"> <!-- 왼쪽 메인 div -->
-<button id="prevBtn" disabled>이전</button>
-<button id="nextBtn">다음</button>
-
+	<div class="cContainer">
+	  <div class="cContent_wrapper"> <!-- 왼쪽 메인 div -->
+	<div style="display: flex; align-items: center; margin-bottom: 15px;">
+	  <button id="prevBtn" disabled>이전</button>
+	  <button id="nextBtn">다음</button>
+	  
+	  <c:choose>
+	    <c:when test="${likedByUser}">
+	      <!-- 이미 좋아요 한 경우 -->
+	      <a href="/room/like/${rdto.roomid}" class="like-btn liked" style="margin-left: auto;">
+	        <i class="fas fa-heart" style="font-size: 28px; color: #ff4757;"></i> <span style="font-weight: bold;">${rdto.heart}</span>
+	      </a>
+	    </c:when>
+	    <c:otherwise>
+	      <!-- 좋아요 안 한 경우 -->
+	      <a href="/room/like/${rdto.roomid}" class="like-btn" style="margin-left: auto;">
+	        <i class="far fa-heart" style="font-size: 28px; color: #ff6b6b;"></i> <span style="font-weight: bold;">${rdto.heart}</span>
+	      </a>
+	    </c:otherwise>
+	  </c:choose>
+	</div>
 
   	<div id="cImgMain">
   	 <div class="cImgAll">
@@ -522,16 +979,100 @@ document.addEventListener("DOMContentLoaded", function () {
   
   
   <!-- 네이버지도 api -->
-  <div id="map" style="width:100%;height:620px;"></div>
+  <div id="map" style="width:100%;height:620px;border-radius:15px;box-shadow:0 4px 8px rgba(0,0,0,0.1);"></div>
 		<script>
 		var mapOptions = {
 		    center: new naver.maps.LatLng(${rdto.mapy}, ${rdto.mapx}),
-		    zoom: 10
+		    zoom: 15,
+		    zoomControl: true,
+		    zoomControlOptions: {
+		        position: naver.maps.Position.TOP_RIGHT
+		    }
 		};
-		
 		var map = new naver.maps.Map('map', mapOptions);
+		
+		// 마커 생성
+		var markerPosition = new naver.maps.LatLng(${rdto.mapy}, ${rdto.mapx});
+		var marker = new naver.maps.Marker({
+		    position: markerPosition,
+		    map: map,
+		    icon: {
+		        content: '<div style="background-color:#3A3A3A;width:20px;height:20px;border-radius:50%;border:3px solid white;box-shadow:0 2px 5px rgba(0,0,0,0.3);"></div>',
+		        anchor: new naver.maps.Point(12, 12)
+		    },
+		    animation: naver.maps.Animation.DROP
+		});
+		
+		// 정보창 생성
+		var contentString = [
+		    '<div style="padding:15px;min-width:200px;font-family:\'LINESeedKR-Light\', sans-serif;line-height:1.5;">',
+		    '   <h4 style="margin:0 0 10px;color:#3A3A3A;font-family:\'LINESeedKR-Bold\', sans-serif;">${rdto.name}</h4>',
+		    '   <p style="margin:5px 0;color:#333;">${rdto.subname}</p>',
+		    '   <p style="margin:5px 0;color:#666;font-size:13px;">${rdto.roadadress}</p>',
+		    '   <div style="margin-top:10px;padding-top:10px;border-top:1px solid #eee;display:flex;justify-content:space-between">',
+		    '       <span style="color:#5A5A5A;font-size:12px;">영업시간: ${rdto.officehour}</span>',
+		    '       <a href="https://map.naver.com/p/directions/-/${rdto.mapx},${rdto.mapy}" target="_blank" style="color:#3A3A3A;font-size:12px;text-decoration:none;">길찾기</a>',
+		    '   </div>',
+		    '</div>'
+		].join('');
+		
+		var infowindow = new naver.maps.InfoWindow({
+		    content: contentString,
+		    maxWidth: 300,
+		    backgroundColor: "white",
+		    borderColor: "#DDD",
+		    borderWidth: 2,
+		    anchorSize: new naver.maps.Size(20, 20),
+		    anchorSkew: true,
+		    anchorColor: "white",
+		    pixelOffset: new naver.maps.Point(0, -10)
+		});
+		
+		// 마커 클릭 시 정보창 열기
+		naver.maps.Event.addListener(marker, "click", function() {
+		    if (infowindow.getMap()) {
+		        infowindow.close();
+		    } else {
+		        infowindow.open(map, marker);
+		    }
+		});
+		
+		// 지도 로드 시 자동으로 정보창 열기
+		infowindow.open(map, marker);
+		
+		// 지도 스타일 커스터마이징
+		var mapStyles = [
+		    {
+		        featureType: 'poi',
+		        elementType: 'labels.icon',
+		        stylers: [
+		            { visibility: 'on' }
+		        ]
+		    },
+		    {
+		        featureType: 'transit',
+		        elementType: 'labels',
+		        stylers: [
+		            { visibility: 'on' }
+		        ]
+		    }
+		];
+		
+		// 주변 정보 표시 (교통, 음식점 등)
+		naver.maps.Event.once(map, 'init', function() {
+		    map.setOptions('mapTypeControl', true);
+		});
+		
+		// 지도 기능 추가
+		var locationBtnHtml = '<div style="position:absolute;bottom:15px;right:15px;z-index:100;background:#fff;padding:8px;border-radius:5px;box-shadow:0 2px 5px rgba(0,0,0,0.2);cursor:pointer;display:flex;align-items:center;justify-content:center;width:32px;height:32px;"><img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" style="width:18px;height:18px;"></div>';
+		var customControl = new naver.maps.CustomControl(locationBtnHtml);
+		
+		customControl.setMap(map);
+		naver.maps.Event.addDOMListener(customControl.getElement(), 'click', function() {
+		    map.setCenter(markerPosition);
+		    map.setZoom(15);
+		});
 		</script>
-	  
   
   
   
@@ -546,8 +1087,37 @@ document.addEventListener("DOMContentLoaded", function () {
 	<div>결제 후 바로 예약확정</div>
 	<div>빠르고 확실한 예약을 위해 온라인 결제를 진행하세요!</div>
 	<div>
-		<input type="checkbox" checked onclick="return false">${rdto.name}&#8361;<fmt:formatNumber value="${roomInfo.halinprice}" type="number" pattern="#,###"/>
+		<input type="checkbox" checked onclick="return false">${rdto.name} &#8361;
+		
+		
+		<c:choose>
+		<c:when test="${roomInfo.halinprice>=0}">
+		<fmt:formatNumber value="${roomInfo.halinprice}" type="number" pattern="#,###"/>
+		</c:when>
+		<c:otherwise>
+		
+		<c:set var="priceArray" value="${fn:split(roomInfo.pkgprice, ',')}" />
+		<c:set var="maxPrice" value="0" />
+		
+		<c:forEach var="price" items="${priceArray}">
+		 <c:if test="${not empty price and price != ''}">
+		 <c:set var="currentPrice" value="${price}" />
+		 
+		 <c:if test="${currentPrice > maxPrice}">
+		 <c:set var="maxPrice" value="${currentPrice}" />
+		</c:if>
+		</c:if>
+		</c:forEach>
+		
+		<fmt:formatNumber value="${maxPrice}" type="number" pattern="#,###"/>원
+		</c:otherwise>
+		</c:choose>
+		
 	</div>
+	
+	
+	
+	
 	<div><img style="width:100%; height:50%;" src="../static/room/${rdto.pic}"></div>
 	<div><pre style="white-space: pre-wrap; font-size: 15px">${rdto.subdesc}</pre></div>
 	
@@ -761,30 +1331,19 @@ document.addEventListener("DOMContentLoaded", function () {
 	<div class="fimg">예약 선택</div>
 	<hr width="90%">
 	<div class="fimg">
-	<ul class="durationchk">
-	<c:if test="${rdto.duration_type==0 or rdto.duration_type==2}">
-	<li><input type="checkbox" id="timeduration" name="duration">시간 단위로 예약하기</li>
-	</c:if>
-	<c:if test="${rdto.duration_type==1 or rdto.duration_type==2}">
-	<li><input type="checkbox" id="pkgduration" name="duration">패키지 단위로 예약하기</li>
-	</c:if>
-	</ul>
-<div id="timeDiv" style="display: none;">
+<div id="timeDiv" style="display: block;">
     <div id="calendar"></div>
     <div id="timeContainer" class="time-container"></div>
-<form action="roomReserv" method="get">
-	<input type="hidden" id="selectedDate" name="selectedDate">
-    <input type="hidden" id="startTime" name="startTime">
-    <input type="hidden" id="endTime" name="endTime">
-    <input type="hidden" name="rcode" value="${rdto.rcode}">
-    <button type="submit">예약하기</button>
-</form>
+	<form action="roomReserv" method="get" onsubmit="return validateForm()">
+		<input type="hidden" id="selectedDate" name="selectedDate">
+	    <input type="hidden" id="startTime" name="startTime">
+	    <input type="hidden" id="endTime" name="endTime">
+	    <input type="hidden" name="rcode" value="${rdto.rcode}">
+	    <button type="submit">예약하기</button>
+	</form>
     
 </div>
-	
-<div id="pkgtimeDiv" style="display: none;">
-    <div>패키지 단위 선택 영역</div>
-</div>
+	 
 
 	
 	
@@ -796,6 +1355,6 @@ document.addEventListener("DOMContentLoaded", function () {
   </aside>
   
 </div>
-
+</c:if>
 </body>
 </html>

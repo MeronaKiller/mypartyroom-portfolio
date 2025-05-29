@@ -34,6 +34,16 @@ public class MainController {
 	{
 		return service.room();
 	}
+	@GetMapping("/about/terms")
+	public String terms()
+	{
+		return service.terms();
+	}
+	@GetMapping("/about/privacy")
+	public String privacy()
+	{
+		return service.privacy();
+	}
 	
 	
 }

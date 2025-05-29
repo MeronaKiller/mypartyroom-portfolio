@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title><sitemesh:write property="title"/></title>
 <style>
 	@font-face {
 	    font-family: 'LINESeedKR-Light'; /* Light 버전 */
@@ -196,6 +196,8 @@
 	{
 		text-decoration: none;
 		color: white;
+		margin-left: 5px;
+		margin-right: 5px;
 	}
 </style>
 <script>
@@ -229,8 +231,7 @@
        		<li><a href="../board/noticeList">공지사항</a></li>
        		<li><a href="../board/fna">자주하는 질문</a></li>
        		<li><a href="../member/personalInquiry">1:1 문의</a></li>
-       		<li><a href="">건의하기</a></li>	
-       		<li><a href="">취소/반품 안내</a></li>
+       		<li><a href="../board/CRNotice">취소/환불 안내</a></li>
        	</ul>
     </span>
     </div>
@@ -244,8 +245,7 @@
        		<li><a href="../board/noticeList">공지사항</a></li>
        		<li><a href="../board/fna">자주하는 질문</a></li>
        		<li><a href="../login/login">1:1 문의</a></li>
-       		<li><a href="../login/login">건의하기</a></li>	
-       		<li><a href="../login/login">취소/반품 안내</a></li>
+       		<li><a href="../board/CRNotice">취소/환불 안내</a></li>
        	</ul>
     </span>
     </div>
@@ -262,8 +262,8 @@
                 <!-- 로고 텍스트 -->
                 <a xlink:href="/"> <!-- xlink:href 사용해서 이동 -->
                 <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" dy="0.1em">
-                    파티플레이스<tspan fill="red"></tspan>
-                </text>
+				    마이<tspan fill="#FF5A5F">파티</tspan>룸
+				</text>
                 </a>
             </svg> 
         </div><!-- SVG 로고 끝 -->
@@ -272,7 +272,7 @@
   	  <div id="search-container" style="position: absolute; left: 50%; transform: translateX(-50%);">
         <form action="../room/roomList" method="get">
             <input type="text" name="searchKeyword" placeholder="파티룸 이름 또는 키워드 검색" style="width: 300px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-            <button type="submit" style="padding: 8px 15px; background: #0066ff; color: white; border: none; border-radius: 4px; cursor: pointer;">검색</button>
+            <button type="submit" style="padding: 8px 15px; background: #3A3A3A; color: white; border: none; border-radius: 4px; cursor: pointer;">검색</button>
         </form>
   	  </div>
         
@@ -284,8 +284,7 @@
        	</a>
        	<ul id="mySub">
        		<li><a href="../login/login">주문내역</a></li> <!-- 프로필내역 메인 -->
-       		<li><a href="../login/login">취소/반품 내역</a></li>
-       		<li><a href="../login/login">개인 정보 수정</a></li>
+       		<li><a href="../login/login">취소/환불 내역</a></li>
        	</ul>       	
        	</span>
        	</c:if>
@@ -297,14 +296,13 @@
        	<ul id="mySub">
        		<li><a href="../member/order">예약내역</a></li> <!-- 프로필내역 메인 -->
        		<li><a href="../member/cancelReturnList">취소/환불 내역</a></li>
-       		<li><a href="../member/order">개인 정보 수정</a></li>
        		<li><a href="../login/logout">로그아웃</a></li>
        	</ul>
        	</span>
        </c:if>
        </div>
        
-       
+       <sitemesh:write property="head" excludeTags="title"/>
     </header> <!-- 헤더 끝 -->
 </div>
     <sitemesh:write property="body"/>
@@ -313,7 +311,7 @@
     <div class="footer-container">
         <!-- 1. 회사 정보 -->
         <div class="footer-info">
-            <h3>파티플레이스</h3>
+            <h3>마이파티룸</h3>
             <p>특별한 순간을 위한 공간</p>
         </div>
 
@@ -339,7 +337,7 @@
 
         <!-- 5. 저작권 정보 -->
         <div class="footer-copyright">
-            <p>© 2025 파티플레이스. All rights reserved.</p>
+            <p>© 2025 마이파티룸. All rights reserved.</p>
         </div>
     </div>
     <div id="footer-wrap"></div>

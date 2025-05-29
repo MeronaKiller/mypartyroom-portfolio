@@ -7,12 +7,13 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>룸리스트</title>
 <style>
 	section
 	{
-		width: 1100px;
-		height: auto;
+	  width: 1100px;
+	  height: auto;
+	  margin: 0 auto;
 	}
    section > table {
       border-spacing:20px;
@@ -21,17 +22,9 @@
       border:2px solid white;
       vertical-align:top;
    }
-   section > table tr td:hover {
-      border:2px solid #5F007F;
-   }
-   section > table tr td div:first-child {
-      text-align:center;
-      overflow:hidden;
-      width:30%;
-      height:180px;
-   }
-   section > table tr td div {
-      margin-top:4px;
+   section > table tr td:hover
+   {
+   
    }
    section table tr:last-child td { /* 페이지 출력되는 td에 외곽선 없애기 */
       border:none;
@@ -44,42 +37,40 @@
       display:inline-block;
       color:black;
    }
-      section table tr:last-child td a:hover {
+   section table tr:last-child td a:hover {
       background:#5F007F;
       color:white;
    }
 	#topDiv {
-		position:relative;
-		padding: 30px;
-		word-spacing: 10px;
-		text-align: left;
+	  position:relative;
+	  padding: 30px;
+	  word-spacing: 10px;
+	  text-align: left;
 	}
 	#imgContainer
 	{
-    width: 100%;
-    height: 180px;
+      width: 100%;
+      height: 180px;
 	}
 	#imgContainer img
 	{
-		
-		width: 100%;
-    	height: 100%;
-		object-fit: cover; /* 빈 공간 없이 채우기, 일부 잘림 */
+      width: 100%;
+      height: 100%;
+	  object-fit: cover; /* 빈 공간 없이 채우기, 일부 잘림 */
 	}
 	#topDiv ul
 	{
-		display: flex;
-		list-style: none;
+	  display: flex;
+	  list-style: none;
 	}
-	
 	
 	#selectPeople
 	{	
-		position:absolute;
-		width:300px;
-		height:100px;
-		border: 1px solid black;
-		display:none;
+	  position:absolute;
+	  width:300px;
+	  height:100px;
+	  border: 1px solid black;
+	  display:none;
 	}
 	#selectDate
 	{	
@@ -104,7 +95,70 @@
 	}
 	#imgTd
 	{
-		width:30%;
+ 	 	width: 33.33%;
+ 	 	padding: 10px;
+ 	 	vertical-align: middle;
+ 	 	text-align: center;
+	}
+	#roomInfoCon
+	{
+	 	width: 90%;
+	 	border-radius: 5px;
+	 	overflow: hidden;
+	 	box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+	 	cursor: pointer;
+	 	text-align: left;
+	 	margin: 0 auto;
+	}
+	#keywordCon
+	{
+	 	font-size:12px;
+	 	background-color: #f5f5f5;
+	 	color: #55555;
+	 	border-radius: 5px;
+	 	width: auto;
+	 	padding: 3px;
+	 	text-align: center;
+		display: inline-block;
+	}
+	#PRoomTextCon
+	{
+	 	padding: 10px;
+	 	line-height: 1.7;
+	}
+	#PRoomName
+	{
+	 	font-weight: bold;
+	 	color: #262c4c;
+	}
+	#PRoomCapacity
+	{
+	 	color: #848a8f;
+	}
+	#PRoomHeart
+	{
+	 	color: #5A7D9A;
+	}
+	.rdtoprice
+	{
+	 	font-weight: bold;
+	 	margin-left:0px;
+	 	text-align: center;
+	 	display: inline-block;
+	 	display: flex;
+	 	justify-content: center;
+	 	align-items: center;
+	}
+	#rdtocapaheart1
+	{
+	 	display: flex;
+	 	color: #262c4c;
+	}
+	#rdtocapaheart
+	{
+		margin-left: auto;
+		display: flex;
+		color: #262c4c;
 	}
     .locCat
     {
@@ -114,6 +168,15 @@
        margin-top:5px;
 	   text-align: left;
        white-space: nowrap;
+    }
+    .locCat a
+    {
+	   text-decoration: none;
+       color: #262c4c;
+    }
+    .locCat a:hover
+    {
+    	color: red;
     }
 	.locCatUl
 	{
@@ -134,13 +197,9 @@
     }
 </style>
 <script>
-
-	
-	
 	var hnum=-1; // 이전에 보였는 인덱스
 	function locCatSpan(n)
 	{
-		
 		if(hnum!=-1)
 			document.getElementsByClassName("locCatUl")[hnum].style.visibility="hidden";
 		
@@ -148,8 +207,6 @@
 		
 		hnum=n;
 	}
-	
-</script>
 </script>
 </head>
 <body>
@@ -220,73 +277,80 @@
 	</ul>
 </span>
 
-
 </div> <!-- 탑 바 끝 -->
 
 <hr>
 
-
-
-	<table align="center" width="1100">
-        <tr>
+<table align="center" width="1100">
+	<tr>
 	<c:forEach items="${rlist}" var="rdto" varStatus="sts">
-	
-	<!-- 룸 사진 -->
-	<td id="imgTd" onclick="location='roomContent?rcode=${rdto.rcode}'">
-	<div id="imgContainer"><img src="../static/room/${rdto.pic}" alt="룸 이미지"></div>
-	
-	<!-- 할인율 -->
-	<c:if test="${rdto.halin>0}">
-		<div>할인율: ${rdto.halin}%</div>
-	</c:if>
-	
-	<!-- 룸 이름 -->
-	<div>${rdto.name}</div>
-	
-	<!-- 키워드 -->
-	<div>${rdto.keyword}</div>
-	
-	<div>
-	<!-- 단위 0일때:시간단위 아니면 패키지단위(패키지아직안함) -->
-	<c:choose>
-	<c:when test="${rdto.duration_type==0}">
-		<fmt:formatNumber value="${rdto.price}" type="number" pattern="#,###"/>원/시간
-	</c:when>
-	<c:when test="${rdto.duration_type==1}">
-	
-	</c:when>
-	<c:otherwise>
-			<fmt:formatNumber value="${rdto.price}" type="number" pattern="#,###"/>원/시간
-			
-	</c:otherwise>
-	</c:choose>
-	
-	<!-- 인원수 -->
-	최대${rdto.capacity}인
-	<!-- 댓글 수(답변기능 추가해야함) -->
-	<!-- 좋아요 수 -->
-	♡${rdto.heart}</div>
-	</td>
-   <c:if test="${sts.count%3==0}">	
-     </tr>
-     <tr>
-   </c:if> 
+		<!-- 룸 사진 -->
+		<td id="imgTd">
+			<div id="roomInfoCon" onclick="location='roomContent?rcode=${rdto.rcode}'">
+				<div id="imgContainer"><img src="../static/room/${rdto.pic}" alt="룸 이미지"></div>
+				
+				<!-- 할인율 -->
+				<c:if test="${rdto.halin>0}">
+					<div>할인율: ${rdto.halin}%</div>
+				</c:if>
+				
+				<div id="PRoomTextCon"> <!-- 인기 파티룸 내용 텍스트 아이디 -->
+					<!-- 룸 이름 -->
+					<div id="PRoomName">${rdto.name}</div>
+					
+					<!-- 키워드 -->
+					<div><span id="keywordCon">${rdto.keyword}</span></div>
+					
+					<div id="rdtocapaheart1">
+						<!-- 단위 0일때:시간단위 아니면 패키지단위(패키지아직안함) -->
+						<c:choose>
+							<c:when test="${rdto.duration_type==2}">
+								<span class="rdtoprice"><fmt:formatNumber value="${rdto.price}" type="number" pattern="#,###"/>원/시간</span>
+							</c:when>
+							<c:otherwise>
+									
+								<c:set var="priceArray" value="${fn:split(rdto.pkgprice, ',')}" />
+								<c:set var="maxPrice" value="0" />
+								
+								<c:forEach var="price" items="${priceArray}">
+									<c:if test="${not empty price and price != ''}">
+										<c:set var="currentPrice" value="${price}"/>
+										<c:if test="${currentPrice > maxPrice}">
+											<c:set var="maxPrice" value="${currentPrice}" />
+										</c:if>
+									</c:if>
+								</c:forEach>
+								
+								<span class="rdtoprice"><fmt:formatNumber value="${maxPrice}" type="number" pattern="#,###"/>원/패키지</span>
+									
+							</c:otherwise>
+						</c:choose>
+						
+						<!-- 인원수 -->
+						<span id="rdtocapaheart">
+							<span id="PRoomCapacity">최대${rdto.capacity}인</span>
+							<!-- 좋아요 수 -->
+							<span id="PRoomHeart">♥${rdto.heart}</span>
+						</span>
+					</div>
+				</div>
+			</div>
+		</td>
+		
+		<c:if test="${sts.count%3==0}">	
+			</tr>
+			<tr>
+		</c:if> 
 	</c:forEach>
 	
+	<!-- 남은 칸 채우기 -->
 	<c:if test="${rlistSize % 3 !=0}">
 		<c:forEach begin="1" end="${3-(rlistSize % 3)}">
-		<td></td>
+			<td></td>
 		</c:forEach>
-		</c:if>
+	</c:if>
 	</tr>
-	</table>
-	
-<!-- <fmt:formatNumber value="${rdto.pkgprice}" type="number" pattern="#,###"/>원/패키지 -->
-
-		
-
-
-
+</table>
 
 </section>
 </body>

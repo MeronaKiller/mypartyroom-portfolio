@@ -24,4 +24,10 @@ public interface RoomService {
     public ArrayList<ReservationDto> getReservTime(HttpServletRequest request);
 	String reservChk(HttpSession session, HttpServletRequest request, Model model, MemberDto mdto, ReservationDto rsdto,
 			RoomDto rdto);
+	public void addLike(String userid, int roomid);
+	public void removeLike(String userid, int roomid);
+	public boolean isLikedByUser(String userid, int roomid);
+	public String getRcodeByroomid(int roomid);
+	void increaseRoomLike(int roomid);
+
 }

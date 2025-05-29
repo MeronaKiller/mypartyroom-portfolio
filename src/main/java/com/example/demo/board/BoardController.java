@@ -29,4 +29,14 @@ public class BoardController {
 	{
 		return service.fna(fdto,model,request);
 	}
+	@GetMapping("/board/CRNotice")
+	public String CRNotice()
+	{
+		return service.CRNotice();
+	}
+	@GetMapping("/board/noticeContent")
+	public String noticeContent(NoticeDto ndto,Model model,HttpServletRequest request)
+	{
+		return service.noticeContent(ndto,model,request);
+	}
 }

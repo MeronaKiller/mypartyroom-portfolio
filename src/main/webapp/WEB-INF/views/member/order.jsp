@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>예약내역</title>
 <script>
 function handleCancelRequest(reservationId, currentStatus) {
   // 현재 상태를 기반으로 링크 텍스트와 확인 메시지 설정
@@ -128,6 +128,21 @@ function handleCancelRequest(reservationId, currentStatus) {
 		margin-bottom: 5px;
 		border-radius: 5px;
 	}
+	.odContent #odtd2 .odbtn3 a
+	{
+		display: block;
+		font-size: 20px;
+		border: 1px solid #ddd;
+		background-color:#FF6B3D;
+		color: white;
+		text-decoration: none;
+		width: 90%;
+		height:45px;
+		margin: 0, auto;
+		line-height:45px;
+		margin-bottom: 5px;
+		border-radius: 5px;
+	}
 	.odContent #odtd2 .odbtn1 a
 	{
 		display: block;
@@ -158,21 +173,6 @@ function handleCancelRequest(reservationId, currentStatus) {
 		margin-bottom: 5px;
 		border-radius: 5px;
 		pointer-events: none;
-	}
-	.odContent #odtd2 #odbtnReview a
-	{
-		display: block;
-		font-size: 20px;
-		border: 1px solid #ddd;
-		background-color: #28A745;
-		text-decoration: none;
-		color: white;
-		width: 90%;
-		height:45px;
-		margin: 0, auto;
-		line-height: 45px;
-		margin-bottom: 5px;
-		border-radius: 5px;
 	}
 	#reservback
 	{
@@ -219,7 +219,7 @@ function handleCancelRequest(reservationId, currentStatus) {
         <div>
             <c:choose>
               <c:when test="${map.status == 0}">
-              <div class="odbtn">
+              <div class="odbtn3">
               <a href="#" onclick="handleCancelRequest(${map.reservationid}, ${map.status}); return false;">
               취소 및 환불 신청
               </a>
@@ -241,7 +241,6 @@ function handleCancelRequest(reservationId, currentStatus) {
               </c:otherwise>
             </c:choose>
         </div>
-        <div id="odbtnReview"><a href="">리뷰 작성하기</a></div>
       </td>
     </tr>
   </table>

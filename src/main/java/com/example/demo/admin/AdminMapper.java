@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Mapper;
 import com.example.demo.dto.AdminDto;
 import com.example.demo.dto.DaeDto;
 import com.example.demo.dto.MemberDto;
+import com.example.demo.dto.NoticeDto;
+import com.example.demo.dto.PersonalInquiryDto;
 import com.example.demo.dto.ReservationDto;
 import com.example.demo.dto.RoomDto;
 import com.example.demo.dto.SoDto;
@@ -27,4 +29,19 @@ public interface AdminMapper {
 	public ArrayList<MemberDto> getAllMember(String userid); // 특정 회원만 가져오기
 	public void updateReservationStatus(int reservationId, int status);
 	public ReservationDto getReservation(int reservationId);
+	public void deleteUser(int memberid, int status);
+	public void reviveUser(int memberid, int status);
+	public ArrayList<ReservationDto> roomDelete(String rcode);
+	public void roomDeleteOk(int roomid, int duration_type);
+	public void roomReviveOk(int roomid, int duration_type);
+	int noticeGetChong();
+	public ArrayList<NoticeDto> noticeManage(int index);
+	public NoticeDto getNoticeContentManage(int noticeid);
+	public void noticeWriteOk(NoticeDto ndto);
+	public void noticeContentDeleteOk(int noticeid, int i);
+	public void noticeContentReviveOk(int noticeid, int i);
+	public ArrayList<PersonalInquiryDto> getPersonalInquiryList(int index);
+	public PersonalInquiryDto getPersonalInquiry(int personalInquiryid);
+	int qnaGetChong();
+	public void qnaAnswerOk(int personalInquiryid, int i);
 }

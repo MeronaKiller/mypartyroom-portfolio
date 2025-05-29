@@ -22,6 +22,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.example.demo.dto.AdminDto;
 import com.example.demo.dto.DaeDto;
 import com.example.demo.dto.MemberDto;
+import com.example.demo.dto.NoticeDto;
+import com.example.demo.dto.PersonalInquiryDto;
 import com.example.demo.dto.ReservationDto;
 import com.example.demo.dto.RoomDto;
 import com.example.demo.dto.SoDto;
@@ -202,5 +204,160 @@ public class AdminServiceImpl implements AdminService {
 	public String conformCancleNo(int reservationId1) {
 		mapper.updateReservationStatus(reservationId1, 0);
 		return "redirect:/admin/conformCancle";
+	}
+	@Override
+	public String deleteUser(int memberid) {
+		mapper.deleteUser(memberid, 1);
+		return "redirect:/admin/memberManage";
+	}
+	@Override
+	public String reviveUser(int memberid) {
+		mapper.reviveUser(memberid, 0);
+		return "redirect:/admin/memberManage";
+	}
+	@Override 
+	public String roomDelete(RoomDto rdto, Model model)
+	{
+	    ArrayList<ReservationDto> rlist=mapper.roomDelete(rdto.getRcode());
+	    
+	    model.addAttribute("rlist", rlist);
+		return "/admin/roomDelete";
+	}
+	@Override
+	public String roomDeleteOk(int roomid)
+	{
+		mapper.roomDeleteOk(roomid, 1);//1이 비활성화 
+	    return "redirect:/admin/roomDelete";
+	}
+	@Override
+	public String roomReviveOk(int roomid)
+	{
+		mapper.roomReviveOk(roomid, 0);//0이 복구
+		return "redirect:/admin/roomDelete";
+	}
+	@Override
+	public String noticeManage(NoticeDto ndto,Model model,HttpServletRequest request)
+	{
+		
+		// 시작페이지 인덱스값 구하기
+		
+		int page;
+		if(request.getParameter("page")==null)
+		{
+			page=1;
+		}
+		else
+		{
+			page=Integer.parseInt(request.getParameter("page"));
+		}
+		
+		
+		int pstart,pend,noticeGetChong;
+		
+		pstart=page/10;
+		if(page%10==0)
+
+		pstart=pstart-1;
+
+		
+		pstart=(pstart*10)+1;
+		pend=pstart+9;
+		
+		noticeGetChong=mapper.noticeGetChong();
+		if(pend>noticeGetChong)
+			pend=noticeGetChong;
+		
+		int index=(page-1)*20;
+		ArrayList<NoticeDto> nlist=mapper.noticeManage(index);
+		
+		
+		model.addAttribute("nlist",nlist);
+		model.addAttribute("page",page);
+		model.addAttribute("pstart",pstart);
+		model.addAttribute("pend",pend);
+		model.addAttribute("noticeGetChong",noticeGetChong);
+		
+		//ArrayList 처리
+		return "/admin/noticeManage";
+	}
+	@Override
+	public String noticeContentManage(NoticeDto ndto, Model model, HttpServletRequest request)
+	{
+	    int noticeid = Integer.parseInt(request.getParameter("noticeList"));
+	    NoticeDto notice = mapper.getNoticeContentManage(noticeid);
+	    model.addAttribute("notice", notice);
+	    return "/admin/noticeContentManage";
+	}
+	@Override
+	public String noticeWrite(Model model)
+	{
+	    return "/admin/noticeWrite";
+	}
+	@Override
+	public String noticeWriteOk(NoticeDto ndto)
+	{
+		mapper.noticeWriteOk(ndto);
+		
+		return "redirect:/admin/noticeManage";
+	}
+	@Override
+	public String noticeContentDeleteOk(int noticeid)
+	{
+		mapper.noticeContentDeleteOk(noticeid, 1);//1이 비활성화 
+	    return "redirect:/admin/noticeManage";
+	}
+	@Override
+	public String noticeContentReviveOk(int noticeid)
+	{
+		mapper.noticeContentReviveOk(noticeid, 0);//0이 복구
+		return "redirect:/admin/noticeManage";
+	}
+	@Override
+	public String qnaAnswer(Model model, HttpServletRequest request) {
+	    // 시작페이지 인덱스값 구하기
+	    int page;
+	    if(request.getParameter("page")==null) {
+	        page=1;
+	    } else {
+	        page=Integer.parseInt(request.getParameter("page"));
+	    }
+	    
+	    int pstart, pend, qnaGetChong;
+	    
+	    pstart=page/10;
+	    if(page%10==0)
+	        pstart=pstart-1;
+	    
+	    pstart=(pstart*10)+1;
+	    pend=pstart+9;
+	    
+	    qnaGetChong=mapper.qnaGetChong();
+	    if(pend>qnaGetChong)
+	        pend=qnaGetChong;
+	    
+	    int index=(page-1)*20;
+	    ArrayList<PersonalInquiryDto> qlist=mapper.getPersonalInquiryList(index);
+	    
+	    model.addAttribute("qlist", qlist);
+	    model.addAttribute("page", page);
+	    model.addAttribute("pstart", pstart);
+	    model.addAttribute("pend", pend);
+	    model.addAttribute("qnaGetChong", qnaGetChong);
+	    
+	    return "/admin/qnaAnswer";
+	}
+
+	@Override
+	public String qnaContent(int personalInquiryid, Model model) {
+	    PersonalInquiryDto qdto = mapper.getPersonalInquiry(personalInquiryid);
+	    model.addAttribute("qdto", qdto);
+	    return "/admin/qnaContent";
+	}
+
+	@Override
+	public String qnaAnswerOk(int personalInquiryid)
+	{
+		mapper.qnaAnswerOk(personalInquiryid, 1);//1이 답변완료
+		return "redirect:/admin/qnaAnswer";
 	}
 }
