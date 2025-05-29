@@ -1,0 +1,44 @@
+{
+	"id": "9dea2737-9cff-428f-9f34-0bd1acccca34",
+	"name": "advancedBulkTest",
+	"timestamp": "2025-05-29T17:23:35.862Z",
+	"collection_id": "45098911-5d6e9c29-9d4e-46ae-92d1-2b6f38344520",
+	"folder_id": 0,
+	"environment_id": "0",
+	"totalPass": 0,
+	"delay": 0,
+	"persist": true,
+	"status": "finished",
+	"startedAt": "2025-05-29T17:23:21.219Z",
+	"totalFail": 0,
+	"results": [
+		{
+			"id": "6c18193d-02ee-4fdb-9fcd-441c2c8c5935",
+			"name": "http://localhost:8080/room/advancedBulkTest?count=50&roomCount=10&enableBatch=true",
+			"url": "http://localhost:8080/room/advancedBulkTest?count=50000&roomCount=10&enableBatch=true",
+			"time": 14294,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				14294
+			],
+			"allTests": [
+				{}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 14294,
+	"collection": {
+		"requests": [
+			{
+				"id": "6c18193d-02ee-4fdb-9fcd-441c2c8c5935",
+				"method": "POST"
+			}
+		]
+	}
+}
