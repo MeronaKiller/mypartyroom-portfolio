@@ -33,16 +33,20 @@ public interface RoomMapper {
 	void decreaseRoomLike(int roomid);
 	String getRcodeByroomid(int roomid);
 	
-	
+    int countConflictingReservations(ReservationDto dto);
+    int insertReservationSimple(ReservationDto dto);
+    int insertReservationFast(ReservationDto dto);
 	
 	boolean isTimeSlotAvailable(@Param("rcode") String rcode, 
 	                           @Param("startTime") String startTime, 
 	                           @Param("endTime") String endTime);
 
-	int insertReservationWithCheck(@Param("rsdto") ReservationDto rsdto);
+	int insertReservationWithCheck(ReservationDto rsdto);
 
 	int getReservationVersion(String rcode);
 	boolean updateReservationWithVersion(@Param("rsdto") ReservationDto rsdto, @Param("version") int version);
 	public int insertReservationBatch(List<ReservationDto> validReservations);
 	public Set<String> getReservationTimesByRcodeAndDate(String rcode, String date);
+	
+	
 }

@@ -1,6 +1,7 @@
 package com.example.demo.room;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -144,12 +145,24 @@ public class RoomServiceImpl implements RoomService {
 	@Override
 	@Transactional
 	public String reservOk(ReservationDto rsdto, HttpSession session) {
+	    System.out.println("🔍 reservOk 메서드 시작");
+	    System.out.println("받은 데이터: " + rsdto.getRcode() + ", " + rsdto.getSelectedDate());
 	    
-	    if(session.getAttribute("userid") == null) { 
-	        return "redirect:/login/login";
+	    // ✅ 날짜 검증 추가
+	    if (rsdto.getSelectedDate() == null || rsdto.getSelectedDate().contains("{{")) {
+	        System.err.println("❌ 잘못된 날짜 형식: " + rsdto.getSelectedDate());
+	        return "redirect:/room/reservFailure";
 	    }
-
-	    String userid = session.getAttribute("userid").toString();
+	    
+	    // ✅ 시간 검증 추가
+	    if (rsdto.getStartTime() == null || rsdto.getEndTime() == null) {
+	        System.err.println("❌ 시작/종료 시간이 null입니다");
+	        return "redirect:/room/reservFailure";
+	    }
+	    
+	    // 테스트용 고정 사용자
+	    String userid = "testuser";
+	    System.out.println("✅ userid: " + userid);
 	    rsdto.setUserid(userid);
 	    
 	    // 주문코드 생성
@@ -160,39 +173,66 @@ public class RoomServiceImpl implements RoomService {
 	    rsdto.setJumuncode(jumuncode);
 	    
 	    String[] rcodes = rsdto.getRcode().split("/");
+	    int successCount = 0;
 	    
 	    for(int i = 0; i < rcodes.length; i++) {
-	        // 새로운 객체 생성 (중요!)
-	        ReservationDto newReservation = new ReservationDto();
-	        
-	         //기존 데이터 복사
-	        newReservation.setUserid(userid);
-	        newReservation.setJumuncode(jumuncode);
-	        newReservation.setRcode(rcodes[i]); // 각각 다른 방 코드
-	        newReservation.setCard1(rsdto.getCard1());
-	        newReservation.setTel(rsdto.getTel());
-	        newReservation.setHalbu1(rsdto.getHalbu1());
-	        newReservation.setBank1(rsdto.getBank1());
-	        newReservation.setCard2(rsdto.getCard2());
-	        newReservation.setBank2(rsdto.getBank2());
-	        newReservation.setPurposeuse(rsdto.getPurposeuse());
-	        newReservation.setRequesttohost(rsdto.getRequesttohost());
-	        newReservation.setReservprice(rsdto.getReservprice());
-	        
-	        // 시간 설정
-	        String fullStartTime = rsdto.getSelectedDate() + " " + rsdto.getStartTime();
-	        String fullEndTime = rsdto.getSelectedDate() + " " + rsdto.getEndTime();
-	        
-	        newReservation.setStartTime(fullStartTime);
-	        newReservation.setEndTime(fullEndTime);
-	        
-	        // 큐에 추가 (기존 queueService.addToQueue => reservationQueueService.enqueue로 변경)
-	        reservationQueueService.enqueue(newReservation);
-	        
-	        System.out.println("큐에 추가됨: " + rcodes[i] + " | " + fullStartTime + "~" + fullEndTime);
+	        try {
+	            ReservationDto newReservation = new ReservationDto();
+	            
+	            // 기존 데이터 복사
+	            newReservation.setUserid(userid);
+	            newReservation.setJumuncode(jumuncode);
+	            newReservation.setRcode(rcodes[i]);
+	            newReservation.setCard1(rsdto.getCard1());
+	            newReservation.setTel(rsdto.getTel());
+	            newReservation.setHalbu1(rsdto.getHalbu1());
+	            newReservation.setBank1(rsdto.getBank1());
+	            newReservation.setCard2(rsdto.getCard2());
+	            newReservation.setBank2(rsdto.getBank2());
+	            newReservation.setPurposeuse(rsdto.getPurposeuse());
+	            newReservation.setRequesttohost(rsdto.getRequesttohost());
+	            newReservation.setReservprice(rsdto.getReservprice());
+	            
+	            // ✅ 날짜 형식 검증 및 시간 설정
+	            String fullStartTime = rsdto.getSelectedDate() + " " + rsdto.getStartTime();
+	            String fullEndTime = rsdto.getSelectedDate() + " " + rsdto.getEndTime();
+	            
+	            // 날짜 형식 재검증
+	            try {
+	                LocalDateTime.parse(fullStartTime.replace(" ", "T"));
+	                LocalDateTime.parse(fullEndTime.replace(" ", "T"));
+	            } catch (Exception e) {
+	                System.err.println("❌ 날짜 파싱 오류: " + e.getMessage());
+	                continue;
+	            }
+	            
+	            System.out.println("🕐 받은 시간: startTime=" + rsdto.getStartTime() + ", endTime=" + rsdto.getEndTime());
+	            System.out.println("🕐 최종 시간: " + fullStartTime + " ~ " + fullEndTime);
+	            
+	            newReservation.setStartTime(fullStartTime);
+	            newReservation.setEndTime(fullEndTime);
+	            
+	            // 큐에 추가
+	            boolean added = reservationQueueService.enqueue(newReservation);
+	            if (added) {
+	                successCount++;
+	                System.out.println("✅ 큐 추가 성공: " + rcodes[i] + " | " + fullStartTime + "~" + fullEndTime);
+	            } else {
+	                System.out.println("⚠️ 큐 추가 실패: " + rcodes[i] + " (중복 또는 큐 포화)");
+	            }
+	            
+	        } catch (Exception e) {
+	            System.err.println("❌ 큐 추가 실패: " + e.getMessage());
+	            e.printStackTrace();
+	        }
 	    }
 	    
-	    // 바로 성공 페이지로 이동 (실제 처리는 백그라운드에서)
+	    System.out.println("📊 총 " + rcodes.length + "건 중 " + successCount + "건 큐 추가 성공");
+	    
+	    if (successCount == 0) {
+	        return "redirect:/room/reservFailure";
+	    }
+	    
 	    return "redirect:/room/reservList?jumuncode=" + jumuncode;
 	}
 	

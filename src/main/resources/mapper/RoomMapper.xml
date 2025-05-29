@@ -27,9 +27,10 @@
 	</select>
 
 
-	<select id="roomContent" resultType="com.example.demo.dto.RoomDto">
-		SELECT * FROM room WHERE rcode=#{rcode}
+	<select id="roomContent" resultType="com.example.demo.dto.RoomDto" useCache="true">
+	    SELECT * FROM room WHERE rcode = #{rcode}
 	</select>
+
 	
 	<select id="getMember" resultType="com.example.demo.dto.MemberDto">
 	    SELECT * FROM member WHERE userid=#{userid}
@@ -56,11 +57,14 @@
 		SELECT * FROM reservation WHERE jumuncode=#{jumuncode}
 	</select>
 	
-	  <select id="getReservTime"  resultType="com.example.demo.dto.ReservationDto">
-	    select substring(startTime,12,2) as startTime  , substring(endTime,12,2) as endTime 
-	    from reservation
-	     where rcode=#{rcode} and startTime like concat(#{ymd} , '%')
-	</select> 
+	<select id="getReservTime" resultType="com.example.demo.dto.ReservationDto">
+	    SELECT TIME_FORMAT(startTime, '%H') as startTime, 
+	           TIME_FORMAT(endTime, '%H') as endTime 
+	    FROM reservation USE INDEX(idx_reservation_rcode_date)
+	    WHERE rcode = #{rcode} 
+	    AND DATE(startTime) = #{ymd}
+	    ORDER BY startTime
+	</select>
 
 	<select id="getReservationsByroomid" resultType="com.example.demo.dto.ReservationDto">
 	    SELECT * FROM reservation WHERE roomid=#{roomid} ORDER BY writeday DESC
@@ -136,16 +140,16 @@
 </select>
 
 <!-- 원자적 예약 삽입 쿼리 - 조건부 INSERT -->
-<insert id="insertReservationWithCheck">
+<insert id="insertReservationWithCheck" parameterType="com.example.demo.dto.ReservationDto">
     INSERT INTO reservation(startTime, endTime, rcode, userid, card1, tel, 
     halbu1, bank1, card2, bank2, jumuncode, writeday, purposeuse, requesttohost, reservprice)
-    SELECT #{rsdto.startTime}, #{rsdto.endTime}, #{rsdto.rcode}, #{rsdto.userid}, #{rsdto.card1}, #{rsdto.tel}, #{rsdto.halbu1},
-    #{rsdto.bank1}, #{rsdto.card2}, #{rsdto.bank2}, #{rsdto.jumuncode}, now(), #{rsdto.purposeuse}, #{rsdto.requesttohost}, #{rsdto.reservprice}
+    SELECT #{startTime}, #{endTime}, #{rcode}, #{userid}, #{card1}, #{tel}, #{halbu1},
+    #{bank1}, #{card2}, #{bank2}, #{jumuncode}, now(), #{purposeuse}, #{requesttohost}, #{reservprice}
     FROM dual
     WHERE NOT EXISTS (
         SELECT 1 FROM reservation 
-        WHERE rcode = #{rsdto.rcode}
-        AND (startTime &lt;= #{rsdto.endTime} AND endTime &gt;= #{rsdto.startTime})
+        WHERE rcode = #{rcode}
+        AND (startTime &lt;= #{endTime} AND endTime &gt;= #{startTime})
     )
 </insert>
 
@@ -162,12 +166,20 @@
 </update>
 
 <insert id="insertReservationBatch" parameterType="list">
-    INSERT IGNORE INTO reservation(startTime, endTime, rcode, userid, jumuncode, writeday, reservprice)
-    VALUES 
+    INSERT INTO reservation(
+        startTime, endTime, rcode, userid, card1, tel, 
+        halbu1, bank1, card2, bank2, jumuncode, writeday, 
+        purposeuse, requesttohost, reservprice
+    ) VALUES 
     <foreach collection="list" item="item" separator=",">
         (#{item.startTime}, #{item.endTime}, #{item.rcode}, 
-         #{item.userid}, #{item.jumuncode}, now(), #{item.reservprice})
+         #{item.userid}, #{item.card1}, #{item.tel}, #{item.halbu1},
+         #{item.bank1}, #{item.card2}, #{item.bank2}, #{item.jumuncode}, 
+         now(), #{item.purposeuse}, #{item.requesttohost}, #{item.reservprice})
     </foreach>
+    ON DUPLICATE KEY UPDATE 
+        reservprice = VALUES(reservprice),
+        modified_at = now()
 </insert>
 
 <select id="getReservationTimesByRcodeAndDate" resultType="string">
@@ -178,6 +190,50 @@
     ORDER BY startTime
 </select>
 
+
+
+<!-- 빠른 중복 체크 -->
+<select id="countConflictingReservations" resultType="int" parameterType="com.example.demo.dto.ReservationDto">
+    SELECT COUNT(*) 
+    FROM reservation USE INDEX(idx_reservation_rcode_time)
+    WHERE rcode = #{rcode}
+    AND startTime &lt; #{endTime} 
+    AND endTime &gt; #{startTime}
+</select>
+
+<!-- 빠른 삽입 (중복 체크 없이) -->
+<insert id="insertReservationSimple" parameterType="com.example.demo.dto.ReservationDto">
+    INSERT INTO reservation(
+        startTime, endTime, rcode, userid, card1, tel, 
+        halbu1, bank1, card2, bank2, jumuncode, writeday, 
+        purposeuse, requesttohost, reservprice
+    ) VALUES (
+        #{startTime}, #{endTime}, #{rcode}, #{userid}, #{card1}, #{tel}, #{halbu1},
+        #{bank1}, #{card2}, #{bank2}, #{jumuncode}, now(), 
+        #{purposeuse}, #{requesttohost}, #{reservprice}
+    )
+</insert>
+
+<!-- INSERT IGNORE 사용 (가장 빠름) -->
+<insert id="insertReservationFast" parameterType="com.example.demo.dto.ReservationDto">
+    INSERT IGNORE INTO reservation(
+        startTime, endTime, rcode, userid, card1, tel, 
+        halbu1, bank1, card2, bank2, jumuncode, writeday, 
+        purposeuse, requesttohost, reservprice
+    ) VALUES (
+        #{startTime}, #{endTime}, #{rcode}, #{userid}, #{card1}, #{tel}, #{halbu1},
+        #{bank1}, #{card2}, #{bank2}, #{jumuncode}, now(), 
+        #{purposeuse}, #{requesttohost}, #{reservprice}
+    )
+</insert>
+
+<select id="getReservationsByUserIdPaged" resultType="com.example.demo.dto.ReservationDto">
+    SELECT r.*, rm.name as room_name
+    FROM reservation r USE INDEX(idx_reservation_userid)
+    LEFT JOIN room rm ON r.rcode = rm.rcode 
+    WHERE r.userid = #{userid} 
+    ORDER BY r.writeday DESC
+    LIMIT #{offset}, #{limit}
+</select>
+
 </mapper>
-
-
