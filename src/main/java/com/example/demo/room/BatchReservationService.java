@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.ApplicationContext;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -15,10 +16,7 @@ import java.util.stream.Collectors;
 public class BatchReservationService {
     
     @Autowired
-    private RoomMapper roomMapper;
-    
-    @Autowired
-    private RedisLockService redisLockService;
+    private ApplicationContext applicationContext;
     
     // 배치 처리용 큐
     private final Queue<ReservationDto> batchQueue = new ConcurrentLinkedQueue<>();
@@ -27,6 +25,15 @@ public class BatchReservationService {
     // 통계
     private final AtomicInteger batchSuccessCount = new AtomicInteger(0);
     private final AtomicInteger batchFailCount = new AtomicInteger(0);
+    
+    // Lazy loading으로 의존성 해결
+    private RoomMapper getRoomMapper() {
+        return applicationContext.getBean(RoomMapper.class);
+    }
+    
+    private RedisLockService getRedisLockService() {
+        return applicationContext.getBean(RedisLockService.class);
+    }
     
     // 배치 큐에 예약 추가
     public boolean addToBatch(ReservationDto dto) {
@@ -69,7 +76,7 @@ public class BatchReservationService {
         // 유효한 예약들을 배치로 INSERT
         if (!validReservations.isEmpty()) {
             try {
-                int insertedCount = roomMapper.insertReservationBatch(validReservations);
+                int insertedCount = getRoomMapper().insertReservationBatch(validReservations);
                 batchSuccessCount.addAndGet(insertedCount);
                 System.out.println("✅ 배치 INSERT 완료: " + insertedCount + "건 성공");
             } catch (Exception e) {
@@ -91,7 +98,7 @@ public class BatchReservationService {
         String lockValue = "batch_" + System.currentTimeMillis();
         
         // 방별 락 획득
-        if (!redisLockService.tryLock(lockKey, lockValue, 5)) {
+        if (!getRedisLockService().tryLock(lockKey, lockValue, 5)) {
             System.out.println("🔒 배치 락 획득 실패: " + rcode);
             return Collections.emptyList();
         }
@@ -104,7 +111,7 @@ public class BatchReservationService {
             
             for (ReservationDto reservation : reservations) {
                 // 기존 예약과 충돌 검사
-                int conflictCount = roomMapper.countConflictingReservations(reservation);
+                int conflictCount = getRoomMapper().countConflictingReservations(reservation);
                 
                 if (conflictCount == 0) {
                     // 이미 처리된 예약들과도 충돌 검사
@@ -117,7 +124,7 @@ public class BatchReservationService {
             return validReservations;
             
         } finally {
-            redisLockService.unlock(lockKey, lockValue);
+            getRedisLockService().unlock(lockKey, lockValue);
         }
     }
     

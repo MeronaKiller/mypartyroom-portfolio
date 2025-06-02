@@ -176,23 +176,51 @@ public class AdminServiceImpl implements AdminService {
 		return "/admin/adminLogin";
 	}
 	@Override
-	public String memberManage(MemberDto mdto,Model model)
-	{	
-		ArrayList<MemberDto> mlist=mapper.getAllMember(mdto.getMemberid());
-		
-		model.addAttribute("mlist",mlist);
-		
-		return "/admin/memberManage";
+	public String memberManage(MemberDto mdto, Model model) {	
+	    try {
+	        System.out.println("🔍 memberManage 서비스 호출됨");
+	        
+	        // ✅ 수정: getAllMember 호출 방식 변경
+	        ArrayList<MemberDto> mlist = mapper.getAllMember(0); // 0은 전체 조회를 의미
+	        
+	        System.out.println("📊 조회된 회원 수: " + (mlist != null ? mlist.size() : "null"));
+	        
+	        if (mlist != null && !mlist.isEmpty()) {
+	            MemberDto firstMember = mlist.get(0);
+	            System.out.println("👤 첫 번째 회원:");
+	            System.out.println("   - memberid: " + firstMember.getMemberid());
+	            System.out.println("   - userid: " + firstMember.getUserid());
+	            System.out.println("   - created_day: " + firstMember.getCreated_day());
+	            System.out.println("   - status: " + firstMember.getStatus());
+	        }
+	        
+	        model.addAttribute("mlist", mlist);
+	        System.out.println("✅ mlist 모델에 추가 완료");
+	        
+	    } catch (Exception e) {
+	        System.err.println("❌ memberManage 에러: " + e.getMessage());
+	        e.printStackTrace();
+	        model.addAttribute("mlist", new ArrayList<MemberDto>());
+	    }
+	    
+	    return "/admin/memberManage";
 	}
 	@Override
-	public String conformCancle(MemberDto mdto, ReservationDto rsdto, Model model)
-	{
-		ArrayList<MemberDto> mlist=mapper.getAllMember(mdto.getMemberid());
-	    ArrayList<ReservationDto> rslist=mapper.getCancleRequest(mdto.getUserid());
+	public String conformCancle(MemberDto mdto, ReservationDto rsdto, Model model) {
+	    System.out.println("🔍 conformCancle 서비스 시작");
+	    System.out.println("📋 mdto.getUserid(): '" + mdto.getUserid() + "'");
+	    System.out.println("📋 mdto.getMemberid(): " + mdto.getMemberid());
+	    
+	    ArrayList<MemberDto> mlist = mapper.getAllMember(mdto.getMemberid());
+	    
+	    // ✅ userid를 null로 전달해서 모든 취소 요청 가져오기
+	    ArrayList<ReservationDto> rslist = mapper.getCancleRequest(null);
+	    
+	    System.out.println("📊 조회된 취소 요청 수: " + (rslist != null ? rslist.size() : "null"));
 	    
 	    model.addAttribute("mlist", mlist);
 	    model.addAttribute("rslist", rslist);
-		return "/admin/conformCancle";
+	    return "/admin/conformCancle";
 	}
 	@Override
 	public String conformCancleOk(int reservationId)
@@ -216,24 +244,68 @@ public class AdminServiceImpl implements AdminService {
 		return "redirect:/admin/memberManage";
 	}
 	@Override 
-	public String roomDelete(RoomDto rdto, Model model)
-	{
-	    ArrayList<ReservationDto> rlist=mapper.roomDelete(rdto.getRcode());
+	public String roomDelete(RoomDto rdto, Model model) {
+	    try {
+	        System.out.println("🔍 roomDelete 서비스 호출됨");
+	        
+	        // ✅ 매개변수 없는 roomDelete() 호출
+	        ArrayList<RoomDto> rlist = mapper.roomDelete();
+	        
+	        System.out.println("📊 조회된 room 데이터 수: " + (rlist != null ? rlist.size() : "null"));
+	        
+	        if (rlist != null && !rlist.isEmpty()) {
+	            RoomDto firstRoom = rlist.get(0);
+	            System.out.println("🏠 첫 번째 room:");
+	            System.out.println("   - roomid: " + firstRoom.getRoomid());
+	            System.out.println("   - name: " + firstRoom.getName());
+	            System.out.println("   - duration_type: " + firstRoom.getDuration_type());
+	        }
+	        
+	        model.addAttribute("rlist", rlist);
+	        System.out.println("✅ rlist 모델에 추가 완료");
+	        
+	    } catch (Exception e) {
+	        System.err.println("❌ roomDelete 서비스 에러: " + e.getMessage());
+	        e.printStackTrace();
+	        model.addAttribute("rlist", new ArrayList<RoomDto>());
+	    }
 	    
-	    model.addAttribute("rlist", rlist);
-		return "/admin/roomDelete";
+	    return "/admin/roomDelete";
 	}
 	@Override
-	public String roomDeleteOk(int roomid)
-	{
-		mapper.roomDeleteOk(roomid, 1);//1이 비활성화 
+	public String roomDeleteOk(int roomid) {
+	    try {
+	        System.out.println("🗑️ roomDeleteOk 호출: roomid=" + roomid);
+	        
+	        // ✅ duration_type = 1 (삭제됨)
+	        mapper.roomDeleteOk(roomid, 1);
+	        
+	        System.out.println("✅ 룸 삭제 완료: roomid=" + roomid);
+	        
+	    } catch (Exception e) {
+	        System.err.println("❌ roomDeleteOk 에러: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	    
 	    return "redirect:/admin/roomDelete";
 	}
+
 	@Override
-	public String roomReviveOk(int roomid)
-	{
-		mapper.roomReviveOk(roomid, 0);//0이 복구
-		return "redirect:/admin/roomDelete";
+	public String roomReviveOk(int roomid) {
+	    try {
+	        System.out.println("🔄 roomReviveOk 호출: roomid=" + roomid);
+	        
+	        // ✅ duration_type = 2 (활성)
+	        mapper.roomReviveOk(roomid, 2);
+	        
+	        System.out.println("✅ 룸 복구 완료: roomid=" + roomid);
+	        
+	    } catch (Exception e) {
+	        System.err.println("❌ roomReviveOk 에러: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	    
+	    return "redirect:/admin/roomDelete";
 	}
 	@Override
 	public String noticeManage(NoticeDto ndto,Model model,HttpServletRequest request)

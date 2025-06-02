@@ -1,8 +1,8 @@
 package com.example.demo.admin;
 
 import java.util.ArrayList;
-
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.example.demo.dto.AdminDto;
 import com.example.demo.dto.DaeDto;
@@ -13,35 +13,42 @@ import com.example.demo.dto.ReservationDto;
 import com.example.demo.dto.RoomDto;
 import com.example.demo.dto.SoDto;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-
 @Mapper
 public interface AdminMapper {
-	public ArrayList<DaeDto> getDae();
-	public int getNumber(String rcode);
-	public void roomWriteOk(RoomDto rdto);
-	public ArrayList<SoDto> getSo(int daeid);
-	public String getRcode(String rcode);
-	public String adminLoginOk(AdminDto adto);
-	public ArrayList<MemberDto> getAllMember(int memberid);
-	public ArrayList<ReservationDto> getCancleRequest(String userid);
-	public ArrayList<MemberDto> getAllMember(String userid); // 특정 회원만 가져오기
-	public void updateReservationStatus(int reservationId, int status);
-	public ReservationDto getReservation(int reservationId);
-	public void deleteUser(int memberid, int status);
-	public void reviveUser(int memberid, int status);
-	public ArrayList<ReservationDto> roomDelete(String rcode);
-	public void roomDeleteOk(int roomid, int duration_type);
-	public void roomReviveOk(int roomid, int duration_type);
-	int noticeGetChong();
-	public ArrayList<NoticeDto> noticeManage(int index);
-	public NoticeDto getNoticeContentManage(int noticeid);
-	public void noticeWriteOk(NoticeDto ndto);
-	public void noticeContentDeleteOk(int noticeid, int i);
-	public void noticeContentReviveOk(int noticeid, int i);
-	public ArrayList<PersonalInquiryDto> getPersonalInquiryList(int index);
-	public PersonalInquiryDto getPersonalInquiry(int personalInquiryid);
-	int qnaGetChong();
-	public void qnaAnswerOk(int personalInquiryid, int i);
+    
+    // 기존 메서드들
+    ArrayList<DaeDto> getDae();
+    ArrayList<SoDto> getSo(int daeid);
+    int getNumber(String jumuncode);
+    void roomWriteOk(RoomDto rdto);
+    String adminLoginOk(AdminDto adto);
+    
+    // 회원 관리
+    ArrayList<MemberDto> getAllMember(@Param("memberid") int memberid);
+    void deleteUser(@Param("memberid") int memberid, @Param("status") int status);
+    void reviveUser(@Param("memberid") int memberid, @Param("status") int status);
+    
+    // 예약 취소 관리
+    ArrayList<ReservationDto> getCancleRequest(@Param("userid") String userid);
+    void updateReservationStatus(@Param("reservationId") int reservationId, @Param("status") int status);
+    void updateReservationStatus1(ReservationDto rdto);
+    
+    // 룸 삭제 관리
+    ArrayList<RoomDto> roomDelete(); // 매개변수 없는 버전 추가
+    void roomDeleteOk(@Param("roomid") int roomid, @Param("duration_type") int duration_type);
+    void roomReviveOk(@Param("roomid") int roomid, @Param("duration_type") int duration_type);
+    
+    // 공지사항 관리
+    ArrayList<NoticeDto> noticeManage(@Param("index") int index);
+    int noticeGetChong();
+    NoticeDto getNoticeContentManage(@Param("noticeid") int noticeid);
+    void noticeWriteOk(NoticeDto ndto);
+    void noticeContentDeleteOk(@Param("noticeid") int noticeid, @Param("state") int state);
+    void noticeContentReviveOk(@Param("noticeid") int noticeid, @Param("state") int state);
+    
+    // QnA 관리
+    ArrayList<PersonalInquiryDto> getPersonalInquiryList(@Param("index") int index);
+    PersonalInquiryDto getPersonalInquiry(@Param("personalInquiryid") int personalInquiryid);
+    void qnaAnswerOk(@Param("personalInquiryid") int personalInquiryid, @Param("state") int state);
+    int qnaGetChong();
 }

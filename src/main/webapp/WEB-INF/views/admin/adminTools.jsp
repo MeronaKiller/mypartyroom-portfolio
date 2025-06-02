@@ -102,6 +102,7 @@
         <a href="/admin/roomManage">파티룸 관리</a>
         <a href="/admin/noticeManage">공지사항 관리</a>
         <a href="/admin/qnaAnswer">1:1 답변</a>
+        <a href="/admin/reservationMonitor">예약 모니터링</a>
         <a href="/admin/adminLogout">로그아웃</a>
     </div>
 </div>

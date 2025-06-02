@@ -13,8 +13,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class RedisLockService {
     
+    // ✅ Object 타입으로 변경 (ReservationStatusService와 호환)
     @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
     
     // ✅ 배치 락 획득을 위한 Lua 스크립트
     private static final String BATCH_LOCK_SCRIPT = 
@@ -41,7 +42,31 @@ public class RedisLockService {
         "end " +
         "return results";
     
-    // 기본 락 획득 (타임아웃 단축)
+    // ✅ 기본 락 획득 (ReservationStatusService 호환용)
+    public boolean tryLock(String key, String value, int timeoutSeconds) {
+        try {
+            Boolean result = redisTemplate.opsForValue()
+                .setIfAbsent(key, value, timeoutSeconds, TimeUnit.SECONDS);
+            return Boolean.TRUE.equals(result);
+        } catch (Exception e) {
+            System.err.println("Redis 락 획득 실패: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    // ✅ 기본 락 해제 (ReservationStatusService 호환용)
+    public void unlock(String key, String value) {
+        try {
+            String currentValue = (String) redisTemplate.opsForValue().get(key);
+            if (value.equals(currentValue)) {
+                redisTemplate.delete(key);
+            }
+        } catch (Exception e) {
+            System.err.println("Redis 락 해제 실패: " + e.getMessage());
+        }
+    }
+    
+    // 기존 메서드들 (long 타입용)
     public boolean tryLock(String key, String value, long expireTime) {
         try {
             Boolean result = redisTemplate.opsForValue()
@@ -120,8 +145,8 @@ public class RedisLockService {
         return false;
     }
     
-    // 기본 락 해제 (개선된 버전)
-    public boolean unlock(String key, String value) {
+    // 개선된 락 해제 (boolean 반환)
+    public boolean unlockWithResult(String key, String value) {
         try {
             String script = 
                 "if redis.call('GET', KEYS[1]) == ARGV[1] then " +
@@ -144,12 +169,10 @@ public class RedisLockService {
     // ✅ 락 정보 일괄 조회
     public List<Boolean> isLockedBatch(List<String> keys) {
         try {
-            List<Boolean> results = redisTemplate.opsForValue().multiGet(keys)
-                .stream()
+            List<Object> results = redisTemplate.opsForValue().multiGet(keys);
+            return results.stream()
                 .map(value -> value != null)
                 .toList();
-            
-            return results;
             
         } catch (Exception e) {
             System.err.println("🔥 배치 락 확인 에러: " + e.getMessage());

@@ -352,28 +352,7 @@ $(function() {
 	
 	<div id="rdtocapaheart1">
 	<!-- 단위 0일때:시간단위 아니면 패키지단위(패키지아직안함) -->
-	<c:choose>
-	<c:when test="${rdto.duration_type==2}">
 		<span class="rdtoprice"><fmt:formatNumber value="${rdto.price}" type="number" pattern="#,###"/>원/시간</span>
-	</c:when>
-	<c:otherwise>
-			
-		<c:set var="priceArray" value="${fn:split(rdto.pkgprice, ',')}" />
-		<c:set var="maxPrice" value="0" />
-		
-		<c:forEach var="price" items="${priceArray}">
-		 <c:if test="${not empty price and price != ''}">
-		 <c:set var="currentPrice" value="${price}"/>
-		 <c:if test="${currentPrice > maxPrice}">
-		 <c:set var="maxPrice" value="${currentPrice}" />
-		</c:if>
-		</c:if>
-		</c:forEach>
-		
-		<span class="rdtoprice"><fmt:formatNumber value="${maxPrice}" type="number" pattern="#,###"/>원/패키지</span>
-			
-	</c:otherwise>
-	</c:choose>
 	
 	<!-- 인원수 -->
 	<span id="rdtocapaheart">

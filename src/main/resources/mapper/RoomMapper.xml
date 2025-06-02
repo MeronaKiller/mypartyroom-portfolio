@@ -27,9 +27,14 @@
 	</select>
 
 
-	<select id="roomContent" resultType="com.example.demo.dto.RoomDto" useCache="true">
+	<select id="roomContent" resultMap="roomMap">
 	    SELECT * FROM room WHERE rcode = #{rcode}
 	</select>
+	
+	
+	<resultMap id="roomMap" type="com.example.demo.dto.RoomDto">
+		<result property="duration_type" column="duration_type" />
+	</resultMap>
 
 	
 	<select id="getMember" resultType="com.example.demo.dto.MemberDto">
