@@ -724,13 +724,12 @@ ${duration}시간</div>
     
     
     <input type="hidden" value="${rdto.rcode}" name="rcode">
-    <input type="hidden" value="${userid}" name="userid">
     <input type="hidden" value="${selectedDate}" name="selectedDate">
     <input type="hidden" value="${startTime}" name="startTime">
     <input type="hidden" value="${endTime}" name="endTime">
     <input type="hidden" value="${chongprice}" name="reservprice">
-    <input type="hidden" value="${rdto.name}" name="name">
-    
+    <input type="hidden" value="${rdto.name}" name="roomName">
+    <input type="hidden" value="${mdto.name}" name="userName">
     
 		<div> <input type="submit" value="예약하기"> </div><!-- 예약폼 시작 -->
 		</div> <!-- 상품문의와 문의하기 링크 -->
